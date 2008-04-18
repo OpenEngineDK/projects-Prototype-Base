@@ -27,6 +27,7 @@
 #include <Resources/GLSLResource.h>
 #include <Resources/TGAResource.h>
 #include <Resources/OBJResource.h>
+#include <Resources/DirectoryManager.h>
 #include <Resources/ResourceManager.h>
 #include <Scene/SceneNode.h>
 #include <Scene/GeometryNode.h>
@@ -47,10 +48,10 @@
 // Project files
 #include "RenderStateHandler.h"
 #include "ClassicMovementHandler.h"
-#include "ActionMovementHandler.h"
 #include "QuitHandler.h"
 #include "Tank.h"
 #include "Crosshair.h"
+#include "TankManager.h"
 
 // Additional namespaces (others are in the header).
 using namespace OpenEngine::Devices;
@@ -59,6 +60,9 @@ using namespace OpenEngine::Renderers;
 using namespace OpenEngine::Resources;
 using namespace OpenEngine::Utils;
 using namespace OpenEngine::Physics;
+
+// Prototype namespace
+using namespace OpenEngine::Prototype;
 
 // composite rendering view. Uses RenderingView for drawing and
 // AcceleratedRenderingView for clipping. 
@@ -75,7 +79,7 @@ public:
 
 GeometryNode* LoadGeometryFromFile(string filepath) {
 	// Load the model
-	IModelResourcePtr mod_res = ResourceManager::CreateModel(filepath);
+	IModelResourcePtr mod_res = ResourceManager<IModelResource>::Create(filepath);
 	mod_res->Load();
 	GeometryNode* mod_node = new GeometryNode();
 	mod_node->SetFaceSet(mod_res->GetFaceSet());
@@ -149,13 +153,13 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 
 	// set the resources directory
 	string resources = "projects/Prototype-Base/data/";
-	ResourceManager::AppendPath(resources);
+	DirectoryManager::AppendPath(resources);
 	logger.info << "Resource directory: " << resources << logger.end;
 
 	// load the resource plug-ins
-	ResourceManager::AddModelPlugin(new OBJPlugin());
-	ResourceManager::AddTexturePlugin(new TGAPlugin());
-	ResourceManager::AddShaderPlugin(new GLSLPlugin());
+	ResourceManager<IModelResource>::AddPlugin(new OBJPlugin());
+    	ResourceManager<ITextureResource>::AddPlugin(new TGAPlugin());
+    	ResourceManager<IShaderResource>::AddPlugin(new GLSLPlugin());
 
 	// pointer to Box transformation node
 	RigidBox* box = NULL;

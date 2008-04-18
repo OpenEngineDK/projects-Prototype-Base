@@ -8,7 +8,7 @@
 //--------------------------------------------------------------------
 
 // OpenEngine stuff
-#include <Meta/Config.h>
+//#include <Meta/Config.h>
 
 #include <Core/GameEngine.h>
 #include <Logging/Logger.h>

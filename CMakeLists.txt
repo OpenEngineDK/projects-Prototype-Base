@@ -9,13 +9,13 @@ SET( PROTOTYPE_SOURCES
   TestShot.cpp
   Crosshair.cpp
   ClassicMovementHandler.cpp
-  ActionMovementHandler.cpp
+  TankManager.cpp
 )
 
 # todo get rid of this!@#!
 # Include if using SDL under Mac OS X
 IF(APPLE)
-  SET(PROTOTYPE_SOURCES ${PROTOTYPE_SOURCES} ${SDL_MAIN_FOR_MAC})
+  SET(PROTOTYPE_SOURCES ${PROTOTYPE_SOURCES} ../../conf/mac/SDLMain.m)
 ENDIF(APPLE)
 
 # Project executable
@@ -35,4 +35,6 @@ TARGET_LINK_LIBRARIES(Prototype-Base
   Extensions_FixedTimeStepPhysics
   Extensions_SDL
   Extensions_OpenGLRenderer
+  Extensions_OBJResource
+  Extensions_TGAResource
 )

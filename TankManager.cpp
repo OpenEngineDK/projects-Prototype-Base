@@ -31,6 +31,20 @@ namespace OpenEngine {
             return elm->second;
         }
 
+	void TankManager::Initialize() {
+	}
+	
+	void TankManager::Deinitialize() {
+	}
+	
+	bool TankManager::IsTypeOf(const std::type_info& inf) {
+		return false;
+	}
+	
+	void TankManager::Process(const float dt, const float percent) {
+		
+	}
+
     } // NS Prototype
 } // NS OpenEngine
 

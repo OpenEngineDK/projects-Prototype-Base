@@ -11,16 +11,18 @@
 #define _TANKMANAGER_H_
 
 #include "Tank.h"
+#include <Core/IModule.h>
 
 namespace OpenEngine {
     namespace Prototype {
 
         using namespace std;
         using namespace OpenEngine::Utils;
+	using namespace OpenEngine::Core;
 
         typedef map<int,Tank*> TankMap;
 
-        class TankManager {
+        class TankManager : public IModule  {
             private:
                 TankMap tankMap;
             public:
@@ -33,6 +35,11 @@ namespace OpenEngine {
                 void RemoveTank(int i);
 
                 Tank* GetTank(int i);
+
+		void Initialize();
+		void Deinitialize();
+		virtual bool IsTypeOf(const std::type_info& inf);
+		virtual void Process(const float dt, const float percent);
 
         };
     } // NS Prototype

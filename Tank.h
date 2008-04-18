@@ -26,6 +26,11 @@ namespace OpenEngine {
 
 		class Tank : public IModule {
 		private:
+			static GeometryNode* bodyModel;
+			static GeometryNode* turretModel;
+			static GeometryNode* gunModel;
+
+			
 			GeometryNode* tankBody;
 			GeometryNode* tankTurret;
 			GeometryNode* tankGun;
@@ -36,7 +41,7 @@ namespace OpenEngine {
 			TransformationNode* tankTurretGunTrans;
 			RigidBox* box;
 			TestShot* tShot;
-                        
+
                         float rotation;
                         float pivot;
 
@@ -44,14 +49,16 @@ namespace OpenEngine {
 			Quaternion<float> direction;
 
 		public:
-			Tank(GeometryNode* tankBody, GeometryNode* tankTurret, GeometryNode* tankGun, RigidBox* box);
+			Tank(RigidBox* box);
 			virtual ~Tank();
 
 			void Initialize();
 			void Deinitialize();
 			virtual bool IsTypeOf(const std::type_info& inf);
 			virtual void Process(const float dt, const float percent);
-			
+
+			static void SetModel(GeometryNode* body, GeometryNode* turret, GeometryNode* gun);
+
                         TransformationNode* GetCameraTransformationNode();
                         TransformationNode* GetCameraRotateTransformationNode();
 			TransformationNode* GetTankTransformationNode();

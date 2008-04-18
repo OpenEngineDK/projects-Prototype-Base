@@ -24,6 +24,7 @@ namespace OpenEngine {
 
         class TankManager : public IModule  {
             private:
+		int newID;
                 TankMap tankMap;
             public:
                 TankManager();

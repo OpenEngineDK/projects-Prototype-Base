@@ -161,10 +161,6 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
     	ResourceManager<ITextureResource>::AddPlugin(new TGAPlugin());
     	ResourceManager<IShaderResource>::AddPlugin(new GLSLPlugin());
 
-	// pointer to Box transformation node
-	RigidBox* box = NULL;
-	Vector<3,float> position(0, 0, 0);
-
 	// Add models from models.txt to the scene
 	ISceneNode* current = rNode;
 	ISceneNode* dynamicObjects = new SceneNode();
@@ -185,15 +181,27 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	physicObjects->AddNode(geoGround2);
 
 	// Dynamic
-	GeometryNode* geoTank = LoadGeometryFromFile("ProtoTank/tank_body.obj");//LoadGeometryFromFile("ToonyTank/tanklower.obj");
-	GeometryNode* geoTurret = LoadGeometryFromFile("ProtoTank/tank_turret.obj");//LoadGeometryFromFile("ToonyTank/tankupper.obj");
-	GeometryNode* geoGun = LoadGeometryFromFile("ProtoTank/tank_cannon.obj");//LoadGeometryFromFile("ToonyTank/tankgun.obj");
+	GeometryNode* geoTank = LoadGeometryFromFile("ProtoTank/tank_body.obj");
+	GeometryNode* geoTurret = LoadGeometryFromFile("ProtoTank/tank_turret.obj");
+	GeometryNode* geoGun = LoadGeometryFromFile("ProtoTank/tank_cannon.obj");
 
-	// Load rigid-box
+	//Setup the tanks
+	TankManager* tankMgr = new TankManager();
+	Tank::SetModel(geoTank,geoTurret,geoGun);
+        engine.AddModule(*tankMgr);
+
+	// Load rigid box for tank1
+	RigidBox* box = NULL;
+	Vector<3,float> position(0, 0, 0);
 	box = new RigidBox( Box(*(geoTank->GetFaceSet())) );
 	box->SetCenter( position );
-	Tank* tank = new Tank(geoTank,geoTurret,geoGun,box);
-	engine.AddModule(*tank);
+	Tank* tank = new Tank(box);
+	tankMgr->AddTank(tank);
+
+	// Load rigid box for tank2
+	Tank* tank2 = new Tank(box);
+	tankMgr->AddTank(tank2);
+
 	dynamicObjects->AddNode(tank->GetTankTransformationNode());
 	box->SetTransformationNode(tank->GetTankTransformationNode());
 	tank->GetTurretGunTransformationNode()->AddNode(new Crosshair());
@@ -202,8 +210,6 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 
 	camera->SetPosition(position + Vector<3,float>(-80,30,0));
 	camera->LookAt(position + Vector<3,float>(0,25,0));
-	//camera->Follow(tank->GetTurretTransformationNode());
-        //camera->Follow(tank->GetTurretGunTransformationNode());
         camera->Follow(tank->GetCameraTransformationNode());
 
 	rNode->AddNode(dynamicObjects);

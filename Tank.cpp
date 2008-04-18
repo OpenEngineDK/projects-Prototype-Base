@@ -13,10 +13,15 @@ namespace OpenEngine {
 	namespace Utils {
 		using namespace OpenEngine::Math;
 
-		Tank::Tank(GeometryNode* tankBody, GeometryNode* tankTurret, GeometryNode* tankGun, RigidBox* box) {
-			this->tankBody = tankBody;
-			this->tankTurret = tankTurret;
-            this->tankGun = tankGun;
+		// initialize static members
+		GeometryNode* Tank::bodyModel = NULL;
+		GeometryNode* Tank::turretModel = NULL;
+		GeometryNode* Tank::gunModel = NULL;
+
+		Tank::Tank(RigidBox* box) {
+			GeometryNode* tankBody = dynamic_cast<GeometryNode*>(bodyModel->Clone());
+			GeometryNode* tankTurret = dynamic_cast<GeometryNode*>(turretModel->Clone());
+			GeometryNode* tankGun = dynamic_cast<GeometryNode*>(gunModel->Clone());
 			this->box = box;
 
 			tShot = new TestShot();
@@ -57,7 +62,13 @@ namespace OpenEngine {
 			//position = tankBodyTrans->GetPosition() + tankBodyTrans->GetRotation().RotateVector(tankTurretTrans->GetPosition() + tankTurretTrans->GetRotation().RotateVector(tankTurretGunTrans->GetPosition()));
 			//direction = tankBodyTrans->GetRotation() * tankTurretTrans->GetRotation() * tankTurretGunTrans->GetRotation();
 		}
-                	
+
+		void Tank::SetModel(GeometryNode* body, GeometryNode* turret, GeometryNode* gun) {
+			bodyModel = body;
+			turretModel = turret;
+           		gunModel = gun;
+		}
+	
                 TransformationNode* Tank::GetCameraTransformationNode() {
                     return cameraPivotTrans;
                 }

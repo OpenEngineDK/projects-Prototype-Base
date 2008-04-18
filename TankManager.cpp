@@ -5,13 +5,15 @@ namespace OpenEngine {
     namespace Prototype {
 
         TankManager::TankManager() {
+		newID = 0;
         }
 
         TankManager::~TankManager() {
         }
 
         void TankManager::AddTank(Tank* tank) {
-            tankMap[0] = tank;
+            tankMap[newID] = tank;
+	    newID++;
         }
 
         void TankManager::RemoveTank(int i) {
@@ -42,7 +44,11 @@ namespace OpenEngine {
 	}
 	
 	void TankManager::Process(const float dt, const float percent) {
-		
+		TankMap::iterator iter;
+		for (iter =  tankMap.begin(); iter != tankMap.end(); iter++) {
+			Tank* tank = (*iter).second;
+			tank->Process(dt,percent);
+		}
 	}
 
     } // NS Prototype

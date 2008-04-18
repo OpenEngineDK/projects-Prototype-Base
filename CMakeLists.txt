@@ -6,10 +6,13 @@ SET( PROTOTYPE_SOURCES
   main.cpp
   GameFactory.cpp
   Tank.cpp
-  TestShot.cpp
+  ShotManager.cpp
   Crosshair.cpp
   ClassicMovementHandler.cpp
   TankManager.cpp
+  TankController.cpp
+  TestShotA.cpp
+  TestShotB.cpp
 )
 
 # todo get rid of this!@#!

@@ -38,7 +38,7 @@ namespace OpenEngine {
 			glVertex3f((float)(i+1.0)*spacing, 0.0, -0.25);
 			glVertex3f((float)(i+1.0)*spacing, 0.0, 0.25);
 			glVertex3f((float)(i+1.5)*spacing, 0.0, 0.25);
-			glVertex3f((float)(i+1.5)*spacing, 0.0, -0.25);			
+			glVertex3f((float)(i+1.5)*spacing, 0.0, -0.25);
 			}
 			glEnd();
 

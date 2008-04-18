@@ -19,7 +19,7 @@ namespace OpenEngine {
         void TankManager::RemoveTank(int i) {
             TankMap::iterator elm = tankMap.find(i);
             if (elm == tankMap.end()) {
-                printf("No tank with id: %d", i);
+                printf("No tank with id: %d!\n", i);
             } else {
                 tankMap.erase(i);
             }
@@ -28,7 +28,7 @@ namespace OpenEngine {
         Tank* TankManager::GetTank(int i) {
             TankMap::iterator elm = tankMap.find(i);
             if (elm == tankMap.end()) {
-                printf("No tank with id: %d", i);
+                printf("No tank with id: %d!\n", i);
             }
             return elm->second;
         }
@@ -49,6 +49,10 @@ namespace OpenEngine {
 			Tank* tank = (*iter).second;
 			tank->Process(dt,percent);
 		}
+	}
+
+	TankMap TankManager::GetTankMap() {
+		return tankMap;
 	}
 
     } // NS Prototype

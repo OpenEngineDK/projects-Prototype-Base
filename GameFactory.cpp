@@ -52,6 +52,7 @@
 #include "Tank.h"
 #include "Crosshair.h"
 #include "TankManager.h"
+#include "TankController.h"
 
 // Additional namespaces (others are in the header).
 using namespace OpenEngine::Devices;
@@ -147,7 +148,7 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	quit_h->BindToEventSystem();
 
 	// Bind the camera to the viewport
-        FollowCamera* camera = new FollowCamera( *(new InterpolatedViewingVolume( *(new ViewingVolume()) )));
+        /*FollowCamera* */ camera = new FollowCamera( *(new InterpolatedViewingVolume( *(new ViewingVolume()) )));
 	Frustum* frustum = new Frustum(*camera, 20, 50000);
 	viewport->SetViewingVolume(frustum);
 
@@ -163,16 +164,13 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 
 	// Add models from models.txt to the scene
 	ISceneNode* current = rNode;
-	ISceneNode* dynamicObjects = new SceneNode();
-	ISceneNode* staticObjects  = new SceneNode();
-	ISceneNode* physicObjects  = new SceneNode();
-
+	dynamicObjects = new SceneNode();
+	staticObjects  = new SceneNode();
+	physicObjects  = new SceneNode();
 
 	//Static
 	GeometryNode* geoSkyBox = LoadGeometryFromFile("MarioBox/MarioBox.obj");
 	GeometryNode* geoGround = LoadGeometryFromFile("2DGround/2DGround.obj");
-	//GeometryNode* geoGround = LoadGeometryFromFile("2DGround/Field.obj");
-	//GeometryNode* geoGround = LoadGeometryFromFile("Island/island.obj");
 	staticObjects->AddNode(geoSkyBox);
 	staticObjects->AddNode(geoGround);
 
@@ -181,36 +179,42 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	physicObjects->AddNode(geoGround2);
 
 	// Dynamic
-	GeometryNode* geoTank = LoadGeometryFromFile("ProtoTank/tank_body.obj");
-	GeometryNode* geoTurret = LoadGeometryFromFile("ProtoTank/tank_turret.obj");
-	GeometryNode* geoGun = LoadGeometryFromFile("ProtoTank/tank_cannon.obj");
+	//GeometryNode* geoTank = LoadGeometryFromFile("ProtoTank/tank_body.obj");
+	//GeometryNode* geoTurret = LoadGeometryFromFile("ProtoTank/tank_turret.obj");
+	//GeometryNode* geoGun = LoadGeometryFromFile("ProtoTank/tank_cannon.obj");
+	GeometryNode* geoTank = LoadGeometryFromFile("Tank2/tank2.obj");
+	GeometryNode* geoTurret = LoadGeometryFromFile("Tank2/turret.obj");
+	GeometryNode* geoGun = LoadGeometryFromFile("Tank2/gun.obj");
+
+	// Add FixedTimeStepPhysics module
+        physic = new FixedTimeStepPhysics( physicObjects );
+	engine.AddModule(*physic, IGameEngine::TICK_DEPENDENT);
+
+	// Register movement handler to be able to move the camera
+	classicMovement = new ClassicMovementHandler(input, physic);
+	classicMovement->BindToEventSystem();
+	engine.AddModule(*classicMovement,IGameEngine::TICK_DEPENDENT);
 
 	//Setup the tanks
-	TankManager* tankMgr = new TankManager();
+	tankMgr = new TankManager();
+	TankController* tankCtrl = new TankController(tankMgr, classicMovement, camera);
+	classicMovement->SetTankController(tankCtrl);
 	Tank::SetModel(geoTank,geoTurret,geoGun);
         engine.AddModule(*tankMgr);
 
-	// Load rigid box for tank1
-	RigidBox* box = NULL;
-	Vector<3,float> position(0, 0, 0);
-	box = new RigidBox( Box(*(geoTank->GetFaceSet())) );
-	box->SetCenter( position );
-	Tank* tank = new Tank(box);
-	tankMgr->AddTank(tank);
+	shotMgr = new ShotManager();
+	rNode->AddNode(shotMgr);
+        engine.AddModule(*shotMgr,IGameEngine::TICK_DEPENDENT);
 
-	// Load rigid box for tank2
-	Tank* tank2 = new Tank(box);
-	tankMgr->AddTank(tank2);
+	crosshairNode = new Crosshair();
 
-	dynamicObjects->AddNode(tank->GetTankTransformationNode());
-	box->SetTransformationNode(tank->GetTankTransformationNode());
-	tank->GetTurretGunTransformationNode()->AddNode(new Crosshair());
-	rNode->AddNode(tank->GetTestShot());
-        engine.AddModule(*(tank->GetTestShot()),IGameEngine::TICK_DEPENDENT);
+	// Load tanks
+	int tankCount = 10;
+	for ( int i = 0; i < tankCount; i++ ) {
+		AddTank();
+	}
 
-	camera->SetPosition(position + Vector<3,float>(-80,30,0));
-	camera->LookAt(position + Vector<3,float>(0,25,0));
-        camera->Follow(tank->GetCameraTransformationNode());
+	tankCtrl->SetPlayerTank(0);
 
 	rNode->AddNode(dynamicObjects);
 
@@ -224,11 +228,6 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
         bspT.Transform(*physicObjects);
 	logger.info << "Preprocessing of physics tree: done" << logger.end;
 
-	// Add FixedTimeStepPhysics module
-        FixedTimeStepPhysics* physic = new FixedTimeStepPhysics( physicObjects );
-	physic->AddRigidBody(box);
-	engine.AddModule(*physic, IGameEngine::TICK_DEPENDENT);
-
 	logger.info << "Preprocessing of static tree: started" << logger.end;
         QuadTransformer quadT2;
         quadT2.SetMaxFaceCount(500);
@@ -239,27 +238,26 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 
 	// Visualization of the frustum
 	//frustum->VisualizeClipping(true);
-	//rNode->AddNode(frustum->GetFrustumNode());
-
-	// add the RigidBox to the scene, for debuging
-	//if (box != NULL) rNode->AddNode( box->GetRigidBoxNode() );
-
-	// Register movement handler to be able to move the camera
-	ClassicMovementHandler* classicMovement = new ClassicMovementHandler(tank, input, physic);
-	classicMovement->BindToEventSystem();
-	engine.AddModule(*classicMovement,IGameEngine::TICK_DEPENDENT);
-
-	/*ActionMovementHandler* actionMovement = new ActionMovementHandler(tank, input, physic);
-	actionMovement->BindToEventSystem();
-	engine.AddModule(*actionMovement,IGameEngine::TICK_DEPENDENT);*/
-
-	// Keyboard bindings to the rigid box and camera
-	/*KeyboardHandler* keyHandler = new KeyboardHandler(camera,box,physic);
-	keyHandler->BindToEventSystem();
-	engine.AddModule(*keyHandler);*/
+	//rNode->AddNode(frustum->GetFrustumNode());	
 
 	// Return true to signal success.
 	return true;
+}
+
+void GameFactory::AddTank() {
+	RigidBox* box = NULL;
+	Vector<3,float> position(2, 1, 2);
+	box = new RigidBox( Box(*(LoadGeometryFromFile("ProtoTank/tank_body.obj")->GetFaceSet())) );
+	box->SetCenter( position );
+	Tank* tank = new Tank(box);
+	tank->SetShotManager(shotMgr);
+	tankMgr->AddTank(tank);
+
+	dynamicObjects->AddNode(tank->GetTankTransformationNode());
+	box->SetTransformationNode(tank->GetTankTransformationNode());
+	physic->AddRigidBody(box);
+
+	//if (box != NULL) tank->GetTankTransformationNode()->GetParent()->AddNode( box->GetRigidBoxNode() );
 }
 
 // Other factory methods. The returned objects are all created in the

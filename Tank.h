@@ -16,13 +16,16 @@
 #include <Scene/GeometryNode.h>
 #include <Scene/TransformationNode.h>
 #include <Physics/RigidBox.h>
-#include "TestShot.h"
+#include "ShotManager.h"
+#include "TestShotA.h"
+#include "TestShotB.h"
 
 namespace OpenEngine {
 	namespace Utils {
 		using namespace OpenEngine::Scene;
 		using namespace OpenEngine::Physics;
 		using namespace OpenEngine::Core;
+		using namespace OpenEngine::Prototype;
 
 		class Tank : public IModule {
 		private:
@@ -30,7 +33,6 @@ namespace OpenEngine {
 			static GeometryNode* turretModel;
 			static GeometryNode* gunModel;
 
-			
 			GeometryNode* tankBody;
 			GeometryNode* tankTurret;
 			GeometryNode* tankGun;
@@ -40,7 +42,7 @@ namespace OpenEngine {
 			TransformationNode* tankTurretTrans;
 			TransformationNode* tankTurretGunTrans;
 			RigidBox* box;
-			TestShot* tShot;
+			ShotManager* shotMgr;
 
                         float rotation;
                         float pivot;
@@ -68,8 +70,9 @@ namespace OpenEngine {
 			Quaternion<float> GetTurretRotation();
 
 			RigidBox* GetRigidBox();
-			void ShootCannon();
-			TestShot* GetTestShot();
+			void ShootPrimary();
+			void ShootSecondary();
+			void SetShotManager(ShotManager* shotMgr);
 		};
 	}
 }

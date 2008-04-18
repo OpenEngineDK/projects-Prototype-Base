@@ -42,6 +42,8 @@ namespace OpenEngine {
 		virtual bool IsTypeOf(const std::type_info& inf);
 		virtual void Process(const float dt, const float percent);
 
+		TankMap GetTankMap();
+
         };
     } // NS Prototype
 } // NS OpenEngine

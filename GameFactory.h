@@ -16,10 +16,19 @@
 #include <Display/Viewport.h>
 #include <Scene/ISceneNode.h>
 
+// HACK-EDY HACK HACK
+#include <Physics/FixedTimeStepPhysics.h>
+#include "TankManager.h"
+#include "ShotManager.h"
+#include "ClassicMovementHandler.h"
+#include <Display/FollowCamera.h>
+
 // Namespaces
 using namespace OpenEngine::Core;
 using namespace OpenEngine::Display;
 using namespace OpenEngine::Renderers;
+
+using namespace OpenEngine::Prototype;
 
 /**
  * Game factory definition.
@@ -37,12 +46,26 @@ private:
 
     Viewport* viewport;
 
+    //HACK ALSO
+    ISceneNode* dynamicObjects;
+    ISceneNode* staticObjects;
+    ISceneNode* physicObjects;
+    FixedTimeStepPhysics* physic;
+
 public:
     GameFactory();
     bool         SetupEngine(IGameEngine& engine);
     IFrame*      GetFrame();
     IRenderer*   GetRenderer();
 
+    //Half HACK
+    void         AddTank();
+    TankManager* tankMgr;
+    ClassicMovementHandler* classicMovement;
+    //FollowCamera* camera;
+    FollowCamera* camera;
+    ShotManager* shotMgr;
+    ISceneNode* crosshairNode;
 };
 
 #endif // _TEST_GAME_FACTORY_H_

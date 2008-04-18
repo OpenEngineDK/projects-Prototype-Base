@@ -13,6 +13,7 @@
 #include <Devices/IMouse.h>
 #include <Math/Quaternion.h>
 #include <Physics/RigidBox.h>
+#include "TankController.h"
 
 namespace OpenEngine {
 	namespace Utils {
@@ -22,7 +23,7 @@ namespace OpenEngine {
 		using namespace OpenEngine::Math;
 		using namespace OpenEngine::Physics;
 
-		ClassicMovementHandler::ClassicMovementHandler(Tank* tank, IMouse* m, FixedTimeStepPhysics* physics, int midX, int midY) : tank(tank), mouse(m),
+		ClassicMovementHandler::ClassicMovementHandler(IMouse* m, FixedTimeStepPhysics* physics, int midX, int midY) : mouse(m),
 			forward(false), back(false),
 			right(false), left(false),
 			up(false), down(false) {
@@ -37,6 +38,8 @@ namespace OpenEngine {
                                 turretRotation = turretPivot = 0.0;
                                 cameraRotation = cameraPivot = 0.0;
                                 rotationFactor = 100.0;
+
+				tankCounter = 0;
 		}
 
 		ClassicMovementHandler::~ClassicMovementHandler() {}
@@ -161,9 +164,23 @@ namespace OpenEngine {
 				box->AddForce(dir * turn, 1);
 				box->AddForce(dir * turn, 3);
 			}
+			if( up ){
+				tankCounter++;
+				tankCtrl->SetPlayerTank(tankCounter);
+				up = false;
+			}
+			if( down ) {
+				tankCounter--;
+				tankCtrl->SetPlayerTank(tankCounter);
+				down = false;
+			}
 			if( mLeftClick ) {
-				tank->ShootCannon();
+				tank->ShootPrimary();
 				mLeftClick = false;
+			}
+			if( mRightClick ) {
+				tank->ShootSecondary();
+				mRightClick = false;
 			}
 			if ( reset ) {
 				physics->Initialize();
@@ -207,6 +224,17 @@ namespace OpenEngine {
 			mWheelUp = (event.button == BUTTON_WHEEL_UP);
 			mWheelDown = (event.button == BUTTON_WHEEL_DOWN);
 		}
+		
+		void ClassicMovementHandler::HandleMouseUp(MouseButtonEventArg event) {
+			if (event.button == BUTTON_LEFT) 
+				mLeftClick = false;
+			if (event.button == BUTTON_RIGHT)
+				mRightClick = false;
+			if (event.button == BUTTON_WHEEL_UP) 
+				mWheelUp = false;
+			if (event.button == BUTTON_WHEEL_DOWN)
+				mWheelDown = false;
+		}
 
 		void ClassicMovementHandler::BindToEventSystem() {
 			Listener<ClassicMovementHandler,KeyboardEventArg>* downl =
@@ -221,9 +249,21 @@ namespace OpenEngine {
 				new Listener<ClassicMovementHandler, MouseButtonEventArg>(*this, &ClassicMovementHandler::HandleMouseDown);
 			IMouse::mouseDownEvent.Add(mouseDownListener);
 
+			Listener<ClassicMovementHandler, MouseButtonEventArg>* mouseUpListener = 
+				new Listener<ClassicMovementHandler, MouseButtonEventArg>(*this, &ClassicMovementHandler::HandleMouseUp);
+			IMouse::mouseUpEvent.Add(mouseUpListener);
+
 			Listener<ClassicMovementHandler, MouseMovedEventArg>* mouseMovedListener = 
 				new Listener<ClassicMovementHandler, MouseMovedEventArg>(*this, &ClassicMovementHandler::MouseMoved);
 			IMouse::mouseMovedEvent.Add(mouseMovedListener);
+		}
+
+		void ClassicMovementHandler::SetTank(Tank* tank) {
+			this->tank = tank;
+		}
+
+		void ClassicMovementHandler::SetTankController(TankController* tankCtrl) {
+			this->tankCtrl = tankCtrl;
 		}
 	} // NS Utils
 } // NS OpenEngine

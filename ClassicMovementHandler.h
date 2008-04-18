@@ -21,6 +21,11 @@
 
 #include "Tank.h"
 
+// forward declarations
+namespace OpenEngine { 
+  namespace Prototype     { class TankController; }
+}
+
 namespace OpenEngine {
 	namespace Utils {
 
@@ -31,6 +36,7 @@ namespace OpenEngine {
 		using namespace OpenEngine::Devices;
 		using namespace OpenEngine::Utils;
 		using namespace OpenEngine::Physics;
+		using namespace OpenEngine::Prototype;
 
 		/**
 		* Camera movement handler
@@ -51,18 +57,21 @@ namespace OpenEngine {
 			int offset;
 			int middleX;
 			int middleY;
-                        
+
                         float turretRotation;
                         float turretPivot;
                         float cameraRotation;
                         float cameraPivot;
                         float rotationFactor;
+			TankController* tankCtrl;
+
+			int tankCounter;
 
 		public:
 
 			std::vector<TransformationNode*> nodes; // node list
 
-            ClassicMovementHandler(Tank* tank, IMouse* m, FixedTimeStepPhysics* physics, int midX = 300, int midY = 300);
+           		ClassicMovementHandler(IMouse* m, FixedTimeStepPhysics* physics, int midX = 300, int midY = 300);
 			~ClassicMovementHandler();
 			void Initialize();
 			void Deinitialize();
@@ -72,8 +81,11 @@ namespace OpenEngine {
 			virtual void HandleUpEvent(KeyboardEventArg arg);
 			virtual void HandleKeyEvent(KeyboardEventArg arg, bool state);
 			virtual void HandleMouseDown(MouseButtonEventArg event);
+			virtual void HandleMouseUp(MouseButtonEventArg event);
 			void BindToEventSystem();
 			void MouseMoved(MouseMovedEventArg event);
+			void SetTank(Tank* tank);
+			void SetTankController(TankController* tankCtrl);
 		};
 	} // NS Utils
 } // NS OpenEngine

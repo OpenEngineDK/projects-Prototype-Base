@@ -7,9 +7,10 @@
 // See the GNU General Public License for more details (see LICENSE). 
 //--------------------------------------------------------------------
 
-#ifndef _TEST_SHOT_NODE_H_
-#define _TEST_SHOT_NODE_H_
+#ifndef _TEST_SHOT_A_NODE_H_
+#define _TEST_SHOT_A_NODE_H_
 
+#include "TestShot.h"
 #include <Renderers/IRenderNode.h>
 #include <Renderers/IRenderingView.h>
 #include <Scene/ISceneNode.h>
@@ -31,19 +32,26 @@ using namespace std;
 namespace OpenEngine {
 	namespace Prototype {
 
-                class TestShot : public IRenderNode, public IModule {
+                class TestShotA : public TestShot {
+		private:
+			
+			float shotSpeed;
+			Vector<3,float> from;
+			Vector<3,float> to;
+			Vector<3,float> color;
 
 		public:
-			double timeCreated;
-			double decayTime;
-			TestShot() {};
-			virtual ~TestShot() {};
-                        void Initialize() {};
-                        void Deinitialize() {};
-                        bool IsTypeOf(const std::type_info& inf) { return false; }
-                        void Process(const float dt, const float percent) {};
+			//double timeCreated;
+			//double decayTime;
+			TestShotA(Vector<3,float> from, Vector<3,float> to);
 
-			void Apply(IRenderingView* view) {};
+			virtual ~TestShotA();
+                        void Initialize();
+                        void Deinitialize();
+                        virtual bool IsTypeOf(const std::type_info& inf);
+                        virtual void Process(const float dt, const float percent);
+
+			void Apply(IRenderingView* view);
 		};
 	} // NS Utils
 } // NS OpenEngine

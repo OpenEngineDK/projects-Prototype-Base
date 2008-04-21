@@ -24,7 +24,7 @@ namespace OpenEngine {
 		using namespace OpenEngine::Utils;
 		using namespace OpenEngine::Math;
 
-		typedef std::pair<Vector<3,float>,Quaternion<float>> ShotPosAndDir;
+		typedef std::pair<Vector<3,float>,Quaternion<float> > ShotPosAndDir;
 
 		class IGun {
 		protected:

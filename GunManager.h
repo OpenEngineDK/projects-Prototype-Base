@@ -30,7 +30,7 @@ namespace OpenEngine {
 		using namespace OpenEngine::Math;
 
 		typedef map<int,IGun*> GunMap;
-		typedef pair<Vector<3,float>,Quaternion<float>> ShotPosAndDir;
+		typedef pair<Vector<3,float>,Quaternion<float> > ShotPosAndDir;
 
 		class GunManager  {
 		public:

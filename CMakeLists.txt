@@ -5,14 +5,24 @@ SET( PROTOTYPE_SOURCES
   # Add all the cpp source files here
   main.cpp
   GameFactory.cpp
-  Tank.cpp
+  SnowTank.cpp
+  SeanTank.cpp
   ShotManager.cpp
   Crosshair.cpp
   ClassicMovementHandler.cpp
   TankManager.cpp
   TankController.cpp
-  TestShotA.cpp
-  TestShotB.cpp
+  GunManager.cpp
+  LaserShot.cpp
+  RapidLaserShot.cpp
+  Landmine.cpp
+  Shield.cpp
+  LightningShot.cpp
+  LaserGun.cpp
+  RapidLaserGun.cpp
+  LandmineLayer.cpp
+  ShieldGenerator.cpp
+  LightningGun.cpp
 )
 
 # todo get rid of this!@#!

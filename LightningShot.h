@@ -7,9 +7,10 @@
 // See the GNU General Public License for more details (see LICENSE). 
 //--------------------------------------------------------------------
 
-#ifndef _CROSSHAIR_H_
-#define _CROSSHAIR_H_
+#ifndef _LIGHTNING_SHOT_H_
+#define _LIGHTNING_SHOT_H_
 
+#include "IShot.h"
 #include <Renderers/IRenderNode.h>
 #include <Renderers/IRenderingView.h>
 #include <Scene/ISceneNode.h>
@@ -17,29 +18,42 @@
 
 // forward declarations
 namespace OpenEngine { 
-  //namespace Geometry  { class Box; } 
-  namespace Scene     { class TransformationNode; } 
-  namespace Renderers { class IRenderNode; } 
+	//namespace Geometry  { class Box; } 
+	namespace Scene     { class TransformationNode; } 
+	namespace Renderers { class IRenderNode; } 
 }
 
 using namespace OpenEngine::Math;
 using namespace OpenEngine::Geometry;
 using namespace OpenEngine::Scene;
 using namespace OpenEngine::Renderers;
+using namespace std;
 
 namespace OpenEngine {
-  namespace Utils {
+	namespace Prototype {
 
-    class Crosshair : public IRenderNode {  
-    public:
-      Crosshair();
-    
-      virtual ~Crosshair();
+                class LightningShot : public IShot {
+		private:
+			double lifeTime;
+			double decayTime;
+			float shotSpeed;
+			Vector<3,float> color;
+			vector<Vector<3,float>* > segments;
 
-      void Apply(IRenderingView* view);
-    };
+			float randomness;
+			Vector<3,float>* OffsetVector();
 
-  } // NS Utils
+		public:			
+			LightningShot(Vector<3,float> from, Vector<3,float> to);
+
+			virtual ~LightningShot();
+            virtual void Process(const float timeSinceLast);
+
+			void Apply(IRenderingView* view);
+
+			void Destroy();
+		};
+	} // NS Utils
 } // NS OpenEngine
 
 #endif // _DEFAULT_RIGID_BODY_RENDER_NODE_H_

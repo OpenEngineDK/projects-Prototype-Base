@@ -11,7 +11,7 @@ namespace OpenEngine {
         TankManager::~TankManager() {
         }
 
-        void TankManager::AddTank(Tank* tank) {
+        void TankManager::AddTank(ITank* tank) {
             tankMap[newID] = tank;
 	    newID++;
         }
@@ -25,10 +25,11 @@ namespace OpenEngine {
             }
         }
 
-        Tank* TankManager::GetTank(int i) {
+        ITank* TankManager::GetTank(int i) {
             TankMap::iterator elm = tankMap.find(i);
             if (elm == tankMap.end()) {
                 printf("No tank with id: %d!\n", i);
+				return NULL;
             }
             return elm->second;
         }
@@ -46,8 +47,8 @@ namespace OpenEngine {
 	void TankManager::Process(const float dt, const float percent) {
 		TankMap::iterator iter;
 		for (iter =  tankMap.begin(); iter != tankMap.end(); iter++) {
-			Tank* tank = (*iter).second;
-			tank->Process(dt,percent);
+			ITank* tank = (*iter).second;
+			tank->Process(dt);
 		}
 	}
 

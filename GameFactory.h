@@ -59,7 +59,7 @@ public:
     IRenderer*   GetRenderer();
 
     //Half HACK
-    void         AddTank();
+    void         AddTank(int i);
     TankManager* tankMgr;
     ClassicMovementHandler* classicMovement;
     //FollowCamera* camera;

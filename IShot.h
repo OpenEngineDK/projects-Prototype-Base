@@ -7,45 +7,48 @@
 // See the GNU General Public License for more details (see LICENSE). 
 //--------------------------------------------------------------------
 
-#ifndef _SHOT_MANAGER_H_
-#define _SHOT_MANAGER_H_
+#ifndef _I_SHOT_H_
+#define _I_SHOT_H_
 
+#include <Renderers/IRenderNode.h>
+#include <Renderers/IRenderingView.h>
 #include <Scene/ISceneNode.h>
 #include <Meta/OpenGL.h>
-#include <vector>
 
-#include "IShot.h"
+// forward declarations
+namespace OpenEngine { 
+	//namespace Geometry  { class Box; } 
+	namespace Scene     { class TransformationNode; } 
+	namespace Renderers { class IRenderNode; }
+	namespace Prototype { class ShotManager; } 
+}
 
 using namespace OpenEngine::Math;
 using namespace OpenEngine::Geometry;
 using namespace OpenEngine::Scene;
+using namespace OpenEngine::Renderers;
 using namespace std;
 
 namespace OpenEngine {
 	namespace Prototype {
 
-                class ShotManager : public IRenderNode, public IModule {
-		private:
-			list<IShot*>::iterator shotIter;
-			list<IShot*> shots;
-			vector<IShot*> toDelete;
+        class IShot : public IRenderNode {
+		protected:
+			ShotManager* shotMgr;
 
 		public:
-			ShotManager();
+			IShot() {};
+			virtual ~IShot() {};
+            virtual void Process(const float timeSinceLast) {};
 
-			virtual ~ShotManager();
+			void Apply(IRenderingView* view) {};
 
-                        void Initialize();
-                        void Deinitialize();
-                        virtual bool IsTypeOf(const std::type_info& inf);
-                        virtual void Process(const float dt, const float percent);
+			virtual void Destroy() = 0;
 
-			void Apply(IRenderingView* view);
-
-			void AddShot(IShot* shot);
-			void DeleteShot(IShot* shot);
+			virtual void RegisterShotManager(ShotManager* shotMgr) {
+				this->shotMgr = shotMgr;
+			}
 		};
-
 	} // NS Utils
 } // NS OpenEngine
 

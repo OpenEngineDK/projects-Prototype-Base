@@ -7,45 +7,51 @@
 // See the GNU General Public License for more details (see LICENSE). 
 //--------------------------------------------------------------------
 
-#ifndef _SHOT_MANAGER_H_
-#define _SHOT_MANAGER_H_
-
-#include <Scene/ISceneNode.h>
-#include <Meta/OpenGL.h>
-#include <vector>
+#ifndef _LANDMINE_H_
+#define _LANDMINE_H_
 
 #include "IShot.h"
+#include <Renderers/IRenderNode.h>
+#include <Renderers/IRenderingView.h>
+#include <Scene/ISceneNode.h>
+#include <Meta/OpenGL.h>
+
+// forward declarations
+namespace OpenEngine { 
+	//namespace Geometry  { class Box; } 
+	namespace Scene     { class TransformationNode; } 
+	namespace Renderers { class IRenderNode; } 
+}
 
 using namespace OpenEngine::Math;
 using namespace OpenEngine::Geometry;
 using namespace OpenEngine::Scene;
+using namespace OpenEngine::Renderers;
 using namespace std;
 
 namespace OpenEngine {
 	namespace Prototype {
 
-                class ShotManager : public IRenderNode, public IModule {
+                class Landmine : public IShot {
 		private:
-			list<IShot*>::iterator shotIter;
-			list<IShot*> shots;
-			vector<IShot*> toDelete;
+			double lifeTime;
+			double decayTime;
+			float shotSpeed;
+			Vector<3,float> from;
+			Vector<3,float> color;
+			float scale;
+			bool exploding;
 
 		public:
-			ShotManager();
+			Landmine(Vector<3,float> from);
 
-			virtual ~ShotManager();
-
-                        void Initialize();
-                        void Deinitialize();
-                        virtual bool IsTypeOf(const std::type_info& inf);
-                        virtual void Process(const float dt, const float percent);
+			virtual ~Landmine();
+            void Process(const float timeSinceLast);
 
 			void Apply(IRenderingView* view);
 
-			void AddShot(IShot* shot);
-			void DeleteShot(IShot* shot);
+			void Destroy();
 		};
-
 	} // NS Utils
 } // NS OpenEngine
 

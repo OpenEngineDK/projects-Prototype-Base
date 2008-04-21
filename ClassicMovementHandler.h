@@ -19,7 +19,7 @@
 #include <Physics/FixedTimeStepPhysics.h>
 #include <vector>
 
-#include "Tank.h"
+#include "ITank.h"
 
 // forward declarations
 namespace OpenEngine { 
@@ -27,16 +27,14 @@ namespace OpenEngine {
 }
 
 namespace OpenEngine {
-	namespace Utils {
+	namespace Prototype {
 
 		using OpenEngine::Math::Vector;
 		using namespace OpenEngine::Core;
 		using namespace OpenEngine::Display;
 		using namespace OpenEngine::Scene;
 		using namespace OpenEngine::Devices;
-		using namespace OpenEngine::Utils;
 		using namespace OpenEngine::Physics;
-		using namespace OpenEngine::Prototype;
 
 		/**
 		* Camera movement handler
@@ -45,7 +43,7 @@ namespace OpenEngine {
 
 		private:
 			FixedTimeStepPhysics* physics;
-			Tank* tank;
+			ITank* tank;
 			IMouse* mouse;
 			bool forward, back, right, left, up, down, mouse3Down;  // active move direction
 			bool mWheelUp, mWheelDown;
@@ -67,6 +65,9 @@ namespace OpenEngine {
 
 			int tankCounter;
 
+			unsigned int hackWeaponChanger;
+			unsigned int hackWeaponChanger2;
+
 		public:
 
 			std::vector<TransformationNode*> nodes; // node list
@@ -84,7 +85,7 @@ namespace OpenEngine {
 			virtual void HandleMouseUp(MouseButtonEventArg event);
 			void BindToEventSystem();
 			void MouseMoved(MouseMovedEventArg event);
-			void SetTank(Tank* tank);
+			void SetTank(ITank* tank);
 			void SetTankController(TankController* tankCtrl);
 		};
 	} // NS Utils

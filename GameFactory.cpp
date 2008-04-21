@@ -49,7 +49,9 @@
 #include "RenderStateHandler.h"
 #include "ClassicMovementHandler.h"
 #include "QuitHandler.h"
-#include "Tank.h"
+#include "ITank.h"
+#include "SnowTank.h"
+#include "SeanTank.h"
 #include "Crosshair.h"
 #include "TankManager.h"
 #include "TankController.h"
@@ -82,8 +84,7 @@ GeometryNode* LoadGeometryFromFile(string filepath) {
 	// Load the model
 	IModelResourcePtr mod_res = ResourceManager<IModelResource>::Create(filepath);
 	mod_res->Load();
-	GeometryNode* mod_node = new GeometryNode();
-	mod_node->SetFaceSet(mod_res->GetFaceSet());
+	GeometryNode* mod_node = dynamic_cast<GeometryNode*>(mod_res->GetSceneNode());
 	mod_res->Unload();
 	return mod_node;
 }
@@ -178,16 +179,10 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
         GeometryNode* geoGround2 = LoadGeometryFromFile("2DGround/2DGround.obj");
 	physicObjects->AddNode(geoGround2);
 
-	// Dynamic
-	//GeometryNode* geoTank = LoadGeometryFromFile("ProtoTank/tank_body.obj");
-	//GeometryNode* geoTurret = LoadGeometryFromFile("ProtoTank/tank_turret.obj");
-	//GeometryNode* geoGun = LoadGeometryFromFile("ProtoTank/tank_cannon.obj");
-	GeometryNode* geoTank = LoadGeometryFromFile("Tank2/tank2.obj");
-	GeometryNode* geoTurret = LoadGeometryFromFile("Tank2/turret.obj");
-	GeometryNode* geoGun = LoadGeometryFromFile("Tank2/gun.obj");
+	
 
 	// Add FixedTimeStepPhysics module
-        physic = new FixedTimeStepPhysics( physicObjects );
+    physic = new FixedTimeStepPhysics( physicObjects );
 	engine.AddModule(*physic, IGameEngine::TICK_DEPENDENT);
 
 	// Register movement handler to be able to move the camera
@@ -199,19 +194,30 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	tankMgr = new TankManager();
 	TankController* tankCtrl = new TankController(tankMgr, classicMovement, camera);
 	classicMovement->SetTankController(tankCtrl);
-	Tank::SetModel(geoTank,geoTurret,geoGun);
-        engine.AddModule(*tankMgr);
+    engine.AddModule(*tankMgr);
+
+	// Setup SnowTank
+	GeometryNode* snowTankBody = LoadGeometryFromFile("ProtoTank/tank_body.obj");
+	GeometryNode* snowTankTurret = LoadGeometryFromFile("ProtoTank/tank_turret.obj");
+	GeometryNode* snowTankGun = LoadGeometryFromFile("ProtoTank/tank_cannon.obj");
+	SnowTank::SetModel(snowTankBody,snowTankTurret,snowTankGun);
+
+	// Setup SeanTank
+	GeometryNode* seanTankBody = LoadGeometryFromFile("Tank2/tank2.obj");
+	GeometryNode* seanTankTurret = LoadGeometryFromFile("Tank2/turret.obj");
+	GeometryNode* seanTankGun = LoadGeometryFromFile("Tank2/gun.obj");
+	SeanTank::SetModel(seanTankBody,seanTankTurret,seanTankGun);
 
 	shotMgr = new ShotManager();
 	rNode->AddNode(shotMgr);
-        engine.AddModule(*shotMgr,IGameEngine::TICK_DEPENDENT);
+    engine.AddModule(*shotMgr,IGameEngine::TICK_DEPENDENT);
 
 	crosshairNode = new Crosshair();
 
 	// Load tanks
-	int tankCount = 10;
+	int tankCount = 2;
 	for ( int i = 0; i < tankCount; i++ ) {
-		AddTank();
+		AddTank(i % 2);
 	}
 
 	tankCtrl->SetPlayerTank(0);
@@ -244,12 +250,20 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	return true;
 }
 
-void GameFactory::AddTank() {
+void GameFactory::AddTank(int i) {
 	RigidBox* box = NULL;
 	Vector<3,float> position(2, 1, 2);
-	box = new RigidBox( Box(*(LoadGeometryFromFile("ProtoTank/tank_body.obj")->GetFaceSet())) );
-	box->SetCenter( position );
-	Tank* tank = new Tank(box);
+	ITank* tank;
+	if ( i == 0 ) {
+		box = new RigidBox( Box(*(SnowTank::bodyModel)->GetFaceSet()));
+		box->SetCenter( position );
+		tank = new SnowTank(box);
+	} else if (i == 1) {
+		box = new RigidBox( Box(*(SeanTank::bodyModel)->GetFaceSet()));
+		box->SetCenter( position );
+		tank = new SeanTank(box);
+	}	
+	 
 	tank->SetShotManager(shotMgr);
 	tankMgr->AddTank(tank);
 

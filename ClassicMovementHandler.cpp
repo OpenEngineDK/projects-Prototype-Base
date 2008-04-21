@@ -16,7 +16,7 @@
 #include "TankController.h"
 
 namespace OpenEngine {
-	namespace Utils {
+	namespace Prototype {
 
 		using OpenEngine::Core::IGameEngine;
 		using OpenEngine::Scene::TransformationNode;
@@ -33,6 +33,7 @@ namespace OpenEngine {
 				lx = midX;
 				ly = midY;
 				mLeftClick = mRightClick = false;
+				mWheelUp = mWheelDown = false;
 				reset = false;
 				this->physics = physics;
                                 turretRotation = turretPivot = 0.0;
@@ -40,6 +41,9 @@ namespace OpenEngine {
                                 rotationFactor = 100.0;
 
 				tankCounter = 0;
+
+				hackWeaponChanger = 0;
+				hackWeaponChanger2 = 3;
 		}
 
 		ClassicMovementHandler::~ClassicMovementHandler() {}
@@ -175,12 +179,24 @@ namespace OpenEngine {
 				down = false;
 			}
 			if( mLeftClick ) {
-				tank->ShootPrimary();
-				mLeftClick = false;
+				tank->ShootGun(hackWeaponChanger);
 			}
 			if( mRightClick ) {
-				tank->ShootSecondary();
-				mRightClick = false;
+				tank->ShootGun(hackWeaponChanger2);
+			}
+			if( mWheelUp ) {
+				hackWeaponChanger++;
+				if ( hackWeaponChanger == tank->GetGunManager()->GetGunMap().size() - 2 ) {
+					hackWeaponChanger = 0;
+				}
+				mWheelUp = false;
+			}
+			if( mWheelDown ) {
+				hackWeaponChanger--;
+				if ( hackWeaponChanger > 1000 ) {
+					hackWeaponChanger = tank->GetGunManager()->GetGunMap().size() - 3;
+				}
+				mWheelDown = false;
 			}
 			if ( reset ) {
 				physics->Initialize();
@@ -211,6 +227,11 @@ namespace OpenEngine {
 			case KEY_e: up      = state; break;
 			case KEY_q: down    = state; break;
 			case KEY_r: reset	= state; break;
+			case KEY_1: hackWeaponChanger	= 0; break;
+			case KEY_2: hackWeaponChanger	= 1; break;
+			case KEY_3: hackWeaponChanger	= 2; break;
+			case KEY_4: hackWeaponChanger2	= 3; break;
+			case KEY_5: hackWeaponChanger2	= 4; break;
 				// object changing
 			default: 
 				break;
@@ -230,10 +251,6 @@ namespace OpenEngine {
 				mLeftClick = false;
 			if (event.button == BUTTON_RIGHT)
 				mRightClick = false;
-			if (event.button == BUTTON_WHEEL_UP) 
-				mWheelUp = false;
-			if (event.button == BUTTON_WHEEL_DOWN)
-				mWheelDown = false;
 		}
 
 		void ClassicMovementHandler::BindToEventSystem() {
@@ -258,7 +275,7 @@ namespace OpenEngine {
 			IMouse::mouseMovedEvent.Add(mouseMovedListener);
 		}
 
-		void ClassicMovementHandler::SetTank(Tank* tank) {
+		void ClassicMovementHandler::SetTank(ITank* tank) {
 			this->tank = tank;
 		}
 

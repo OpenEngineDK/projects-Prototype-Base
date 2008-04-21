@@ -19,7 +19,7 @@ namespace OpenEngine {
 		TankController::~TankController() {}
 
 		void TankController::SetPlayerTank(int i) {
-			Tank* tank = tankMgr->GetTank(i);
+			ITank* tank = tankMgr->GetTank(i);
 			if ( tank != NULL ) {	
 				classicMovement->SetTank(tank);
 				ISceneNode* parent = crosshairNode->GetParent();

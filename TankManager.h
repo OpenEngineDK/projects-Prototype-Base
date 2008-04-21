@@ -10,17 +10,16 @@
 #ifndef _TANKMANAGER_H_
 #define _TANKMANAGER_H_
 
-#include "Tank.h"
+#include "ITank.h"
 #include <Core/IModule.h>
 
 namespace OpenEngine {
     namespace Prototype {
 
         using namespace std;
-        using namespace OpenEngine::Utils;
 	using namespace OpenEngine::Core;
 
-        typedef map<int,Tank*> TankMap;
+        typedef map<int,ITank*> TankMap;
 
         class TankManager : public IModule  {
             private:
@@ -31,11 +30,11 @@ namespace OpenEngine {
 
                 virtual ~TankManager();
 
-                void AddTank(Tank* tank);
+                void AddTank(ITank* tank);
 
                 void RemoveTank(int i);
 
-                Tank* GetTank(int i);
+                ITank* GetTank(int i);
 
 		void Initialize();
 		void Deinitialize();

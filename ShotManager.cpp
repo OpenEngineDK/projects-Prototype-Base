@@ -14,38 +14,44 @@ namespace OpenEngine {
 		}
 
 		ShotManager::~ShotManager() {}
-                void ShotManager::Initialize() {
-                }
-                void ShotManager::Deinitialize() {
-                }
-                bool ShotManager::IsTypeOf(const std::type_info& inf) {
-                    return false;
-                }
-                void ShotManager::Process(const float dt, const float percent) {
-			double currentTime = Timer::GetTime();
-			for (shotIter =  shots.begin(); shotIter != shots.end(); shotIter++) {
-				TestShot* shot = (*shotIter);
-				shot->Process(dt,percent);
-				if ( shot->timeCreated + shot->decayTime < currentTime ) {
-					toDelete.push_back(shot);
-                        	}
-			}
+		void ShotManager::Initialize() {
+		}
+		void ShotManager::Deinitialize() {
+		}
+		bool ShotManager::IsTypeOf(const std::type_info& inf) {
+			return false;
+		}
+		void ShotManager::Process(const float dt, const float percent) {
+			bool deleted = false;
 			for ( unsigned int i = 0; i < toDelete.size(); i++ ) {
 				shots.remove(toDelete[i]);
+				deleted = true;
 			}
-			toDelete.clear();
-                }
+			if ( deleted ) {
+				toDelete.clear();
+			}
+
+			for (shotIter =  shots.begin(); shotIter != shots.end(); shotIter++) {
+				IShot* shot = (*shotIter);
+				shot->Process(dt);
+			}
+		}
 
 		void ShotManager::Apply(IRenderingView* view) {
 			// Render the shots
 			for (shotIter =  shots.begin(); shotIter != shots.end(); shotIter++) {
-				TestShot* shot = (*shotIter);
+				IShot* shot = (*shotIter);
 				shot->Apply(view);
 			}	
 		}
 
-		void ShotManager::AddShot(TestShot* shot) {
+		void ShotManager::AddShot(IShot* shot) {
+			shot->RegisterShotManager(this);
 			shots.push_back(shot);
+		}
+
+		void ShotManager::DeleteShot(IShot* shot) {
+			toDelete.push_back(shot);
 		}
 	} // NS Utils
 } // NS OpenEngine

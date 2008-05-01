@@ -28,7 +28,7 @@ SET( PROTOTYPE_SOURCES
 # todo get rid of this!@#!
 # Include if using SDL under Mac OS X
 IF(APPLE)
-  SET(PROTOTYPE_SOURCES ${PROTOTYPE_SOURCES} ../../conf/mac/SDLMain.m)
+  SET(PROTOTYPE_SOURCES ${PROTOTYPE_SOURCES} ${SDL_MAIN_FOR_MAC})
 ENDIF(APPLE)
 
 # Project executable

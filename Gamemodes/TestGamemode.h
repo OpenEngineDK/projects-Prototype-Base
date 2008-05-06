@@ -21,19 +21,21 @@ namespace OpenEngine {
 
             class TestGamemode : public IGamemode {
                 public:
-                    TestGamemode();
+					TestGamemode() {};
 
-                    virtual ~TestGamemode();
+					virtual ~TestGamemode() {};
 
-                    void Join(ITank* tank);
-
-                    void Quit(ITank* tank);
-
-                    void Kill(ITank* killer, ITank* killee, IGun* gun);
-
-                    void Initialize();
-                    void Deinitialize();
-                    virtual void Process(const float dt, const float percent);
+					int OnGameModeInit();
+					int OnGameModeExit();
+					int OnGameModeStart();
+					int OnGameModeEnd();
+					int OnGameLoopProcess(float timeSinceLast);
+					int OnPlayerConnect(int playerid);
+                    int OnPlayerDisconnect(int playerid);
+					int OnPlayerRequestClass(int playerid, int classid);
+					int OnPlayerSpawn(int playerid);
+					int OnPlayerDeath(int playerid, int killerid, int reason);
+					int OnPlayerCommandText(int playerid, string cmdtext);
             };
         }
     } // NS Prototype

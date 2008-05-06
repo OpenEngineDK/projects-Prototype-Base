@@ -10,9 +10,8 @@
 #ifndef _IGAMEMODE_H_
 #define _IGAMEMODE_H_
 
-#include "../Vehicles/ITank.h"
-#include "../Weapons/IGun.h"
 #include <Core/IModule.h>
+#include <string>
 
 namespace OpenEngine {
     namespace Prototype {
@@ -20,7 +19,6 @@ namespace OpenEngine {
 
             using namespace std;
             using namespace OpenEngine::Core;
-            using namespace OpenEngine::Prototype::Vehicles;
 
             class IGamemode : public IModule  {
                 public:
@@ -28,16 +26,23 @@ namespace OpenEngine {
 
                     virtual ~IGamemode() {};
 
-                    virtual void Join(ITank* tank) {};
+					bool IsTypeOf(const std::type_info& inf) { return false; };
 
-                    virtual void Quit(ITank* tank) {};
+                    void Initialize() { OnGameModeInit(); };
+                    void Deinitialize() { OnGameModeExit(); };                    
+                    void Process(const float dt, const float percent) { OnGameLoopProcess(dt); };
 
-                    virtual void Kill(ITank* killer, ITank* killee, IGun* gun) {};
-
-                    virtual void Initialize() {};
-                    virtual void Deinitialize() {};
-                    virtual bool IsTypeOf(const std::type_info& inf) { return false; };
-                    virtual void Process(const float dt, const float percent) {};
+					virtual int OnGameModeInit() = 0;
+					virtual int OnGameModeExit() = 0;
+					virtual int OnGameModeStart() = 0;
+					virtual int OnGameModeEnd() = 0;
+					virtual int OnGameLoopProcess(float timeSinceLast) = 0;
+					virtual int OnPlayerConnect(int playerid) = 0;
+                    virtual int OnPlayerDisconnect(int playerid) = 0;
+					virtual int OnPlayerRequestClass(int playerid, int classid) = 0;
+					virtual int OnPlayerSpawn(int playerid) = 0;
+					virtual int OnPlayerDeath(int playerid, int killerid, int reason) = 0;
+					virtual int OnPlayerCommandText(int playerid, string cmdtext) = 0;
             };
         }
     } // NS Prototype

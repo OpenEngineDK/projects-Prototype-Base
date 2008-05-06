@@ -222,7 +222,7 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	int tankCount = 2;
 	for ( int i = 0; i < tankCount; i++ ) {
 		AddTank(i % 2);
-                gamemode->Join(tankMgr->GetTank(i));
+                gamemode->OnPlayerConnect(i);
 	}
 
 	tankCtrl->SetPlayerTank(0);

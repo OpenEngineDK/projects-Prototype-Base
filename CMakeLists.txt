@@ -27,6 +27,9 @@ SET( PROTOTYPE_SOURCES
   Weapons/LandmineLayer.cpp
   Weapons/ShieldGenerator.cpp
   Weapons/LightningGun.cpp
+
+  # Gamemodes
+  Gamemodes/TestGamemode.cpp
 )
 
 # todo get rid of this!@#!

@@ -55,6 +55,8 @@
 #include "Crosshair.h"
 #include "TankManager.h"
 #include "TankController.h"
+#include "Gamemodes/IGamemode.h"
+#include "Gamemodes/TestGamemode.h"
 
 // Additional namespaces (others are in the header).
 using namespace OpenEngine::Devices;
@@ -66,6 +68,7 @@ using namespace OpenEngine::Physics;
 
 // Prototype namespace
 using namespace OpenEngine::Prototype;
+using namespace OpenEngine::Prototype::Gamemode;
 
 // composite rendering view. Uses RenderingView for drawing and
 // AcceleratedRenderingView for clipping. 
@@ -214,10 +217,12 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 
 	crosshairNode = new Crosshair();
 
+        IGamemode* gamemode = new TestGamemode();
 	// Load tanks
 	int tankCount = 2;
 	for ( int i = 0; i < tankCount; i++ ) {
 		AddTank(i % 2);
+                gamemode->Join(tankMgr->GetTank(i));
 	}
 
 	tankCtrl->SetPlayerTank(0);

@@ -29,7 +29,7 @@ namespace OpenEngine {
 
                     void Quit(ITank* tank);
 
-                    void Kill(ITank* killer, ITank* killee);
+                    void Kill(ITank* killer, ITank* killee, IGun* gun);
 
                     void Initialize();
                     void Deinitialize();

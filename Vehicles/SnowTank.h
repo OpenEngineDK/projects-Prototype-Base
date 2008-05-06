@@ -7,8 +7,8 @@
 // See the GNU General Public License for more details (see LICENSE). 
 //--------------------------------------------------------------------
 
-#ifndef _SeanTank_H_
-#define _SeanTank_H_
+#ifndef _SnowTank_H_
+#define _SnowTank_H_
 
 #include "ITank.h"
 #include <Core/IModule.h>
@@ -17,28 +17,24 @@
 #include <Scene/GeometryNode.h>
 #include <Scene/TransformationNode.h>
 #include <Physics/RigidBox.h>
-#include "ShotManager.h"
-#include "GunManager.h"
-#include "LaserGun.h"
-#include "RapidLaserGun.h"
-#include "LightningGun.h"
-#include "LandmineLayer.h"
-#include "ShieldGenerator.h"
+#include "../ShotManager.h"
+#include "../GunManager.h"
 
 namespace OpenEngine {
 	namespace Prototype {
+            namespace Vehicles {
 		using namespace OpenEngine::Scene;
 		using namespace OpenEngine::Physics;
 		using namespace OpenEngine::Core;
 
-		class SeanTank : public ITank {
+		class SnowTank : public ITank {
 		public:
 			static GeometryNode* bodyModel;
 			static GeometryNode* turretModel;
 			static GeometryNode* gunModel;
 
-			SeanTank(RigidBox* box);
-			virtual ~SeanTank();
+			SnowTank(RigidBox* box);
+			virtual ~SnowTank();
 
 			virtual void Process(const float timeSinceLast);
 
@@ -53,6 +49,7 @@ namespace OpenEngine {
 			RigidBox* GetRigidBox();
 			void ShootGun(int i);
 		};
+            }
 	}
 }
 

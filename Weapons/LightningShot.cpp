@@ -2,14 +2,16 @@
 #include "LightningShot.h"
 #include <Meta/OpenGL.h>
 #include <Utils/Timer.h>
-#include "ShotManager.h"
+#include "../ShotManager.h"
 
 using namespace OpenEngine::Renderers;
 using namespace OpenEngine::Utils;
+using namespace OpenEngine::Prototype;
 //using namespace OpenEngine::Renderers::OpenGL;
 
 namespace OpenEngine {
 	namespace Prototype {
+            namespace Weapons {
 		LightningShot::LightningShot(Vector<3,float> from, Vector<3,float> to) {
 			segments.push_back(new Vector<3,float>(from));
 			segments.push_back(new Vector<3,float>(to));
@@ -113,6 +115,7 @@ namespace OpenEngine {
 			if (t) glEnable(GL_TEXTURE_2D);
 			if (l) glEnable(GL_LIGHTING);		
 		}
+            }
 	} // NS Utils
 } // NS OpenEngine
 

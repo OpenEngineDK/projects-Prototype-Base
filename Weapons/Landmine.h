@@ -7,9 +7,10 @@
 // See the GNU General Public License for more details (see LICENSE). 
 //--------------------------------------------------------------------
 
-#ifndef _I_SHOT_H_
-#define _I_SHOT_H_
+#ifndef _LANDMINE_H_
+#define _LANDMINE_H_
 
+#include "IShot.h"
 #include <Renderers/IRenderNode.h>
 #include <Renderers/IRenderingView.h>
 #include <Scene/ISceneNode.h>
@@ -19,8 +20,7 @@
 namespace OpenEngine { 
 	//namespace Geometry  { class Box; } 
 	namespace Scene     { class TransformationNode; } 
-	namespace Renderers { class IRenderNode; }
-	namespace Prototype { class ShotManager; } 
+	namespace Renderers { class IRenderNode; } 
 }
 
 using namespace OpenEngine::Math;
@@ -28,27 +28,33 @@ using namespace OpenEngine::Geometry;
 using namespace OpenEngine::Scene;
 using namespace OpenEngine::Renderers;
 using namespace std;
+using namespace OpenEngine::Prototype;
 
 namespace OpenEngine {
 	namespace Prototype {
-
-        class IShot : public IRenderNode {
-		protected:
-			ShotManager* shotMgr;
+            namespace Weapons {
+                
+                class Landmine : public IShot {
+		private:
+			double lifeTime;
+			double decayTime;
+			float shotSpeed;
+			Vector<3,float> from;
+			Vector<3,float> color;
+			float scale;
+			bool exploding;
 
 		public:
-			IShot() {};
-			virtual ~IShot() {};
-            virtual void Process(const float timeSinceLast) {};
+			Landmine(Vector<3,float> from);
 
-			void Apply(IRenderingView* view) {};
+			virtual ~Landmine();
+            void Process(const float timeSinceLast);
 
-			virtual void Destroy() = 0;
+			void Apply(IRenderingView* view);
 
-			virtual void RegisterShotManager(ShotManager* shotMgr) {
-				this->shotMgr = shotMgr;
-			}
+			void Destroy();
 		};
+            } // NS Weapons
 	} // NS Utils
 } // NS OpenEngine
 

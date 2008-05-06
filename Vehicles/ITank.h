@@ -15,15 +15,21 @@
 #include <Scene/GeometryNode.h>
 #include <Scene/TransformationNode.h>
 #include <Physics/RigidBox.h>
-#include "ShotManager.h"
-#include "GunManager.h"
-#include "LaserGun.h"
-#include "LandmineLayer.h"
+#include "../ShotManager.h"
+#include "../GunManager.h"
+#include "../Weapons/LaserGun.h"
+#include "../Weapons/RapidLaserGun.h"
+#include "../Weapons/LightningGun.h"
+#include "../Weapons/LandmineLayer.h"
+#include "../Weapons/ShieldGenerator.h"
 
 namespace OpenEngine {
 	namespace Prototype {
+            namespace Vehicles {
 		using namespace OpenEngine::Scene;
 		using namespace OpenEngine::Physics;
+                using namespace OpenEngine::Prototype;
+                using namespace OpenEngine::Prototype::Weapons;
 
 		class ITank {
 		protected:
@@ -71,6 +77,7 @@ namespace OpenEngine {
 				return gunMgr;
 			}
 		};
+            }
 	}
 }
 

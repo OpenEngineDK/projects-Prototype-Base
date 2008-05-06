@@ -1,28 +1,29 @@
 
-#include "LaserShot.h"
+#include "RapidLaserShot.h"
 #include <Meta/OpenGL.h>
 #include <Utils/Timer.h>
-#include "ShotManager.h"
+#include "../ShotManager.h"
 
 using namespace OpenEngine::Renderers;
 using namespace OpenEngine::Utils;
-//using namespace OpenEngine::Renderers::OpenGL;
+using namespace OpenEngine::Prototype;
 
 namespace OpenEngine {
 	namespace Prototype {
-		LaserShot::LaserShot(Vector<3,float> from, Vector<3,float> to) {
+            namespace Weapons {
+		RapidLaserShot::RapidLaserShot(Vector<3,float> from, Vector<3,float> to) {
 			this->from = from;
 			this->to = to;
-			color = Vector<3,float>(0.0, 1.0, 0.0);
+			color = Vector<3,float>(1.0, 1.0, 0.0);
 			lifeTime = 0.0f;
 			decayTime = 2000.0f;
-			shotSpeed = 0.03f;
+			shotSpeed = 0.07f;
 		}
 
-		LaserShot::~LaserShot() {
+		RapidLaserShot::~RapidLaserShot() {
 
 		}
-		void LaserShot::Process(const float timeSinceLast) {
+		void RapidLaserShot::Process(const float timeSinceLast) {
 
 			Vector<3,float> p1 = from;
 			Vector<3,float> p2 = to;
@@ -35,11 +36,11 @@ namespace OpenEngine {
 			}
 		}
 
-		void LaserShot::Destroy() {
+		void RapidLaserShot::Destroy() {
 			shotMgr->DeleteShot(this);
 		}
 
-		void LaserShot::Apply(IRenderingView* view) {
+		void RapidLaserShot::Apply(IRenderingView* view) {
 			GLboolean t = glIsEnabled(GL_TEXTURE_2D);
 			GLboolean l = glIsEnabled(GL_LIGHTING);
 			glDisable(GL_TEXTURE_2D);
@@ -53,7 +54,7 @@ namespace OpenEngine {
 
 			// Render the shots
 			float c[3];
-			float diameter = 0.50;
+			float diameter = 0.25;
 			color.ToArray(c);
 			Vector<3,float> p1 = from;
 			Vector<3,float> p2 = to;
@@ -91,6 +92,7 @@ namespace OpenEngine {
 			if (t) glEnable(GL_TEXTURE_2D);
 			if (l) glEnable(GL_LIGHTING);		
 		}
+            }
 	} // NS Utils
 } // NS OpenEngine
 

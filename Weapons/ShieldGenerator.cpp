@@ -1,11 +1,15 @@
 
 #include "ShieldGenerator.h"
-#include "GunManager.h"
+#include "../GunManager.h"
 #include "Shield.h"
-#include "ITank.h"
+#include "../Vehicles/ITank.h"
+
+using namespace OpenEngine::Prototype;
+using namespace OpenEngine::Prototype::Vehicles;
 
 namespace OpenEngine {
 	namespace Prototype {
+            namespace Weapons {
 
 		ShieldGenerator::ShieldGenerator() {
 			lastFired = 0.0;
@@ -28,6 +32,7 @@ namespace OpenEngine {
 		Vector<3,float> ShieldGenerator::UpdatePosition() {
 			return gunMgr->GetShotPosAndDir(this).first;
 		}
+            }
 	} // NS Utils
 } // NS OpenEngine
 

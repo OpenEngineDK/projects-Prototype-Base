@@ -7,26 +7,28 @@
 // See the GNU General Public License for more details (see LICENSE). 
 //--------------------------------------------------------------------
 
-#ifndef _LIGHTNINGGUN_H_
-#define _LIGHTNINGGUN_H_
+#ifndef _LANDMINELAYER_H_
+#define _LANDMINELAYER_H_
 
 #include "IGun.h"
 
 namespace OpenEngine {
   namespace Prototype {
+      namespace Weapons {
 
-	  class LightningGun : public IGun {
+    class LandmineLayer : public IGun {
 
     public:
-      LightningGun();
+      LandmineLayer();
 
-      virtual ~LightningGun();
+      virtual ~LandmineLayer();
 
       void ShootGun(ShotPosAndDir posAndDir);
 
 	  bool GunReady();
 
     };
+      }
 
   } // NS Utils
 } // NS OpenEngine

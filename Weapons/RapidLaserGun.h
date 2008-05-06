@@ -7,28 +7,30 @@
 // See the GNU General Public License for more details (see LICENSE). 
 //--------------------------------------------------------------------
 
-#ifndef _SHIELDGENERATOR_H_
-#define _SHIELDGENERATOR_H_
+#ifndef _RAPIDLASERGUN_H_
+#define _RAPIDLASERGUN_H_
 
 #include "IGun.h"
 
 namespace OpenEngine {
   namespace Prototype {
+      namespace Weapons {
 
-    class ShieldGenerator : public IGun {
+	  class RapidLaserGun : public IGun {
+	  private:
+		  float randomness;
 
     public:
-      ShieldGenerator();
+      RapidLaserGun();
 
-      virtual ~ShieldGenerator();
+      virtual ~RapidLaserGun();
 
       void ShootGun(ShotPosAndDir posAndDir);
 
 	  bool GunReady();
 
-	  Vector<3,float> UpdatePosition();
-
     };
+      }
 
   } // NS Utils
 } // NS OpenEngine

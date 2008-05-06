@@ -19,7 +19,7 @@
 #include <Physics/FixedTimeStepPhysics.h>
 #include <vector>
 
-#include "ITank.h"
+#include "Vehicles/ITank.h"
 
 // forward declarations
 namespace OpenEngine { 
@@ -35,6 +35,7 @@ namespace OpenEngine {
 		using namespace OpenEngine::Scene;
 		using namespace OpenEngine::Devices;
 		using namespace OpenEngine::Physics;
+                using namespace OpenEngine::Prototype::Vehicles;
 
 		/**
 		* Camera movement handler

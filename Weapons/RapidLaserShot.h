@@ -7,8 +7,8 @@
 // See the GNU General Public License for more details (see LICENSE). 
 //--------------------------------------------------------------------
 
-#ifndef _LASER_SHOT_H_
-#define _LASER_SHOT_H_
+#ifndef _RAPID_LASER_SHOT_H_
+#define _RAPID_LASER_SHOT_H_
 
 #include "IShot.h"
 #include <Renderers/IRenderNode.h>
@@ -31,8 +31,9 @@ using namespace std;
 
 namespace OpenEngine {
 	namespace Prototype {
+            namespace Weapons {
 
-                class LaserShot : public IShot {
+                class RapidLaserShot : public IShot {
 		private:
 			double lifeTime;
 			double decayTime;
@@ -42,15 +43,16 @@ namespace OpenEngine {
 			Vector<3,float> color;
 
 		public:			
-			LaserShot(Vector<3,float> from, Vector<3,float> to);
+			RapidLaserShot(Vector<3,float> from, Vector<3,float> to);
 
-			virtual ~LaserShot();
+			virtual ~RapidLaserShot();
             virtual void Process(const float timeSinceLast);
 
 			void Apply(IRenderingView* view);
 
 			void Destroy();
 		};
+            }
 	} // NS Utils
 } // NS OpenEngine
 

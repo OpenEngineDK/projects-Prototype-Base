@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
     Logger::AddLogger(new StreamLogger(&std::cout));
 
     // Print usage info.
-    logger.info << "========= Running OpenEngine Test Project =========" << logger.end;
+    logger.info << "========= Beaten Traxx Prototype =========" << logger.end;
 
     // Start the engine.
     IGameEngine& engine = GameEngine::Instance();

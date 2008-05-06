@@ -1,6 +1,8 @@
 
 #include "GunManager.h"
-#include "ITank.h"
+#include "Vehicles/ITank.h"
+
+using namespace OpenEngine::Prototype::Vehicles;
 
 namespace OpenEngine {
 	namespace Prototype {

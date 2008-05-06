@@ -7,8 +7,8 @@
 // See the GNU General Public License for more details (see LICENSE). 
 //--------------------------------------------------------------------
 
-#ifndef _SHIELD_H_
-#define _SHIELD_H_
+#ifndef _LASER_SHOT_H_
+#define _LASER_SHOT_H_
 
 #include "IShot.h"
 #include <Renderers/IRenderNode.h>
@@ -21,7 +21,6 @@ namespace OpenEngine {
 	//namespace Geometry  { class Box; } 
 	namespace Scene     { class TransformationNode; } 
 	namespace Renderers { class IRenderNode; } 
-	namespace Prototype { class ShieldGenerator; } 
 }
 
 using namespace OpenEngine::Math;
@@ -32,27 +31,28 @@ using namespace std;
 
 namespace OpenEngine {
 	namespace Prototype {
-
-                class Shield : public IShot {
+            namespace Weapons {
+                    
+                class LaserShot : public IShot {
 		private:
 			double lifeTime;
 			double decayTime;
 			float shotSpeed;
-			Vector<3,float> pos;
+			Vector<3,float> from;
+			Vector<3,float> to;
 			Vector<3,float> color;
-			float rotation;
-			ShieldGenerator* generator;
 
-		public:
-			Shield(ShieldGenerator* generator);
+		public:			
+			LaserShot(Vector<3,float> from, Vector<3,float> to);
 
-			virtual ~Shield();
-            void Process(const float timeSinceLast);
+			virtual ~LaserShot();
+            virtual void Process(const float timeSinceLast);
 
 			void Apply(IRenderingView* view);
 
 			void Destroy();
 		};
+            }
 	} // NS Utils
 } // NS OpenEngine
 

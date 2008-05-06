@@ -10,13 +10,16 @@
 #ifndef _GUNMANAGER_H_
 #define _GUNMANAGER_H_
 
-#include "IGun.h"
+#include "Weapons/IGun.h"
 #include <map>
 #include <Math/Vector.h>
 #include <Math/Quaternion.h>
+#include "Vehicles/ITank.h"
 
 namespace OpenEngine { 
-	namespace Prototype { class ITank; } 
+    namespace Prototype {
+        namespace Vehicles { class ITank; } 
+    }
 }
 
 //#define PRIMARY 1
@@ -28,9 +31,11 @@ namespace OpenEngine {
 
 		using namespace std;
 		using namespace OpenEngine::Math;
+                using namespace OpenEngine::Prototype::Weapons;
+                using namespace OpenEngine::Prototype::Vehicles;
 
 		typedef map<int,IGun*> GunMap;
-		typedef pair<Vector<3,float>,Quaternion<float> > ShotPosAndDir;
+		//typedef pair<Vector<3,float>,Quaternion<float> > ShotPosAndDir;
 
 		class GunManager  {
 		public:

@@ -1,20 +1,24 @@
 
-#include "LightningGun.h"
-#include "GunManager.h"
-#include "LightningShot.h"
-#include "ITank.h"
+#include "LaserGun.h"
+#include "../GunManager.h"
+#include "LaserShot.h"
+#include "../Vehicles/ITank.h"
+
+using namespace OpenEngine::Prototype;
+using namespace OpenEngine::Prototype::Vehicles;
 
 namespace OpenEngine {
 	namespace Prototype {
+            namespace Weapons {
 
-		LightningGun::LightningGun() {
+		LaserGun::LaserGun() {
 			lastFired = 0.0;
-			delayTime = 20.0;
+			delayTime = 1000.0;
 		}
 
-		LightningGun::~LightningGun() {}
+		LaserGun::~LaserGun() {}
 
-		void LightningGun::ShootGun(ShotPosAndDir posAndDir) {
+		void LaserGun::ShootGun(ShotPosAndDir posAndDir) {
 			lastFired = Timer::GetTime();
 
 			Vector<3,float> shotPos = posAndDir.first;
@@ -24,13 +28,13 @@ namespace OpenEngine {
 			
 			shotLength = shotDir.RotateVector(shotLength) + shotPos;
 
-			LightningShot* shot = new LightningShot(shotPos,shotLength);
+			LaserShot* shot = new LaserShot(shotPos,shotLength);
 			gunMgr->GetTank()->GetShotManager()->AddShot(shot);
 
 			OpenEngine::Physics::RigidBox* box = gunMgr->GetTank()->GetRigidBox();
 
 			if( box == NULL ) return;
-			float force = 75.0;
+			float force = 250.0;
 			Vector<3,float> forceDirection = (shotPos - shotLength).GetNormalize();
 			box->AddForce(forceDirection * force, 1);
 			box->AddForce(forceDirection * force, 2);
@@ -43,10 +47,10 @@ namespace OpenEngine {
 			box->AddForce(-forceDirection * force, 8);			
 		}
 
-		bool LightningGun::GunReady() {
+		bool LaserGun::GunReady() {
 			return (Timer::GetTime() >= lastFired + delayTime);
 		}
-
+            }
 	} // NS Utils
 } // NS OpenEngine
 

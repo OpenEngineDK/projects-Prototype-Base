@@ -20,6 +20,7 @@ namespace OpenEngine {
 
 namespace OpenEngine {
 	namespace Prototype {
+            namespace Weapons {
 
 		using namespace OpenEngine::Utils;
 		using namespace OpenEngine::Math;
@@ -47,8 +48,8 @@ namespace OpenEngine {
 			virtual bool GunReady() = 0;
 
 		};
-
-	} // NS Utils
+            } // NS Weapons
+	} // NS Prototype
 } // NS OpenEngine
 
 #endif // _DEFAULT_RIGID_BODY_RENDER_NODE_H_

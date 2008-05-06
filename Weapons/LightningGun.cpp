@@ -1,39 +1,39 @@
 
-#include "RapidLaserGun.h"
-#include "GunManager.h"
-#include "RapidLaserShot.h"
-#include "ITank.h"
+#include "LightningGun.h"
+#include "../GunManager.h"
+#include "LightningShot.h"
+#include "../Vehicles/ITank.h"
+
+using namespace OpenEngine::Prototype;
+using namespace OpenEngine::Prototype::Vehicles;
 
 namespace OpenEngine {
 	namespace Prototype {
-
-		RapidLaserGun::RapidLaserGun() {
+            namespace Weapons {
+		LightningGun::LightningGun() {
 			lastFired = 0.0;
-			delayTime = 10.0;
-
-			randomness = 0.04;
+			delayTime = 20.0;
 		}
 
-		RapidLaserGun::~RapidLaserGun() {}
+		LightningGun::~LightningGun() {}
 
-		void RapidLaserGun::ShootGun(ShotPosAndDir posAndDir) {
+		void LightningGun::ShootGun(ShotPosAndDir posAndDir) {
 			lastFired = Timer::GetTime();
 
 			Vector<3,float> shotPos = posAndDir.first;
-			Quaternion<float> shotDir = posAndDir.second;
-			shotDir *= Quaternion<float>( ((float)std::rand()/RAND_MAX - 0.5) * randomness, ((float)std::rand()/RAND_MAX - 0.5) * randomness, ((float)std::rand()/RAND_MAX - 0.5) * randomness );
+			Quaternion<float> shotDir = posAndDir.second; 
 
-			Vector<3,float> shotLength = Vector<3,float>(10.0, 0.0, 0.0);
+			Vector<3,float> shotLength = Vector<3,float>(20.0, 0.0, 0.0);
 			
 			shotLength = shotDir.RotateVector(shotLength) + shotPos;
 
-			RapidLaserShot* shot = new RapidLaserShot(shotPos,shotLength);
+			LightningShot* shot = new LightningShot(shotPos,shotLength);
 			gunMgr->GetTank()->GetShotManager()->AddShot(shot);
 
 			OpenEngine::Physics::RigidBox* box = gunMgr->GetTank()->GetRigidBox();
 
 			if( box == NULL ) return;
-			float force = 70.0;
+			float force = 75.0;
 			Vector<3,float> forceDirection = (shotPos - shotLength).GetNormalize();
 			box->AddForce(forceDirection * force, 1);
 			box->AddForce(forceDirection * force, 2);
@@ -46,9 +46,10 @@ namespace OpenEngine {
 			box->AddForce(-forceDirection * force, 8);			
 		}
 
-		bool RapidLaserGun::GunReady() {
+		bool LightningGun::GunReady() {
 			return (Timer::GetTime() >= lastFired + delayTime);
 		}
+            }
 
 	} // NS Utils
 } // NS OpenEngine

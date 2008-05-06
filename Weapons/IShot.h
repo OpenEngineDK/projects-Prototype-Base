@@ -7,10 +7,9 @@
 // See the GNU General Public License for more details (see LICENSE). 
 //--------------------------------------------------------------------
 
-#ifndef _LIGHTNING_SHOT_H_
-#define _LIGHTNING_SHOT_H_
+#ifndef _I_SHOT_H_
+#define _I_SHOT_H_
 
-#include "IShot.h"
 #include <Renderers/IRenderNode.h>
 #include <Renderers/IRenderingView.h>
 #include <Scene/ISceneNode.h>
@@ -20,7 +19,8 @@
 namespace OpenEngine { 
 	//namespace Geometry  { class Box; } 
 	namespace Scene     { class TransformationNode; } 
-	namespace Renderers { class IRenderNode; } 
+	namespace Renderers { class IRenderNode; }
+	namespace Prototype { class ShotManager; } 
 }
 
 using namespace OpenEngine::Math;
@@ -31,28 +31,26 @@ using namespace std;
 
 namespace OpenEngine {
 	namespace Prototype {
+            namespace Weapons {
 
-                class LightningShot : public IShot {
-		private:
-			double lifeTime;
-			double decayTime;
-			float shotSpeed;
-			Vector<3,float> color;
-			vector<Vector<3,float>* > segments;
+        class IShot : public IRenderNode {
+		protected:
+			ShotManager* shotMgr;
 
-			float randomness;
-			Vector<3,float>* OffsetVector();
+		public:
+			IShot() {};
+			virtual ~IShot() {};
+            virtual void Process(const float timeSinceLast) {};
 
-		public:			
-			LightningShot(Vector<3,float> from, Vector<3,float> to);
+			void Apply(IRenderingView* view) {};
 
-			virtual ~LightningShot();
-            virtual void Process(const float timeSinceLast);
+			virtual void Destroy() = 0;
 
-			void Apply(IRenderingView* view);
-
-			void Destroy();
+			virtual void RegisterShotManager(ShotManager* shotMgr) {
+				this->shotMgr = shotMgr;
+			}
 		};
+            } // NS Weapons
 	} // NS Utils
 } // NS OpenEngine
 

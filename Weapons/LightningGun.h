@@ -7,28 +7,28 @@
 // See the GNU General Public License for more details (see LICENSE). 
 //--------------------------------------------------------------------
 
-#ifndef _RAPIDLASERGUN_H_
-#define _RAPIDLASERGUN_H_
+#ifndef _LIGHTNINGGUN_H_
+#define _LIGHTNINGGUN_H_
 
 #include "IGun.h"
 
 namespace OpenEngine {
   namespace Prototype {
+      namespace Weapons {
 
-	  class RapidLaserGun : public IGun {
-	  private:
-		  float randomness;
+	  class LightningGun : public IGun {
 
     public:
-      RapidLaserGun();
+      LightningGun();
 
-      virtual ~RapidLaserGun();
+      virtual ~LightningGun();
 
       void ShootGun(ShotPosAndDir posAndDir);
 
 	  bool GunReady();
 
     };
+      }
 
   } // NS Utils
 } // NS OpenEngine

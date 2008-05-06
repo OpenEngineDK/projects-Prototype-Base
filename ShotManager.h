@@ -14,12 +14,13 @@
 #include <Meta/OpenGL.h>
 #include <vector>
 
-#include "IShot.h"
+#include "Weapons/IShot.h"
 
 using namespace OpenEngine::Math;
 using namespace OpenEngine::Geometry;
 using namespace OpenEngine::Scene;
 using namespace std;
+using namespace OpenEngine::Prototype::Weapons;
 
 namespace OpenEngine {
 	namespace Prototype {

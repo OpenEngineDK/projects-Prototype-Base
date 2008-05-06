@@ -10,7 +10,7 @@
 #ifndef _TANKMANAGER_H_
 #define _TANKMANAGER_H_
 
-#include "ITank.h"
+#include "Vehicles/ITank.h"
 #include <Core/IModule.h>
 
 namespace OpenEngine {
@@ -18,6 +18,7 @@ namespace OpenEngine {
 
         using namespace std;
 	using namespace OpenEngine::Core;
+        using namespace OpenEngine::Prototype::Vehicles;
 
         typedef map<int,ITank*> TankMap;
 

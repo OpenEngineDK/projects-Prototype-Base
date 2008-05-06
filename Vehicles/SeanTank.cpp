@@ -11,6 +11,7 @@
 
 namespace OpenEngine {
 	namespace Prototype {
+            namespace Vehicles {
 		using namespace OpenEngine::Math;
 
 		// initialize static members
@@ -91,5 +92,6 @@ namespace OpenEngine {
 		void SeanTank::ShootGun(int i) {
 			gunMgr->ShootGun(i);
 		}
+        }
 	}
 }

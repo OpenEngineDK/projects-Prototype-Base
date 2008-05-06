@@ -1,11 +1,15 @@
 
 #include "LandmineLayer.h"
-#include "GunManager.h"
+#include "../GunManager.h"
 #include "Landmine.h"
-#include "ITank.h"
+#include "../Vehicles/ITank.h"
+
+using namespace OpenEngine::Prototype;
+using namespace OpenEngine::Prototype::Vehicles;
 
 namespace OpenEngine {
 	namespace Prototype {
+            namespace Weapons {
 
 		LandmineLayer::LandmineLayer() {
 			lastFired = 0.0;
@@ -24,6 +28,7 @@ namespace OpenEngine {
 		bool LandmineLayer::GunReady() {
 			return (Timer::GetTime() >= lastFired + delayTime);
 		}
+            }
 	} // NS Utils
 } // NS OpenEngine
 

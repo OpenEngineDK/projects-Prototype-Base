@@ -14,6 +14,7 @@
 
 namespace OpenEngine {
   namespace Prototype {
+      namespace Weapons {
 
 	  class LaserGun : public IGun {
 
@@ -27,6 +28,7 @@ namespace OpenEngine {
 	  bool GunReady();
 
     };
+      }
 
   } // NS Utils
 } // NS OpenEngine

@@ -2,14 +2,16 @@
 #include "Shield.h"
 #include <Meta/OpenGL.h>
 #include <Utils/Timer.h>
-#include "ShotManager.h"
+#include "../ShotManager.h"
 #include "ShieldGenerator.h"
 
 using namespace OpenEngine::Renderers;
 using namespace OpenEngine::Utils;
+using namespace OpenEngine::Prototype;
 
 namespace OpenEngine {
 	namespace Prototype {
+            namespace Weapons {
 		Shield::Shield(ShieldGenerator* generator) {
 			this->generator = generator;
 			color = Vector<3,float>(0.0, 0.0, 1.0);
@@ -87,6 +89,7 @@ namespace OpenEngine {
 			if (t) glEnable(GL_TEXTURE_2D);
 			if (l) glEnable(GL_LIGHTING);		
 		}
+            }
 	} // NS Utils
 } // NS OpenEngine
 

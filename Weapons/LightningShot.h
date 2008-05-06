@@ -7,8 +7,8 @@
 // See the GNU General Public License for more details (see LICENSE). 
 //--------------------------------------------------------------------
 
-#ifndef _LANDMINE_H_
-#define _LANDMINE_H_
+#ifndef _LIGHTNING_SHOT_H_
+#define _LIGHTNING_SHOT_H_
 
 #include "IShot.h"
 #include <Renderers/IRenderNode.h>
@@ -31,27 +31,30 @@ using namespace std;
 
 namespace OpenEngine {
 	namespace Prototype {
+            namespace Weapons {
 
-                class Landmine : public IShot {
+                class LightningShot : public IShot {
 		private:
 			double lifeTime;
 			double decayTime;
 			float shotSpeed;
-			Vector<3,float> from;
 			Vector<3,float> color;
-			float scale;
-			bool exploding;
+			vector<Vector<3,float>* > segments;
 
-		public:
-			Landmine(Vector<3,float> from);
+			float randomness;
+			Vector<3,float>* OffsetVector();
 
-			virtual ~Landmine();
-            void Process(const float timeSinceLast);
+		public:			
+			LightningShot(Vector<3,float> from, Vector<3,float> to);
+
+			virtual ~LightningShot();
+            virtual void Process(const float timeSinceLast);
 
 			void Apply(IRenderingView* view);
 
 			void Destroy();
 		};
+            }
 	} // NS Utils
 } // NS OpenEngine
 

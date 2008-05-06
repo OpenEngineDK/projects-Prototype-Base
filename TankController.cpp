@@ -1,10 +1,10 @@
 
 #include <Meta/OpenGL.h>
 #include "TankController.h"
-
+#include "Vehicles/ITank.h"
 
 using namespace OpenEngine::Renderers;
-//using namespace OpenEngine::Renderers::OpenGL;
+using namespace OpenEngine::Prototype::Vehicles;
 
 namespace OpenEngine {
 	namespace Prototype {

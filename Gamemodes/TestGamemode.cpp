@@ -7,6 +7,22 @@ namespace OpenEngine {
 
 			int TestGamemode::OnGameModeInit() {
 				printf("TestGamemode::OnGameModeInit()\n");
+
+
+				Callback<TestGamemode>* cb;
+				//call TestCallbackFunction immediately and just once
+				cb = new Callback<TestGamemode>(*this,&TestGamemode::TestCallbackFunction);
+				AddCallback(cb);
+
+				//call TestCallbackFunction2 after 5 seconds, but just once
+				cb = new Callback<TestGamemode>(*this,&TestGamemode::TestCallbackFunction2, 15000);
+				AddCallback(cb);
+
+				count = 0;
+				//call TestCallbackFunction3 every 2 seconds, 5 times in total
+				cb = new Callback<TestGamemode>(*this,&TestGamemode::TestCallbackFunction3, 2000, 5);
+				AddCallback(cb);
+
 				return 1;
 			}
 
@@ -35,6 +51,7 @@ namespace OpenEngine {
 
 			int TestGamemode::OnPlayerConnect(int playerid) {
 				printf("Player with id '%d' connected\n",playerid);
+				OnPlayerCommandText(playerid, "I have connected!");
 				return 1;
 			}
 
@@ -61,8 +78,24 @@ namespace OpenEngine {
 			int TestGamemode::OnPlayerCommandText(int playerid, string cmdtext) {
 				char tmp[256];
 				sprintf(tmp, "Player %d: ", playerid);
-				string toWrite = string(tmp) + cmdtext;
+				string toWrite = string(tmp) + cmdtext + "\n";
 				printf(toWrite.c_str());
+				return 1;
+			}
+
+			int TestGamemode::TestCallbackFunction() {
+				printf("This should be called immediately! - TestGamemode::TestCallbackFunction()\n");
+				return 1;
+			}
+
+			int TestGamemode::TestCallbackFunction2() {
+				printf("This should be called after 15 seconds - TestGamemode::TestCallbackFunction2()\n");
+				return 1;
+			}
+
+			int TestGamemode::TestCallbackFunction3() {
+				count++;
+				printf("This has been called %d times - TestGamemode::TestCallbackFunction3()\n",count);
 				return 1;
 			}
         }

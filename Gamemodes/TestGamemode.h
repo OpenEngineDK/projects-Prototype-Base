@@ -21,6 +21,8 @@ namespace OpenEngine {
 
             class TestGamemode : public IGamemode {
                 public:
+					int count;
+
 					TestGamemode() {};
 
 					virtual ~TestGamemode() {};
@@ -36,6 +38,10 @@ namespace OpenEngine {
 					int OnPlayerSpawn(int playerid);
 					int OnPlayerDeath(int playerid, int killerid, int reason);
 					int OnPlayerCommandText(int playerid, string cmdtext);
+
+					int TestCallbackFunction();
+					int TestCallbackFunction2();
+					int TestCallbackFunction3();
             };
         }
     } // NS Prototype

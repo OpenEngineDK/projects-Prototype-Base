@@ -47,14 +47,15 @@
 
 // Project files
 #include "RenderStateHandler.h"
-#include "ClassicMovementHandler.h"
 #include "QuitHandler.h"
-#include "Vehicles/ITank.h"
-#include "Vehicles/SnowTank.h"
-#include "Vehicles/SeanTank.h"
+
 #include "Crosshair.h"
 #include "TankManager.h"
 #include "TankController.h"
+#include "ClassicMovementHandler.h"
+#include "Vehicles/ITank.h"
+#include "Vehicles/SnowTank.h"
+#include "Vehicles/SeanTank.h"
 #include "Gamemodes/IGamemode.h"
 #include "Gamemodes/TestGamemode.h"
 
@@ -74,12 +75,12 @@ using namespace OpenEngine::Prototype::Gamemode;
 // AcceleratedRenderingView for clipping. 
 class MyRenderingView : 
 	public RenderingView/*,
-	public AcceleratedRenderingView*/ {
+						public AcceleratedRenderingView*/ {
 public:
 	MyRenderingView(Viewport& viewport) :
 	  IRenderingView(viewport),
 		  RenderingView(viewport)/*,
-		  AcceleratedRenderingView(viewport)*/ {
+								 AcceleratedRenderingView(viewport)*/ {
 	  }
 };
 
@@ -128,7 +129,7 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	engine.AddModule(*input);
 
 	// Add Statistics module
-	engine.AddModule(*(new OpenEngine::Utils::Statistics(1000)));
+	//engine.AddModule(*(new OpenEngine::Utils::Statistics(1000)));
 
 	// Create a root scene node
 	SceneNode* scene = new SceneNode();
@@ -152,7 +153,7 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	quit_h->BindToEventSystem();
 
 	// Bind the camera to the viewport
-        /*FollowCamera* */ camera = new FollowCamera( *(new InterpolatedViewingVolume( *(new ViewingVolume()) )));
+	camera = new FollowCamera( *(new InterpolatedViewingVolume( *(new ViewingVolume()) )));
 	Frustum* frustum = new Frustum(*camera, 20, 50000);
 	viewport->SetViewingVolume(frustum);
 
@@ -163,8 +164,8 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 
 	// load the resource plug-ins
 	ResourceManager<IModelResource>::AddPlugin(new OBJPlugin());
-    	ResourceManager<ITextureResource>::AddPlugin(new TGAPlugin());
-    	ResourceManager<IShaderResource>::AddPlugin(new GLSLPlugin());
+	ResourceManager<ITextureResource>::AddPlugin(new TGAPlugin());
+	ResourceManager<IShaderResource>::AddPlugin(new GLSLPlugin());
 
 	// Add models from models.txt to the scene
 	ISceneNode* current = rNode;
@@ -179,13 +180,11 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	staticObjects->AddNode(geoGround);
 
 	//Physic
-        GeometryNode* geoGround2 = LoadGeometryFromFile("2DGround/2DGround.obj");
+	GeometryNode* geoGround2 = LoadGeometryFromFile("2DGround/2DGround.obj");
 	physicObjects->AddNode(geoGround2);
 
-	
-
 	// Add FixedTimeStepPhysics module
-    physic = new FixedTimeStepPhysics( physicObjects );
+	physic = new FixedTimeStepPhysics( physicObjects );
 	engine.AddModule(*physic, IGameEngine::TICK_DEPENDENT);
 
 	// Register movement handler to be able to move the camera
@@ -197,7 +196,7 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	tankMgr = new TankManager();
 	TankController* tankCtrl = new TankController(tankMgr, classicMovement, camera);
 	classicMovement->SetTankController(tankCtrl);
-    engine.AddModule(*tankMgr);
+	engine.AddModule(*tankMgr);
 
 	// Setup SnowTank
 	GeometryNode* snowTankBody = LoadGeometryFromFile("ProtoTank/tank_body.obj");
@@ -213,16 +212,17 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 
 	shotMgr = new ShotManager();
 	rNode->AddNode(shotMgr);
-    engine.AddModule(*shotMgr,IGameEngine::TICK_DEPENDENT);
+	engine.AddModule(*shotMgr,IGameEngine::TICK_DEPENDENT);
 
 	crosshairNode = new Crosshair();
 
-        IGamemode* gamemode = new TestGamemode();
+	IGamemode* gamemode = new TestGamemode();
+	engine.AddModule(*gamemode);
 	// Load tanks
 	int tankCount = 2;
 	for ( int i = 0; i < tankCount; i++ ) {
 		AddTank(i % 2);
-                gamemode->OnPlayerConnect(i);
+		gamemode->OnPlayerConnect(i);
 	}
 
 	tankCtrl->SetPlayerTank(0);
@@ -231,20 +231,20 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 
 	// Process static tree
 	logger.info << "Preprocessing of physics tree: started" << logger.end;
-        CollectedGeometryTransformer collT;
-        QuadTransformer quadT;
-        BSPTransformer bspT;
-        collT.Transform(*physicObjects);
-        quadT.Transform(*physicObjects);
-        bspT.Transform(*physicObjects);
+	CollectedGeometryTransformer collT;
+	QuadTransformer quadT;
+	BSPTransformer bspT;
+	collT.Transform(*physicObjects);
+	quadT.Transform(*physicObjects);
+	bspT.Transform(*physicObjects);
 	logger.info << "Preprocessing of physics tree: done" << logger.end;
 
 	logger.info << "Preprocessing of static tree: started" << logger.end;
-        QuadTransformer quadT2;
-        quadT2.SetMaxFaceCount(500);
-        quadT2.SetMaxQuadSize(100);
-        quadT2.Transform(*staticObjects);
-        rNode->AddNode(staticObjects);
+	QuadTransformer quadT2;
+	quadT2.SetMaxFaceCount(500);
+	quadT2.SetMaxQuadSize(100);
+	quadT2.Transform(*staticObjects);
+	rNode->AddNode(staticObjects);
 	logger.info << "Preprocessing of static tree: done" << logger.end;
 
 	// Visualization of the frustum
@@ -268,7 +268,7 @@ void GameFactory::AddTank(int i) {
 		box->SetCenter( position );
 		tank = new SeanTank(box);
 	}	
-	 
+
 	tank->SetShotManager(shotMgr);
 	tankMgr->AddTank(tank);
 

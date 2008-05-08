@@ -11,8 +11,9 @@
 #define _IGAMEMODE_H_
 
 #include <Core/IModule.h>
+#include "GenericGamemodeCallbackHandler.h"
+#include "GamemodeCallbackHandler.h"
 #include <string>
-#include <list>
 
 namespace OpenEngine {
 	namespace Prototype {
@@ -23,64 +24,7 @@ namespace OpenEngine {
 
 			class IGamemode : public IModule  {
 			protected:
-				/**
-				* Generic callback
-				* Used so templated callbacks can easily be stored in a single structure
-				* and invoked from the IGamemode class.
-				* @class GenericCallback
-				*/
-				class GenericCallback {
-				public:
-					float interval;
-					float elapsed;
-					int repetitions;
-
-					GenericCallback() { interval = 0.0; elapsed = 0.0; repetitions = 0; };
-					virtual void Execute() {};
-				};
-
-				/**
-				* Templated callback
-				* @class Callback
-				* @see GenericCallback
-				*/
-				template <class T> class Callback : public GenericCallback {
-				#define CALLBACK_LOOP -1
-				protected:
-					//! reference to handler instance
-					T& instance;
-					//! handler method
-					int (T::*memberFunc)();
-				public:
-					/**
-					* Usage:
-					* \code
-					* \\ create a listener wrapper
-					* Callback<TestGamemode>* cb = new Callback<TestGamemode>(*this,&TestGamemode::OnGameModeStart, 10000);
-					* \\ now add it to the list of callbacks
-					* AddCallback(cb);
-					* \\ it will now be called at the interval specified for the specified number of times.
-					* \endcode
-					*
-					* @param ins Reference to handler object of type \a T
-					* @param ptr Address to handler method
-					* @param interval Time interval between invokes
-					* @param repetitions Number of times the callback should be called, CALLBACK_LOOP for loop.
-					*/
-					Callback(T& ins, int (T::*ptr)(), float interval = 0.0, int repetitions = 0 ): instance(ins) {
-						this->interval = interval;
-						elapsed = 0.0;
-						this->repetitions = repetitions;						
-						memberFunc = ptr;
-					};
-					virtual void Execute() {
-						(instance.*memberFunc)();
-					};
-				};
-
-				list<GenericCallback* > callbacks;
-				list<GenericCallback* > callbacksToDelete;
-				list<GenericCallback* >::iterator cbIter;
+				GenericGamemodeCallbackHandler* genericCBHandler;
 
 			public:
 				IGamemode() {};
@@ -92,28 +36,9 @@ namespace OpenEngine {
 				void Initialize() { OnGameModeInit(); };
 				void Deinitialize() { OnGameModeExit(); };                    
 				void Process(const float dt, const float percent) { 
-					for (cbIter =  callbacks.begin(); cbIter != callbacks.end(); cbIter++) {
-						(*cbIter)->elapsed += dt;
-						if ( (*cbIter)->elapsed > (*cbIter)->interval ) {
-							(*cbIter)->elapsed -= (*cbIter)->interval;
-							(*cbIter)->Execute();
-							if ( (*cbIter)->repetitions > 0 ) {
-								(*cbIter)->repetitions--;
-							}
-							if ( (*cbIter)->repetitions == 0 ) {
-								callbacksToDelete.push_back(*cbIter);
-							}
-						}
-					}
-					for (cbIter =  callbacksToDelete.begin(); cbIter != callbacksToDelete.end(); cbIter++) {
-						RemoveCallback((*cbIter));
-					}
-					callbacksToDelete.clear();
+					genericCBHandler->ProcessCallbacks(dt);
 					OnGameLoopProcess(dt);
 				};
-
-				void AddCallback(GenericCallback* cb) { callbacks.push_back(cb); };
-				void RemoveCallback(GenericCallback* cb) { callbacks.remove(cb); };
 
 				// Implemented for each gamemode
 				virtual int OnGameModeInit() = 0;

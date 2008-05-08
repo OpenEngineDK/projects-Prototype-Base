@@ -1,4 +1,3 @@
-
 #include "TestGamemode.h"
 
 namespace OpenEngine {
@@ -8,20 +7,15 @@ namespace OpenEngine {
 			int TestGamemode::OnGameModeInit() {
 				printf("TestGamemode::OnGameModeInit()\n");
 
-
-				Callback<TestGamemode>* cb;
 				//call TestCallbackFunction immediately and just once
-				cb = new Callback<TestGamemode>(*this,&TestGamemode::TestCallbackFunction);
-				AddCallback(cb);
+				cbHandler->SetCallback(&TestGamemode::TestCallbackFunction);
 
-				//call TestCallbackFunction2 after 5 seconds, but just once
-				cb = new Callback<TestGamemode>(*this,&TestGamemode::TestCallbackFunction2, 15000);
-				AddCallback(cb);
+				//call TestCallbackFunction2 after 15 seconds and just once
+				cbHandler->SetCallback(&TestGamemode::TestCallbackFunction2, 15000);
 
 				count = 0;
-				//call TestCallbackFunction3 every 2 seconds, 5 times in total
-				cb = new Callback<TestGamemode>(*this,&TestGamemode::TestCallbackFunction3, 2000, 5);
-				AddCallback(cb);
+				//call TestCallbackFunction3 every 2 seconds
+				cbHandler->SetCallback(&TestGamemode::TestCallbackFunction3, 2000, GenericGamemodeCallback::CALLBACK_LOOP);
 
 				return 1;
 			}
@@ -96,9 +90,16 @@ namespace OpenEngine {
 			int TestGamemode::TestCallbackFunction3() {
 				count++;
 				printf("This has been called %d times - TestGamemode::TestCallbackFunction3()\n",count);
+				if ( count == 4 ) {
+					printf("Overriding previous timer by setting the callback again, now 6 seconds - TestGamemode::TestCallbackFunction3()\n",count);
+					cbHandler->SetCallback(&TestGamemode::TestCallbackFunction3, 6000, GenericGamemodeCallback::CALLBACK_LOOP);
+				}
+				if ( count == 5 ) {
+					cbHandler->StopCallback(&TestGamemode::TestCallbackFunction3);
+					printf("Executed 5 times, attempting to stop callback - TestGamemode::TestCallbackFunction3()\n",count);
+				}
 				return 1;
 			}
         }
     } // NS Prototype
 } // NS OpenEngine
-

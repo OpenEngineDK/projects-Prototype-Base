@@ -13,38 +13,43 @@
 #include "IGamemode.h"
 
 namespace OpenEngine {
-    namespace Prototype {
-        namespace Gamemode {
+	namespace Prototype {
+		namespace Gamemode {
 
-            using namespace std;
-            using namespace OpenEngine::Core;
+			using namespace std;
+			using namespace OpenEngine::Core;
 
-            class TestGamemode : public IGamemode {
-                public:
-					int count;
+			class TestGamemode : public IGamemode {
+			private:
+				GamemodeCallbackHandler<TestGamemode>* cbHandler;
+			public:
+				int count;
 
-					TestGamemode() {};
+				TestGamemode() {
+					cbHandler = new GamemodeCallbackHandler<TestGamemode>(this);
+					genericCBHandler = cbHandler;
+				};
 
-					virtual ~TestGamemode() {};
+				virtual ~TestGamemode() {};
 
-					int OnGameModeInit();
-					int OnGameModeExit();
-					int OnGameModeStart();
-					int OnGameModeEnd();
-					int OnGameLoopProcess(float timeSinceLast);
-					int OnPlayerConnect(int playerid);
-                    int OnPlayerDisconnect(int playerid);
-					int OnPlayerRequestClass(int playerid, int classid);
-					int OnPlayerSpawn(int playerid);
-					int OnPlayerDeath(int playerid, int killerid, int reason);
-					int OnPlayerCommandText(int playerid, string cmdtext);
+				int OnGameModeInit();
+				int OnGameModeExit();
+				int OnGameModeStart();
+				int OnGameModeEnd();
+				int OnGameLoopProcess(float timeSinceLast);
+				int OnPlayerConnect(int playerid);
+				int OnPlayerDisconnect(int playerid);
+				int OnPlayerRequestClass(int playerid, int classid);
+				int OnPlayerSpawn(int playerid);
+				int OnPlayerDeath(int playerid, int killerid, int reason);
+				int OnPlayerCommandText(int playerid, string cmdtext);
 
-					int TestCallbackFunction();
-					int TestCallbackFunction2();
-					int TestCallbackFunction3();
-            };
-        }
-    } // NS Prototype
+				int TestCallbackFunction();
+				int TestCallbackFunction2();
+				int TestCallbackFunction3();
+			};
+		}
+	} // NS Prototype
 } // NS OpenEngine
 
 #endif

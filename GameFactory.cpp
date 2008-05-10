@@ -168,7 +168,7 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	ResourceManager<IShaderResource>::AddPlugin(new GLSLPlugin());
 
 	// Add models from models.txt to the scene
-	ISceneNode* current = rNode;
+	//ISceneNode* current = rNode;
 	dynamicObjects = new SceneNode();
 	staticObjects  = new SceneNode();
 	physicObjects  = new SceneNode();

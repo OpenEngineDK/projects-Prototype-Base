@@ -22,15 +22,15 @@ namespace OpenEngine {
 			*/
 			class GenericGamemodeCallback {
 			public:
-				enum LoopFlag { CALLBACK_LOOP, CALLBACK_ONCE };
 
 				float interval;
 				float elapsed;
-				LoopFlag loopFlag;
+				bool looping;
 
-				GenericGamemodeCallback() : loopFlag(CALLBACK_ONCE) {
+				GenericGamemodeCallback() {
 					interval = 0.0; 
 					elapsed = 0.0; 
+					looping = false;
 				};
 
 				virtual ~GenericGamemodeCallback() {};

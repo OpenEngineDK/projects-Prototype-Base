@@ -33,13 +33,12 @@ namespace OpenEngine {
 				* @param ins Reference to handler object of type \a T
 				* @param ptr Address to handler method
 				* @param interval Time interval between invokes
-				* @param repetitions Number of times the callback should be called, CALLBACK_LOOP for loop.
 				*/
-				GamemodeCallback(T& ins, int (T::*ptr)(), float interval = 0.0, GenericGamemodeCallback::LoopFlag loopFlag = CALLBACK_ONCE ) : instance(ins) {
+				GamemodeCallback(T& ins, int (T::*ptr)(), float interval = 0.0, bool looping = false ) : instance(ins) {
 					this->interval = interval;
 					elapsed = 0.0;					
 					memberFunc = ptr;
-					this->loopFlag = loopFlag;
+					this->looping = looping;
 				};
 
 				virtual ~GamemodeCallback() {};

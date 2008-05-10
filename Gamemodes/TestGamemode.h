@@ -10,7 +10,7 @@
 #ifndef _TESTGAMEMODE_H_
 #define _TESTGAMEMODE_H_
 
-#include "IGamemode.h"
+#include "TemplatedGamemode.h"
 
 namespace OpenEngine {
 	namespace Prototype {
@@ -19,15 +19,13 @@ namespace OpenEngine {
 			using namespace std;
 			using namespace OpenEngine::Core;
 
-			class TestGamemode : public IGamemode {
-			private:
-				GamemodeCallbackHandler<TestGamemode>* cbHandler;
+			class TestGamemode : public TemplatedGamemode<TestGamemode> {
+
 			public:
 				int count;
 
 				TestGamemode() {
-					cbHandler = new GamemodeCallbackHandler<TestGamemode>(this);
-					genericCBHandler = cbHandler;
+					SetupHandler(this);
 				};
 
 				virtual ~TestGamemode() {};

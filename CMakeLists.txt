@@ -5,6 +5,7 @@ SET( PROTOTYPE_SOURCES
   # Add all the cpp source files here
   main.cpp
   GameFactory.cpp
+  GameOrganizer.cpp
   ShotManager.cpp
   Crosshair.cpp
   ClassicMovementHandler.cpp

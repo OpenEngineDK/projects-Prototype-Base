@@ -55,14 +55,14 @@ namespace OpenEngine {
 						if ( (*cbIter)->elapsed > (*cbIter)->interval ) {
 							(*cbIter)->elapsed -= (*cbIter)->interval;
 							(*cbIter)->Execute();
-							if ( (*cbIter)->loopFlag == GenericGamemodeCallback::CALLBACK_ONCE ) {
+							if ( !(*cbIter)->looping ) {
 								callbacksToDelete.push_back(*cbIter);
 							}
 						}
 					}
 				};
 			};
-		}
+		} // NS Gamemode
 	} // NS Prototype
 } // NS OpenEngine
 

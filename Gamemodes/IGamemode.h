@@ -11,8 +11,8 @@
 #define _IGAMEMODE_H_
 
 #include <Core/IModule.h>
-#include "GenericGamemodeCallbackHandler.h"
-#include "GamemodeCallbackHandler.h"
+#include "Utils/GenericGamemodeCallbackHandler.h"
+#include "Utils/GamemodeCallbackHandler.h"
 #include <string>
 
 namespace OpenEngine {
@@ -27,7 +27,7 @@ namespace OpenEngine {
 				GenericGamemodeCallbackHandler* genericCBHandler;
 
 			public:
-				IGamemode() {};
+				IGamemode() { genericCBHandler = NULL; };
 
 				virtual ~IGamemode() {};
 
@@ -36,7 +36,9 @@ namespace OpenEngine {
 				void Initialize() { OnGameModeInit(); };
 				void Deinitialize() { OnGameModeExit(); };                    
 				void Process(const float dt, const float percent) { 
-					genericCBHandler->ProcessCallbacks(dt);
+					if ( genericCBHandler != NULL ) {
+						genericCBHandler->ProcessCallbacks(dt);
+					}
 					OnGameLoopProcess(dt);
 				};
 

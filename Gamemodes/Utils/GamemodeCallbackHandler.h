@@ -29,8 +29,8 @@ namespace OpenEngine {
 
 					virtual ~GamemodeCallbackHandler() {};
 
-					virtual void SetCallback( int (T::*ptr)(), float interval = 0.0, GenericGamemodeCallback::LoopFlag loopFlag = GenericGamemodeCallback::CALLBACK_ONCE ) {
-						GenericGamemodeCallback* callback = new GamemodeCallback<T>(*instance, ptr, interval, loopFlag);
+					virtual void SetCallback( int (T::*ptr)(), float interval = 0.0, bool looping = false ) {
+						GenericGamemodeCallback* callback = new GamemodeCallback<T>(*instance, ptr, interval, looping);
 						StopCallback(ptr);
 						AddCallback(callback);
 					};

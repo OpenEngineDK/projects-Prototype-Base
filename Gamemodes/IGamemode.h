@@ -53,6 +53,8 @@ namespace OpenEngine {
 				virtual int OnPlayerRequestClass(int playerid, int classid) = 0;
 				virtual int OnPlayerSpawn(int playerid) = 0;
 				virtual int OnPlayerDeath(int playerid, int killerid, int reason) = 0;
+				virtual int OnPlayerEnterZone(int playerid, int zoneid) = 0;
+				virtual int OnPlayerLeaveZone(int playerid, int zoneid) = 0;
 				virtual int OnPlayerCommandText(int playerid, string cmdtext) = 0;
 			};
 		}

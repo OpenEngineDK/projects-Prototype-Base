@@ -69,6 +69,16 @@ namespace OpenEngine {
 				return 1;
 			}
 
+			int TestGamemode::OnPlayerEnterZone(int playerid, int zoneid) {
+				printf("Player with id '%d' entered zone with id '%d'\n",playerid,zoneid);
+				return 1;
+			}
+				
+			int TestGamemode::OnPlayerLeaveZone(int playerid, int zoneid) {
+				printf("Player with id '%d' left zone with id '%d'\n",playerid,zoneid);
+				return 1;
+			}
+
 			int TestGamemode::OnPlayerCommandText(int playerid, string cmdtext) {
 				char tmp[256];
 				sprintf(tmp, "Player %d: ", playerid);

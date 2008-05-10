@@ -40,6 +40,8 @@ namespace OpenEngine {
 				int OnPlayerRequestClass(int playerid, int classid);
 				int OnPlayerSpawn(int playerid);
 				int OnPlayerDeath(int playerid, int killerid, int reason);
+				int OnPlayerEnterZone(int playerid, int zoneid);
+				int OnPlayerLeaveZone(int playerid, int zoneid);
 				int OnPlayerCommandText(int playerid, string cmdtext);
 
 				int TestCallbackFunction();

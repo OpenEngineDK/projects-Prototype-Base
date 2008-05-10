@@ -21,7 +21,7 @@ namespace OpenEngine {
 			protected:
 				GamemodeCallbackHandler<T>* cbHandler;
 
-				void SetupHandler(T* ins) {
+				void SetupCallbackHandler(T* ins) {
 					cbHandler = new GamemodeCallbackHandler<T>(ins);
 					genericCBHandler = cbHandler;
 				}

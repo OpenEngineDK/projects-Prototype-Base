@@ -25,7 +25,7 @@ namespace OpenEngine {
 				int count;
 
 				TestGamemode() {
-					SetupHandler(this);
+					SetupCallbackHandler(this);
 				};
 
 				virtual ~TestGamemode() {};

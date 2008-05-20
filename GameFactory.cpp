@@ -13,6 +13,7 @@
 // OpenEngine library
 #include <Display/FollowCamera.h>
 #include <Display/Frustum.h>
+#include <Display/Orthotope.h>
 #include <Display/InterpolatedViewingVolume.h>
 #include <Display/ViewingVolume.h>
 #include <Display/SDLFrame.h>
@@ -108,6 +109,7 @@ GameFactory::GameFactory() {
 
 	// Create a renderer.
 	this->renderer = new Renderer();
+        renderer->SetFarPlane(50000.0);
 
 	// Add a rendering view to the renderer
 	this->renderer->AddRenderingView(new MyRenderingView(*viewport));
@@ -154,7 +156,8 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 
 	// Bind the camera to the viewport
 	camera = new FollowCamera( *(new InterpolatedViewingVolume( *(new ViewingVolume()) )));
-	Frustum* frustum = new Frustum(*camera, 20, 50000);
+	Frustum* frustum = new Frustum(*camera, 1, 1000.0);
+        //IViewingVolume* frustum = new Orthotope(*camera, 1, 1000.0, 4.0/3.0, 500.0 );
 	viewport->SetViewingVolume(frustum);
 
 	// set the resources directory

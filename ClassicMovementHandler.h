@@ -40,7 +40,10 @@ namespace OpenEngine {
 		/**
 		* Camera movement handler
 		*/
-		class ClassicMovementHandler : public IModule {
+		class ClassicMovementHandler : public IModule,
+                                       public IListener<KeyboardEventArg>,
+                                       public IListener<MouseButtonEventArg>,
+                                       public IListener<MouseMovedEventArg> {
 
 		private:
 			FixedTimeStepPhysics* physics;
@@ -79,11 +82,10 @@ namespace OpenEngine {
 			void Deinitialize();
 			virtual bool IsTypeOf(const std::type_info& inf);
 			virtual void Process(const float dt, const float percent);
-			virtual void HandleDownEvent(KeyboardEventArg arg);
-			virtual void HandleUpEvent(KeyboardEventArg arg);
+			virtual void Handle(KeyboardEventArg arg);
 			virtual void HandleKeyEvent(KeyboardEventArg arg, bool state);
-			virtual void HandleMouseDown(MouseButtonEventArg event);
-			virtual void HandleMouseUp(MouseButtonEventArg event);
+			virtual void Handle(MouseButtonEventArg event);
+            virtual void Handle(MouseMovedEventArg event);
 			void BindToEventSystem();
 			void MouseMoved(MouseMovedEventArg event);
 			void SetTank(ITank* tank);

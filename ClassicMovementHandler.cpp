@@ -58,7 +58,9 @@ namespace OpenEngine {
 			return typeid(ClassicMovementHandler) == inf; 
 		}
 
-		void ClassicMovementHandler::MouseMoved(MouseMovedEventArg arg) {
+
+
+		void ClassicMovementHandler::Handle(MouseMovedEventArg arg) {
 			//if ( mouse->IsPressed(BUTTON_RIGHT) ) {
 				mouse->HideCursor();
 				if ( mouse3Down ) {
@@ -211,12 +213,13 @@ namespace OpenEngine {
 		}
 
 		// set state of keys on up/down events
-		void ClassicMovementHandler::HandleDownEvent(KeyboardEventArg arg) { 
-			HandleKeyEvent(arg, true); 
+		void ClassicMovementHandler::Handle(KeyboardEventArg arg) { 
+            if (arg.type == KeyboardEventArg::PRESS)
+                HandleKeyEvent(arg, true); 
+            else if (arg.type == KeyboardEventArg::RELEASE)
+                HandleKeyEvent(arg, false);
 		}
-		void ClassicMovementHandler::HandleUpEvent(KeyboardEventArg arg) { 
-			HandleKeyEvent(arg, false); 
-		}
+
 		void ClassicMovementHandler::HandleKeyEvent(KeyboardEventArg arg, bool state) {
 			switch (arg.sym) {
 				// movement keys
@@ -239,40 +242,24 @@ namespace OpenEngine {
 			}
 		}
 
-		void ClassicMovementHandler::HandleMouseDown(MouseButtonEventArg event) {
-			mLeftClick = (event.button == BUTTON_LEFT);
-			mRightClick = (event.button == BUTTON_RIGHT);
-			mWheelUp = (event.button == BUTTON_WHEEL_UP);
-			mWheelDown = (event.button == BUTTON_WHEEL_DOWN);
-		}
-		
-		void ClassicMovementHandler::HandleMouseUp(MouseButtonEventArg event) {
-			if (event.button == BUTTON_LEFT) 
-				mLeftClick = false;
-			if (event.button == BUTTON_RIGHT)
-				mRightClick = false;
-		}
-
+		void ClassicMovementHandler::Handle(MouseButtonEventArg event) {
+            if (event.type == MouseButtonEventArg::PRESS) {
+                mLeftClick = (event.button == BUTTON_LEFT);
+                mRightClick = (event.button == BUTTON_RIGHT);
+                mWheelUp = (event.button == BUTTON_WHEEL_UP);
+                mWheelDown = (event.button == BUTTON_WHEEL_DOWN);
+            } else if (event.type == MouseButtonEventArg::RELEASE) {
+                if (event.button == BUTTON_LEFT) 
+                    mLeftClick = false;
+                if (event.button == BUTTON_RIGHT)
+                    mRightClick = false;
+            }
+        }
 		void ClassicMovementHandler::BindToEventSystem() {
-			Listener<ClassicMovementHandler,KeyboardEventArg>* downl =
-				new Listener<ClassicMovementHandler,KeyboardEventArg>(*this,&ClassicMovementHandler::HandleDownEvent);
-			IKeyboard::keyDownEvent.Add(downl);
 
-			Listener<ClassicMovementHandler,KeyboardEventArg>* upl =
-				new Listener<ClassicMovementHandler,KeyboardEventArg>(*this,&ClassicMovementHandler::HandleUpEvent);
-			IKeyboard::keyUpEvent.Add(upl);
-
-			Listener<ClassicMovementHandler, MouseButtonEventArg>* mouseDownListener = 
-				new Listener<ClassicMovementHandler, MouseButtonEventArg>(*this, &ClassicMovementHandler::HandleMouseDown);
-			IMouse::mouseDownEvent.Add(mouseDownListener);
-
-			Listener<ClassicMovementHandler, MouseButtonEventArg>* mouseUpListener = 
-				new Listener<ClassicMovementHandler, MouseButtonEventArg>(*this, &ClassicMovementHandler::HandleMouseUp);
-			IMouse::mouseUpEvent.Add(mouseUpListener);
-
-			Listener<ClassicMovementHandler, MouseMovedEventArg>* mouseMovedListener = 
-				new Listener<ClassicMovementHandler, MouseMovedEventArg>(*this, &ClassicMovementHandler::MouseMoved);
-			IMouse::mouseMovedEvent.Add(mouseMovedListener);
+            IKeyboard::keyEvent.Attach(*this);
+            IMouse::mouseMovedEvent.Attach(*this);
+            IMouse::mouseButtonEvent.Attach(*this);
 		}
 
 		void ClassicMovementHandler::SetTank(ITank* tank) {

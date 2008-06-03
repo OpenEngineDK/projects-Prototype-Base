@@ -60,6 +60,9 @@
 #include "Gamemodes/IGamemode.h"
 #include "Gamemodes/TestGamemode.h"
 
+#include <Network/ErlNetwork.h>
+#include "NetworkHandler.h"
+
 // Additional namespaces (others are in the header).
 using namespace OpenEngine::Devices;
 using namespace OpenEngine::Renderers::OpenGL;
@@ -67,6 +70,8 @@ using namespace OpenEngine::Renderers;
 using namespace OpenEngine::Resources;
 using namespace OpenEngine::Utils;
 using namespace OpenEngine::Physics;
+
+using namespace OpenEngine::Network;
 
 // Prototype namespace
 using namespace OpenEngine::Prototype;
@@ -213,16 +218,35 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	GeometryNode* seanTankGun = LoadGeometryFromFile("Tank2/gun.obj");
 	SeanTank::SetModel(seanTankBody,seanTankTurret,seanTankGun);
 
+    ErlNetwork* netm = new ErlNetwork("localhost", 2345);
+    NetworkHandler* neth = new NetworkHandler(this, netm);
+    engine.AddModule(*netm);
+    netm->Attach(*neth);
+
 	shotMgr = new ShotManager();
 	rNode->AddNode(shotMgr);
 	engine.AddModule(*shotMgr,IGameEngine::TICK_DEPENDENT);
+
+    class Temp : public IModule {
+    public:
+        NetworkHandler* net;
+        void Initialize() {}
+        void Deinitialize() {}
+        bool IsTypeOf(const std::type_info& i) { return false; }
+        void Process(float dt, float p) {
+            net->Notify();
+        }
+    };
+    Temp* t = new Temp();
+    t->net = neth;
+    engine.AddModule(*t, IGameEngine::TICK_DEPENDENT);
 
 	crosshairNode = new Crosshair();
 
 	IGamemode* gamemode = new TestGamemode();
 	engine.AddModule(*gamemode);
 	// Load tanks
-	int tankCount = 2;
+	int tankCount = 1;
 	for ( int i = 0; i < tankCount; i++ ) {
 		AddTank(i % 2);
 		gamemode->OnPlayerConnect(i);
@@ -258,7 +282,7 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	return true;
 }
 
-void GameFactory::AddTank(int i) {
+ITank* GameFactory::AddTank(int i) {
 	RigidBox* box = NULL;
 	Vector<3,float> position(2, 1, 2);
 	ITank* tank;
@@ -280,6 +304,7 @@ void GameFactory::AddTank(int i) {
 	physic->AddRigidBody(box);
 
 	//if (box != NULL) tank->GetTankTransformationNode()->GetParent()->AddNode( box->GetRigidBoxNode() );
+    return tank;
 }
 
 // Other factory methods. The returned objects are all created in the

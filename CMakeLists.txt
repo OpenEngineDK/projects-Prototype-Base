@@ -13,6 +13,8 @@ SET( PROTOTYPE_SOURCES
   TankController.cpp
   GunManager.cpp
 
+  NetworkHandler.cpp
+
   # Vehicles
   Vehicles/SnowTank.cpp
   Vehicles/SeanTank.cpp
@@ -58,4 +60,5 @@ TARGET_LINK_LIBRARIES(Prototype-Base
   Extensions_OpenGLRenderer
   Extensions_OBJResource
   Extensions_TGAResource
+  Extensions_ErlNetwork
 )

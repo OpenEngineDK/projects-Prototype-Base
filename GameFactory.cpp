@@ -276,7 +276,7 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	GeometryNode* seanTankGun = LoadGeometryFromFile("Tank2/gun.obj");
 	SeanTank::SetModel(seanTankBody,seanTankTurret,seanTankGun);
 
-    ErlNetwork* netm = new ErlNetwork("camel24", 2345);
+    ErlNetwork* netm = new ErlNetwork("camel24.daimi.au.dk", 2345);
     NetworkHandler* neth = new NetworkHandler(this, netm);
     engine.AddModule(*netm);
     netm->Attach(*neth);

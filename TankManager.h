@@ -32,6 +32,8 @@ namespace OpenEngine {
                 virtual ~TankManager();
 
                 void AddTank(ITank* tank);
+                
+                void AddTank(ITank* tank, int ID);
 
                 void RemoveTank(int i);
 

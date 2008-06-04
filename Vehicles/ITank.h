@@ -14,7 +14,7 @@
 #include <Scene/SceneNode.h>
 #include <Scene/GeometryNode.h>
 #include <Scene/TransformationNode.h>
-#include <Physics/RigidBox.h>
+#include <Physics/DynamicBody.h>
 #include "../ShotManager.h"
 #include "../GunManager.h"
 #include "../Weapons/LaserGun.h"
@@ -41,7 +41,7 @@ namespace OpenEngine {
 			TransformationNode* tankBodyTrans;
 			TransformationNode* tankTurretTrans;
 			TransformationNode* tankTurretGunTrans;
-			RigidBox* box;
+			DynamicBody* dynamicBody;
 			ShotManager* shotMgr;
 			GunManager* gunMgr;
 
@@ -52,7 +52,7 @@ namespace OpenEngine {
 			Quaternion<float> direction;
 
 		public:
-			ITank(RigidBox* box) {};
+			ITank(DynamicBody* body) {};
 			virtual ~ITank() {};
 
 			virtual void Process(const float timeSinceLast) {};
@@ -63,7 +63,7 @@ namespace OpenEngine {
 			virtual TransformationNode* GetTurretTransformationNode() = 0;
 			virtual TransformationNode* GetTurretGunTransformationNode() = 0;
 
-			virtual RigidBox* GetRigidBox()  = 0;
+			virtual DynamicBody* GetDynamicBody()  = 0;
 
 			virtual void ShootGun(int i)  = 0;
 

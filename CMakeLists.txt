@@ -33,6 +33,10 @@ SET( PROTOTYPE_SOURCES
 
   # Gamemodes
   Gamemodes/TestGamemode.cpp
+  
+  # Physics
+  ForceHandler.cpp
+  CustomRayCallback.cpp
 )
 
 # todo get rid of this!@#!
@@ -55,10 +59,11 @@ TARGET_LINK_LIBRARIES(Prototype-Base
   OpenEngine_Resources
   OpenEngine_Scene
   # Extensions
-  Extensions_FixedTimeStepPhysics
+  #Extensions_FixedTimeStepPhysics
   Extensions_SDL
   Extensions_OpenGLRenderer
   Extensions_OBJResource
   Extensions_TGAResource
   Extensions_ErlNetwork
+  Extensions_RBPhysics
 )

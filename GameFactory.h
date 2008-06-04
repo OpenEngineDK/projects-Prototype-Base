@@ -17,17 +17,18 @@
 #include <Scene/ISceneNode.h>
 
 // HACK-EDY HACK HACK
-#include <Physics/FixedTimeStepPhysics.h>
+//#include <Physics/FixedTimeStepPhysics.h>
 #include "TankManager.h"
 #include "ShotManager.h"
 #include "ClassicMovementHandler.h"
 #include <Display/FollowCamera.h>
+#include <Physics/PhysicsFacade.h>
 
 // Namespaces
 using namespace OpenEngine::Core;
 using namespace OpenEngine::Display;
 using namespace OpenEngine::Renderers;
-
+using namespace OpenEngine::Physics;
 using namespace OpenEngine::Prototype;
 
 /**
@@ -50,7 +51,8 @@ private:
     ISceneNode* dynamicObjects;
     ISceneNode* staticObjects;
     ISceneNode* physicObjects;
-    FixedTimeStepPhysics* physic;
+    //FixedTimeStepPhysics* physic;
+    PhysicsFacade* physics;
 
 public:
     GameFactory();
@@ -59,7 +61,9 @@ public:
     IRenderer*   GetRenderer();
 
     //Half HACK
-    ITank* AddTank(int i);
+    ITank*       AddTank(int i/*, PhysicsFacade* physics*/);
+    void 		 RemoveTank(int i);
+
     TankManager* tankMgr;
     ClassicMovementHandler* classicMovement;
     //FollowCamera* camera;

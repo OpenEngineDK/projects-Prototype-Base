@@ -5,15 +5,19 @@ namespace OpenEngine {
     namespace Prototype {
 
         TankManager::TankManager() {
-		newID = 0;
+			newID = 0;
         }
 
         TankManager::~TankManager() {
         }
-
+        
         void TankManager::AddTank(ITank* tank) {
             tankMap[newID] = tank;
-	    newID++;
+	    	newID++;
+        }
+        
+        void TankManager::AddTank(ITank* tank, int ID) {
+            tankMap[ID] = tank;
         }
 
         void TankManager::RemoveTank(int i) {

@@ -20,7 +20,7 @@ NetworkHandler::~NetworkHandler() {
 }
 
 void NetworkHandler::Notify(){
-    logger.info << "notify: " << Convert::int2string(this->id) << logger.end;
+    //logger.info << "notify: " << Convert::int2string(this->id) << logger.end;
     // send position
     NetworkEventArg arg;
     arg.id = CPOS;
@@ -43,7 +43,7 @@ void NetworkHandler::Handle(NetworkEventArg arg) {
     char* buf = arg.payload;
     float pos[3];
 
-    logger.info << "received net pkg: " + Convert::int2string(arg.id) << logger.end;
+    //logger.info << "received net pkg: " + Convert::int2string(arg.id) << logger.end;
 
     switch (arg.id) {
 

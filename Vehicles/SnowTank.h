@@ -16,7 +16,6 @@
 #include <Scene/SceneNode.h>
 #include <Scene/GeometryNode.h>
 #include <Scene/TransformationNode.h>
-#include <Physics/RigidBox.h>
 #include "../ShotManager.h"
 #include "../GunManager.h"
 
@@ -33,7 +32,7 @@ namespace OpenEngine {
 			static GeometryNode* turretModel;
 			static GeometryNode* gunModel;
 
-			SnowTank(RigidBox* box);
+			SnowTank(DynamicBody* body);
 			virtual ~SnowTank();
 
 			virtual void Process(const float timeSinceLast);
@@ -46,7 +45,7 @@ namespace OpenEngine {
 			TransformationNode* GetTurretTransformationNode();
 			TransformationNode* GetTurretGunTransformationNode();
 
-			RigidBox* GetRigidBox();
+			DynamicBody* GetDynamicBody();
 			void ShootGun(int i);
 		};
             }

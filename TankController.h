@@ -10,7 +10,6 @@
 #ifndef _TANKCONTROLLER_H_
 #define _TANKCONTROLLER_H_
 
-#include <Physics/FixedTimeStepPhysics.h>
 #include "TankManager.h"
 #include "ClassicMovementHandler.h"
 #include <Display/FollowCamera.h>

@@ -12,7 +12,7 @@
 #include <Core/IGameEngine.h>
 #include <Devices/IMouse.h>
 #include <Math/Quaternion.h>
-#include <Physics/RigidBox.h>
+//#include <Physics/RigidBox.h>
 #include "TankController.h"
 
 namespace OpenEngine {
@@ -21,9 +21,9 @@ namespace OpenEngine {
 		using OpenEngine::Core::IGameEngine;
 		using OpenEngine::Scene::TransformationNode;
 		using namespace OpenEngine::Math;
-		using namespace OpenEngine::Physics;
+		//using namespace OpenEngine::Physics;
 
-		ClassicMovementHandler::ClassicMovementHandler(IMouse* m, FixedTimeStepPhysics* physics, int midX, int midY) : mouse(m),
+		ClassicMovementHandler::ClassicMovementHandler(IMouse* m, /*FixedTimeStepPhysics* physics,*/ int midX, int midY) : mouse(m),
 			forward(false), back(false),
 			right(false), left(false),
 			up(false), down(false) {
@@ -35,7 +35,7 @@ namespace OpenEngine {
 				mLeftClick = mRightClick = false;
 				mWheelUp = mWheelDown = false;
 				reset = false;
-				this->physics = physics;
+				//this->physics = physics;
                                 turretRotation = turretPivot = 0.0;
                                 cameraRotation = cameraPivot = 0.0;
                                 rotationFactor = 100.0;
@@ -137,39 +137,40 @@ namespace OpenEngine {
 
 
                         // Keyboard handling
-			RigidBox* box = tank->GetRigidBox();
-			if( box == NULL ) return;
+			//RigidBody* box = tank->GetRigidBox();
+			//if( box == NULL ) return;
 			static float speed = 1750.0f;
 			static float turn = 550.0f;
 			Matrix<3,3,float> m; //orientation
-			if( forward || back || left || right ) m = box->GetRotationMatrix();
-
+			//if( forward || back || left || right ) m = box->GetRotationMatrix();
 			float delta = dt / 1000 * 8;
+			/*
 			// Forward 
 			if( forward ){
 				Vector<3,float> dir = m.GetRow(0) * delta;
-				box->AddForce(dir * speed, 1);
-				box->AddForce(dir * speed, 2);
-				box->AddForce(dir * speed, 3);
-				box->AddForce(dir * speed, 4);
+				box->ApplyForce(dir * speed, 1);
+				box->ApplyForce(dir * speed, 2);
+				box->ApplyForce(dir * speed, 3);
+				box->ApplyForce(dir * speed, 4);
 			}
 			if( back ){
 				Vector<3,float> dir = -m.GetRow(0) * delta;
-				box->AddForce(dir * speed, 5);
-				box->AddForce(dir * speed, 6);
-				box->AddForce(dir * speed, 7);
-				box->AddForce(dir * speed, 8);
+				box->ApplyForce(dir * speed, 5);
+				box->ApplyForce(dir * speed, 6);
+				box->ApplyForce(dir * speed, 7);
+				box->ApplyForce(dir * speed, 8);
 			}
 			if( left ){
 				Vector<3,float> dir = -m.GetRow(2) * delta;
-				box->AddForce(dir * turn, 2);
-				box->AddForce(dir * turn, 4);
+				box->ApplyForce(dir * turn, 2);
+				box->ApplyForce(dir * turn, 4);
 			}
 			if( right ) {
 				Vector<3,float> dir = m.GetRow(2) * delta;
-				box->AddForce(dir * turn, 1);
-				box->AddForce(dir * turn, 3);
+				box->ApplyForce(dir * turn, 1);
+				box->ApplyForce(dir * turn, 3);
 			}
+			*/
 			if( up ){
 				tankCounter++;
 				tankCtrl->SetPlayerTank(tankCounter);
@@ -201,6 +202,7 @@ namespace OpenEngine {
 				mWheelDown = false;
 			}
 			if ( reset ) {
+				/*
 				physics->Initialize();
 				if( physics != NULL ){
 					if( box != NULL ) {
@@ -208,6 +210,7 @@ namespace OpenEngine {
 						box->SetCenter( Vector<3,float>(2, 1, 2) );
 					}
 				}
+				*/
 				reset = false;
 			}
 		}

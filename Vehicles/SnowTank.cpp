@@ -19,11 +19,11 @@ namespace OpenEngine {
 		GeometryNode* SnowTank::turretModel = NULL;
 		GeometryNode* SnowTank::gunModel = NULL;
 
-		SnowTank::SnowTank(RigidBox* box) : ITank(box) {
+		SnowTank::SnowTank(DynamicBody* dynamicBody) : ITank(dynamicBody) {
 			GeometryNode* tankBody = dynamic_cast<GeometryNode*>(bodyModel->Clone());
 			GeometryNode* tankTurret = dynamic_cast<GeometryNode*>(turretModel->Clone());
 			GeometryNode* tankGun = dynamic_cast<GeometryNode*>(gunModel->Clone());
-			this->box = box;
+			this->dynamicBody = dynamicBody;
 
 			tankBodyTrans = new TransformationNode();
 			tankBodyTrans->AddNode(tankBody);
@@ -85,8 +85,8 @@ namespace OpenEngine {
 			return tankTurretGunTrans;
 		}
 
-		RigidBox* SnowTank::GetRigidBox() {
-			return box;
+		DynamicBody* SnowTank::GetDynamicBody() {
+			return dynamicBody;
 		}
 
 		void SnowTank::ShootGun(int i) {

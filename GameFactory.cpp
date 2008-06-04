@@ -38,13 +38,13 @@
 
 // from AccelerationStructures extension
 #include <Scene/CollectedGeometryTransformer.h>
-#include <Scene/QuadTransformer.h>
-#include <Scene/BSPTransformer.h>
-#include <Renderers/AcceleratedRenderingView.h>
+//#include <Scene/QuadTransformer.h>
+//#include <Scene/BSPTransformer.h>
+//#include <Renderers/AcceleratedRenderingView.h>
 
 // from FixedTimeStepPhysics
-#include <Physics/FixedTimeStepPhysics.h>
-#include <Physics/RigidBox.h>
+//#include <Physics/FixedTimeStepPhysics.h>
+//#include <Physics/RigidBox.h>
 
 // Project files
 #include "RenderStateHandler.h"
@@ -60,8 +60,28 @@
 #include "Gamemodes/IGamemode.h"
 #include "Gamemodes/TestGamemode.h"
 
+
+#include <Geometry/Sphere.h>
+#include <Geometry/AABB.h>
+#include <Geometry/TriangleMesh.h>
+#include <Geometry/CompoundShape.h>
+
+
+// RigidBody extension
+// #include <RigidBody/State.h>
+// #include <RigidBody/Properties.h>
+#include <Physics/RigidBody.h>
+#include <Physics/DynamicBody.h>
+// #include <RigidBody/Contact.h>
+//#include <Physics/PhysicsFacade.h>
+// Project files
+// ...
+#include "ForceHandler.h"
+
+
 #include <Network/ErlNetwork.h>
 #include "NetworkHandler.h"
+
 
 // Additional namespaces (others are in the header).
 using namespace OpenEngine::Devices;
@@ -98,6 +118,39 @@ GeometryNode* LoadGeometryFromFile(string filepath) {
 	mod_res->Unload();
 	return mod_node;
 }
+
+IRigidBody * CreateSphere() {
+  DynamicBody * sphereBody = new DynamicBody( new RigidBody( new Sphere( Vector<3,float>(0,2,40),40.f) ) );
+
+  sphereBody->SetPosition(Vector<3,float>(0,200,40));
+  sphereBody->SetLinearVelocity(Vector<3,float>(0,0,0));
+  sphereBody->SetMass(300.0f);
+  return sphereBody;
+}
+
+void CreateCrate(PhysicsFacade * physics, ISceneNode* node, ISceneNode* scene, float width = 11.0, float height = 11.0) {
+  int maxcount = 12;
+  for (int i = 0; i < maxcount; i++) {
+  	ISceneNode* newNode = node->Clone();
+    AABB * shape = new AABB(*newNode);
+    DynamicBody * blockBody = new DynamicBody( new RigidBody(shape) );
+    
+    TransformationNode* transNode = blockBody->GetTransformationNode();
+	transNode->AddNode(newNode);
+
+	int cols = 10;
+	int row = i / cols; //((float)i / maxcount) * cols;
+	int col = i % cols;
+
+    Vector<3,float> position(200.0, 1.0 + row * height, col * width);
+    blockBody->SetMass(0.2f);
+    blockBody->SetName("Box");
+    blockBody->SetPosition(position);
+    physics->AddRigidBody(blockBody);
+    scene->AddNode(transNode);
+  }
+}
+
 /**
 * Factory constructor.
 *
@@ -136,7 +189,7 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	engine.AddModule(*input);
 
 	// Add Statistics module
-	//engine.AddModule(*(new OpenEngine::Utils::Statistics(1000)));
+	engine.AddModule(*(new OpenEngine::Utils::Statistics(1000)));
 
 	// Create a root scene node
 	SceneNode* scene = new SceneNode();
@@ -183,20 +236,25 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 
 	//Static
 	GeometryNode* geoSkyBox = LoadGeometryFromFile("MarioBox/MarioBox.obj");
-	GeometryNode* geoGround = LoadGeometryFromFile("2DGround/2DGround.obj");
+	
+	string islandGeometry;
+	//islandGeometry = "2DGround/2DGround.obj"; 
+	islandGeometry = "Island/island.obj";
+	
+	GeometryNode* geoGround = LoadGeometryFromFile(islandGeometry);
 	staticObjects->AddNode(geoSkyBox);
 	staticObjects->AddNode(geoGround);
 
 	//Physic
-	GeometryNode* geoGround2 = LoadGeometryFromFile("2DGround/2DGround.obj");
+	GeometryNode* geoGround2 = LoadGeometryFromFile(islandGeometry);
 	physicObjects->AddNode(geoGround2);
 
 	// Add FixedTimeStepPhysics module
-	physic = new FixedTimeStepPhysics( physicObjects );
-	engine.AddModule(*physic, IGameEngine::TICK_DEPENDENT);
+	//physic = new FixedTimeStepPhysics( physicObjects );
+	//engine.AddModule(*physic, IGameEngine::TICK_DEPENDENT);
 
 	// Register movement handler to be able to move the camera
-	classicMovement = new ClassicMovementHandler(input, physic);
+	classicMovement = new ClassicMovementHandler(input);
 	classicMovement->BindToEventSystem();
 	engine.AddModule(*classicMovement,IGameEngine::TICK_DEPENDENT);
 
@@ -218,7 +276,7 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	GeometryNode* seanTankGun = LoadGeometryFromFile("Tank2/gun.obj");
 	SeanTank::SetModel(seanTankBody,seanTankTurret,seanTankGun);
 
-    ErlNetwork* netm = new ErlNetwork("localhost", 2345);
+    ErlNetwork* netm = new ErlNetwork("camel24", 2345);
     NetworkHandler* neth = new NetworkHandler(this, netm);
     engine.AddModule(*netm);
     netm->Attach(*neth);
@@ -242,20 +300,48 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
     engine.AddModule(*t, IGameEngine::TICK_DEPENDENT);
 
 	crosshairNode = new Crosshair();
+	
+	
+	
+	
+	
+	
+  	// create physics engine
+	AABB worldAabb(Vector<3,float>(-5000,-5000,-5000),Vector<3,float>(5000,5000,5000));
+	/*PhysicsFacade * */ physics = new PhysicsFacade(worldAabb);
+	engine.AddModule(*physics,IGameEngine::TICK_DEPENDENT);
+	
+	
+	
+	
+	
+	
 
 	IGamemode* gamemode = new TestGamemode();
 	engine.AddModule(*gamemode);
 	// Load tanks
 	int tankCount = 1;
 	for ( int i = 0; i < tankCount; i++ ) {
-		AddTank(i % 2);
+		//AddTank(i % 2/*, physics*/);
+		AddTank(i);
 		gamemode->OnPlayerConnect(i);
 	}
 
 	tankCtrl->SetPlayerTank(0);
+	
+    // steering
+    ForceHandler * handler = new ForceHandler(tankMgr->GetTank(0)->GetDynamicBody(), physics);
+    SDLInput::keyEvent.Attach(*handler);
+    engine.AddModule(*handler,IGameEngine::TICK_DEPENDENT);
+    scene->AddNode(handler->GetRenderNode());
+
 
 	rNode->AddNode(dynamicObjects);
+	
+	
+	
 
+	/*
 	// Process static tree
 	logger.info << "Preprocessing of physics tree: started" << logger.end;
 	CollectedGeometryTransformer collT;
@@ -273,39 +359,67 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	quadT2.Transform(*staticObjects);
 	rNode->AddNode(staticObjects);
 	logger.info << "Preprocessing of static tree: done" << logger.end;
+	*/	
+	
+	
+	CreateSphere();
+	
 
-	// Visualization of the frustum
-	//frustum->VisualizeClipping(true);
-	//rNode->AddNode(frustum->GetFrustumNode());	
+  // physics debug node
+  //scene->AddNode(physics->getRenderNode(this->renderer));
+  
+  GeometryNode* geoBox = LoadGeometryFromFile("Box/Box.obj");
+  CreateCrate(physics, geoBox, scene);
+  
+  // load static geometry
+   {
+    TriangleMesh * triMesh = new TriangleMesh(*physicObjects);
+    RigidBody * meshBody = new RigidBody(triMesh);
+    meshBody->SetName("Island");
+    meshBody->SetPosition(Vector<3,float>(0,0,5.0));
+    physics->AddRigidBody(meshBody);
+    rNode->AddNode(physicObjects);
+   }
 
 	// Return true to signal success.
 	return true;
 }
 
+
 ITank* GameFactory::AddTank(int i) {
-	RigidBox* box = NULL;
-	Vector<3,float> position(2, 1, 2);
+	DynamicBody* tankBody = NULL;
 	ITank* tank;
-	if ( i == 0 ) {
-		box = new RigidBox( Box(*(SnowTank::bodyModel)->GetFaceSet()));
-		box->SetCenter( position );
-		tank = new SnowTank(box);
-	} else if (i == 1) {
-		box = new RigidBox( Box(*(SeanTank::bodyModel)->GetFaceSet()));
-		box->SetCenter( position );
-		tank = new SeanTank(box);
-	}	
+	tankBody = new DynamicBody( new RigidBody( new AABB(*SnowTank::bodyModel) ) );
+	tank = new SnowTank(tankBody);
 
 	tank->SetShotManager(shotMgr);
-	tankMgr->AddTank(tank);
+	tankMgr->AddTank(tank, i);
 
-	dynamicObjects->AddNode(tank->GetTankTransformationNode());
-	box->SetTransformationNode(tank->GetTankTransformationNode());
-	physic->AddRigidBody(box);
+    tankBody->SetName("tank");
+    TransformationNode* mod_tran = tankBody->GetTransformationNode();
+    //mod_tran->SetPosition(Vector<3,float>(0,20 * i,5));    
+    tankBody->SetMass(1.0f);
+    tankBody->SetAngularDamping(20.0f);
+    tankBody->SetLinearDamping(5.0f);
+    physics->AddRigidBody(tankBody);
 
-	//if (box != NULL) tank->GetTankTransformationNode()->GetParent()->AddNode( box->GetRigidBoxNode() );
+    mod_tran->AddNode(tank->GetTankTransformationNode());
+    dynamicObjects->AddNode(mod_tran);
+    
     return tank;
 }
+
+void GameFactory::RemoveTank(int i) {
+	ITank* tank = tankMgr->GetTank(i);
+	
+	ISceneNode* node = tank->GetTankTransformationNode()->GetParent();
+	physics->RemoveRigidBody(tank->GetDynamicBody());
+
+    dynamicObjects->RemoveNode(node);
+    
+    tankMgr->RemoveTank(i);
+}
+
 
 // Other factory methods. The returned objects are all created in the
 // factory constructor.

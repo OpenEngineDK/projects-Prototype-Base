@@ -30,8 +30,10 @@ namespace OpenEngine {
 			LightningShot* shot = new LightningShot(shotPos,shotLength);
 			gunMgr->GetTank()->GetShotManager()->AddShot(shot);
 
-			OpenEngine::Physics::RigidBox* box = gunMgr->GetTank()->GetRigidBox();
+			/*
+			OpenEngine::Physics::RigidBody* box = gunMgr->GetTank()->GetRigidBox();
 
+			
 			if( box == NULL ) return;
 			float force = 75.0;
 			Vector<3,float> forceDirection = (shotPos - shotLength).GetNormalize();
@@ -44,6 +46,7 @@ namespace OpenEngine {
 			box->AddForce(-forceDirection * force, 4);
 			box->AddForce(-forceDirection * force, 7);
 			box->AddForce(-forceDirection * force, 8);			
+			*/
 		}
 
 		bool LightningGun::GunReady() {

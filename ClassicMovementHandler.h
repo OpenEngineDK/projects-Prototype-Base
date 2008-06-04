@@ -16,7 +16,7 @@
 #include <Devices/IMouse.h>
 #include <Scene/TransformationNode.h>
 #include <Math/Vector.h>
-#include <Physics/FixedTimeStepPhysics.h>
+//#include <Physics/FixedTimeStepPhysics.h>
 #include <vector>
 
 #include "Vehicles/ITank.h"
@@ -34,7 +34,7 @@ namespace OpenEngine {
 		using namespace OpenEngine::Display;
 		using namespace OpenEngine::Scene;
 		using namespace OpenEngine::Devices;
-		using namespace OpenEngine::Physics;
+		//using namespace OpenEngine::Physics;
                 using namespace OpenEngine::Prototype::Vehicles;
 
 		/**
@@ -46,7 +46,7 @@ namespace OpenEngine {
                                        public IListener<MouseMovedEventArg> {
 
 		private:
-			FixedTimeStepPhysics* physics;
+			//FixedTimeStepPhysics* physics;
 			ITank* tank;
 			IMouse* mouse;
 			bool forward, back, right, left, up, down, mouse3Down;  // active move direction
@@ -76,7 +76,7 @@ namespace OpenEngine {
 
 			std::vector<TransformationNode*> nodes; // node list
 
-           		ClassicMovementHandler(IMouse* m, FixedTimeStepPhysics* physics, int midX = 300, int midY = 300);
+           		ClassicMovementHandler(IMouse* m, /*FixedTimeStepPhysics* physics,*/ int midX = 300, int midY = 300);
 			~ClassicMovementHandler();
 			void Initialize();
 			void Deinitialize();

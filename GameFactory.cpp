@@ -59,6 +59,7 @@
 #include "Vehicles/SeanTank.h"
 #include "Gamemodes/IGamemode.h"
 #include "Gamemodes/TestGamemode.h"
+#include <Scene/PointLightNode.h>
 
 
 #include <Geometry/Sphere.h>
@@ -413,6 +414,15 @@ ITank* GameFactory::AddTank(int i) {
 
     mod_tran->AddNode(tank->GetTankTransformationNode());
     dynamicObjects->AddNode(mod_tran);
+    
+    // Add point light to the tank    
+    PointLightNode* pln = new PointLightNode();
+            
+    pln->constAtt = 1.0;
+    pln->linearAtt = 0.001;
+    pln->quadAtt = 0.0001;
+    
+    mod_tran->AddNode(pln);
     
     return tank;
 }

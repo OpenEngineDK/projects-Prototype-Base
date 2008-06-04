@@ -129,7 +129,7 @@ IRigidBody * CreateSphere() {
 }
 
 void CreateCrate(PhysicsFacade * physics, ISceneNode* node, ISceneNode* scene, float width = 11.0, float height = 11.0) {
-  int maxcount = 12;
+  int maxcount = 50;
   for (int i = 0; i < maxcount; i++) {
   	ISceneNode* newNode = node->Clone();
     AABB * shape = new AABB(*newNode);
@@ -138,7 +138,7 @@ void CreateCrate(PhysicsFacade * physics, ISceneNode* node, ISceneNode* scene, f
     TransformationNode* transNode = blockBody->GetTransformationNode();
 	transNode->AddNode(newNode);
 
-	int cols = 10;
+	int cols = 5;
 	int row = i / cols; //((float)i / maxcount) * cols;
 	int col = i % cols;
 
@@ -275,17 +275,9 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	GeometryNode* seanTankTurret = LoadGeometryFromFile("Tank2/turret.obj");
 	GeometryNode* seanTankGun = LoadGeometryFromFile("Tank2/gun.obj");
 	SeanTank::SetModel(seanTankBody,seanTankTurret,seanTankGun);
-
-    ErlNetwork* netm = new ErlNetwork("camel24.daimi.au.dk", 2345);
-    NetworkHandler* neth = new NetworkHandler(this, netm);
-    engine.AddModule(*netm);
-    netm->Attach(*neth);
-
-	shotMgr = new ShotManager();
-	rNode->AddNode(shotMgr);
-	engine.AddModule(*shotMgr,IGameEngine::TICK_DEPENDENT);
-
-    class Temp : public IModule {
+	
+	
+	class Temp : public IModule {
     public:
         NetworkHandler* net;
         void Initialize() {}
@@ -295,9 +287,24 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
             net->Notify();
         }
     };
-    Temp* t = new Temp();
-    t->net = neth;
-    engine.AddModule(*t, IGameEngine::TICK_DEPENDENT);
+
+	try {
+    	ErlNetwork* netm = new ErlNetwork("camel24.daimi.au.dk", 2345);
+    	NetworkHandler* neth = new NetworkHandler(this, netm);
+    	engine.AddModule(*netm);
+    	netm->Attach(*neth);
+    	
+    	Temp* t = new Temp();
+    	t->net = neth;
+    	engine.AddModule(*t, IGameEngine::TICK_DEPENDENT);
+    } catch (Exception e) {
+    	logger.error << e.what() << logger.end;
+    }
+
+	shotMgr = new ShotManager();
+	rNode->AddNode(shotMgr);
+	engine.AddModule(*shotMgr,IGameEngine::TICK_DEPENDENT);
+
 
 	crosshairNode = new Crosshair();
 	
@@ -336,7 +343,9 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
     scene->AddNode(handler->GetRenderNode());
 
 
+	rNode->AddNode(staticObjects);
 	rNode->AddNode(dynamicObjects);
+	rNode->AddNode(physicObjects);
 	
 	
 	
@@ -378,7 +387,6 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
     meshBody->SetName("Island");
     meshBody->SetPosition(Vector<3,float>(0,0,5.0));
     physics->AddRigidBody(meshBody);
-    rNode->AddNode(physicObjects);
    }
 
 	// Return true to signal success.

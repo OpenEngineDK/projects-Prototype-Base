@@ -24,12 +24,16 @@
 #include <Display/FollowCamera.h>
 #include <Physics/PhysicsFacade.h>
 
+// Particle system
+#include <Particles/ParticleSystem.h>
+
 // Namespaces
 using namespace OpenEngine::Core;
 using namespace OpenEngine::Display;
 using namespace OpenEngine::Renderers;
 using namespace OpenEngine::Physics;
 using namespace OpenEngine::Prototype;
+using namespace OpenEngine::Particles;
 
 /**
  * Game factory definition.
@@ -53,6 +57,7 @@ private:
     ISceneNode* physicObjects;
     //FixedTimeStepPhysics* physic;
     PhysicsFacade* physics;
+    ParticleSystem* particleSystem;
 
 public:
     GameFactory();

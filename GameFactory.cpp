@@ -38,13 +38,10 @@
 
 // from AccelerationStructures extension
 #include <Scene/CollectedGeometryTransformer.h>
-//#include <Scene/QuadTransformer.h>
-//#include <Scene/BSPTransformer.h>
-//#include <Renderers/AcceleratedRenderingView.h>
-
-// from FixedTimeStepPhysics
-//#include <Physics/FixedTimeStepPhysics.h>
-//#include <Physics/RigidBox.h>
+#include <Scene/QuadTransformer.h>
+#include <Scene/BSPTransformer.h>
+#include <Scene/ASDotVisitor.h>
+#include <Renderers/AcceleratedRenderingView.h>
 
 // Project files
 #include "RenderStateHandler.h"
@@ -68,20 +65,26 @@
 #include <Geometry/CompoundShape.h>
 
 
-// RigidBody extension
-// #include <RigidBody/State.h>
-// #include <RigidBody/Properties.h>
+// Physics extension
 #include <Physics/RigidBody.h>
 #include <Physics/DynamicBody.h>
-// #include <RigidBody/Contact.h>
-//#include <Physics/PhysicsFacade.h>
-// Project files
-// ...
 #include "ForceHandler.h"
 
-
+// Network extension
 #include <Network/ErlNetwork.h>
 #include "NetworkHandler.h"
+
+// Particle extension
+#include <Particles/ParticleGroups.h>
+#include "ParticleGroupBuilder.h"
+#include <Particles/Particles.h>
+#include <Particles/Modifiers.h>
+#include <Math/Interpolators.h>
+#include <Particles/PointEmitter.h>
+#include <Utils/PropertyList.h>
+
+#define MyParticleGroup EnergyParticleGroup<BillBoardParticle<EnergyParticle<DirectionParticle<IParticle> > > >
+#define MyParticle EnergyParticle<BillBoardParticle<EnergyParticle<DirectionParticle<IParticle> > > >
 
 
 // Additional namespaces (others are in the header).
@@ -101,14 +104,15 @@ using namespace OpenEngine::Prototype::Gamemode;
 // composite rendering view. Uses RenderingView for drawing and
 // AcceleratedRenderingView for clipping. 
 class MyRenderingView : 
-	public RenderingView/*,
-						public AcceleratedRenderingView*/ {
+    public RenderingView,
+    public AcceleratedRenderingView {
 public:
-	MyRenderingView(Viewport& viewport) :
-	  IRenderingView(viewport),
-		  RenderingView(viewport)/*,
-								 AcceleratedRenderingView(viewport)*/ {
-	  }
+    MyRenderingView(Viewport& viewport) :
+        IRenderingView(viewport),
+        RenderingView(viewport),
+        AcceleratedRenderingView(viewport) {
+
+    }
 };
 
 GeometryNode* LoadGeometryFromFile(string filepath) {
@@ -129,10 +133,11 @@ IRigidBody * CreateSphere() {
   return sphereBody;
 }
 
-void CreateCrate(PhysicsFacade * physics, ISceneNode* node, ISceneNode* scene, float width = 11.0, float height = 11.0) {
+void CreateCrate(PhysicsFacade * physics, FaceSet* faces, ISceneNode* scene, float width = 11.0, float height = 11.0) {
   int maxcount = 50;
   for (int i = 0; i < maxcount; i++) {
-  	ISceneNode* newNode = node->Clone();
+  	//ISceneNode* newNode = node->Clone();
+  	GeometryNode* newNode = new GeometryNode(faces);
     AABB * shape = new AABB(*newNode);
     DynamicBody * blockBody = new DynamicBody( new RigidBody(shape) );
     
@@ -162,6 +167,7 @@ GameFactory::GameFactory() {
 
 	// Create a frame and viewport.
 	this->frame = new SDLFrame(1024, 768, 32);
+	//this->frame = new SDLFrame(640, 480, 32);
 
 	// Main viewport
 	viewport = new Viewport(*frame);
@@ -234,6 +240,21 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	dynamicObjects = new SceneNode();
 	staticObjects  = new SceneNode();
 	physicObjects  = new SceneNode();
+	
+	
+	
+	// Particles
+	particleSystem = new ParticleSystem();    
+	engine.AddModule(*particleSystem, IGameEngine::TICK_DEPENDENT);
+	
+	//group->Spawn();
+	//group->SetMode(MyParticleGroup::ALL);
+	
+	//PointEmitter<MyParticle >* emitter = (PointEmitter<MyParticle >*)group->GetEmitter();
+	//emitter->prototype->pos = Vector<3,float>(100.0, 20.0, 0.0);
+	
+	// end particles
+	
 
 	//Static
 	GeometryNode* geoSkyBox = LoadGeometryFromFile("MarioBox/MarioBox.obj");
@@ -290,7 +311,7 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
     };
 
 	try {
-    	ErlNetwork* netm = new ErlNetwork("camel24.daimi.au.dk", 2345);
+    	ErlNetwork* netm = new ErlNetwork("localhost", 2345);
     	NetworkHandler* neth = new NetworkHandler(this, netm);
     	engine.AddModule(*netm);
     	netm->Attach(*neth);
@@ -316,8 +337,9 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	
   	// create physics engine
 	AABB worldAabb(Vector<3,float>(-5000,-5000,-5000),Vector<3,float>(5000,5000,5000));
-	/*PhysicsFacade * */ physics = new PhysicsFacade(worldAabb);
-	engine.AddModule(*physics,IGameEngine::TICK_DEPENDENT);
+	Vector<3,float> gravity(0.0, -200.0, 0.0);
+	physics = new PhysicsFacade(worldAabb, gravity);
+	engine.AddModule(*physics, IGameEngine::TICK_DEPENDENT);
 	
 	
 	
@@ -341,35 +363,21 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
     ForceHandler * handler = new ForceHandler(tankMgr->GetTank(0)->GetDynamicBody(), physics);
     SDLInput::keyEvent.Attach(*handler);
     engine.AddModule(*handler,IGameEngine::TICK_DEPENDENT);
-    scene->AddNode(handler->GetRenderNode());
+    rNode->AddNode(handler->GetRenderNode());
 
+	/*
+    logger.info << "Preprocessing of static tree: started" << logger.end;
+    QuadTransformer quadT;
+    quadT.SetMaxFaceCount(500);
+    quadT.SetMaxQuadSize(100);
+    quadT.Transform(*staticObjects);
+    rNode->AddNode(staticObjects);
+    logger.info << "Preprocessing of static tree: done" << logger.end;
+	*/
 
 	rNode->AddNode(staticObjects);
 	rNode->AddNode(dynamicObjects);
 	rNode->AddNode(physicObjects);
-	
-	
-	
-
-	/*
-	// Process static tree
-	logger.info << "Preprocessing of physics tree: started" << logger.end;
-	CollectedGeometryTransformer collT;
-	QuadTransformer quadT;
-	BSPTransformer bspT;
-	collT.Transform(*physicObjects);
-	quadT.Transform(*physicObjects);
-	bspT.Transform(*physicObjects);
-	logger.info << "Preprocessing of physics tree: done" << logger.end;
-
-	logger.info << "Preprocessing of static tree: started" << logger.end;
-	QuadTransformer quadT2;
-	quadT2.SetMaxFaceCount(500);
-	quadT2.SetMaxQuadSize(100);
-	quadT2.Transform(*staticObjects);
-	rNode->AddNode(staticObjects);
-	logger.info << "Preprocessing of static tree: done" << logger.end;
-	*/	
 	
 	
 	CreateSphere();
@@ -379,7 +387,7 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
   //scene->AddNode(physics->getRenderNode(this->renderer));
   
   GeometryNode* geoBox = LoadGeometryFromFile("Box/Box.obj");
-  CreateCrate(physics, geoBox, scene);
+  CreateCrate(physics, geoBox->GetFaceSet(), scene);
   
   // load static geometry
    {
@@ -423,6 +431,31 @@ ITank* GameFactory::AddTank(int i) {
     pln->quadAtt = 0.0001;
     
     mod_tran->AddNode(pln);
+    
+    // Add particle system to the tank
+    PropertyList* plist = new PropertyList("particles.txt");    
+    ParticleGroupBuilder* groupBuilder = new ParticleGroupBuilder(*plist, string("p1"));
+	MyParticleGroup* group = (MyParticleGroup*)(groupBuilder->GetParticleGroup());
+    particleSystem->AddGroup(group);
+    staticObjects->AddNode(groupBuilder->GetRenderNode());
+    
+    /*
+    IEmitter<MyParticle>* emitter = groupBuilder->BuildEmitter<MyParticle>(*plist, "p1");
+    //emitter->prototype.pos = tank->GetTankTransformationNode()->GetPosition();
+    group->SetEmitter(emitter);
+    
+    MyParticle* prototype = groupBuilder->BuildParticle<MyParticle>(*plist, "p1.emitter.prototype");
+    Vector<3,float>* position = &tank->GetTankTransformationNode()->GetPosition();
+    prototype->SetPosition(*position);
+    emitter->SetPrototype(prototype);
+    */
+    
+    /*
+    Vector<3,float>* emitterPos = plist->GetVectorP<3,float>("p1.emitter.prototype.pos");
+    printf("emitterpos = %f, %f, %f\n", (*emitterPos)[0], (*emitterPos)[1], (*emitterPos)[2]);
+    *emitterPos = tank->GetTankTransformationNode()->GetPosition();
+    printf("emitterpos = %f, %f, %f\n", (*emitterPos)[0], (*emitterPos)[1], (*emitterPos)[2]);
+    */
     
     return tank;
 }

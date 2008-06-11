@@ -27,7 +27,8 @@ void NetworkHandler::Notify(){
     arg.length = 2 + 3*sizeof(float);
 
     float pos[3];
-    this->gf->tankMgr->GetTank(0)->GetTankTransformationNode()->GetPosition().ToArray(pos);
+    //this->gf->tankMgr->GetTank(0)->GetTankTransformationNode()->GetPosition().ToArray(pos);
+    this->gf->tankMgr->GetTank(0)->GetDynamicBody()->GetPosition().ToArray(pos);
 
     char buf[arg.length];
 
@@ -85,7 +86,7 @@ void NetworkHandler::Handle(NetworkEventArg arg) {
 void NetworkHandler::CreatePlayerNode(int id) {
     logger.info << "creating tank for player id: " + Convert::int2string(id)
                 << logger.end;
-    ITank* t = this->gf->AddTank(1);
+    ITank* t = this->gf->AddTank(id);
     this->players[id] = t;
 }
 
@@ -94,5 +95,7 @@ void NetworkHandler::DeletePlayerNode(int id) {
 }
 
 void NetworkHandler::UpdatePlayerNode(int id, Vector<3,float> pos) {
-    this->players[id]->GetTankTransformationNode()->SetPosition(pos);
+    //this->players[id]->GetTankTransformationNode()->SetPosition(pos);
+    Vector<3,float> positionDisplacement(0.0, 1.0, 0.0);
+    this->players[id]->GetDynamicBody()->SetPosition(pos + positionDisplacement);
 }

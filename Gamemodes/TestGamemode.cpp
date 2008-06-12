@@ -8,14 +8,14 @@ namespace OpenEngine {
 				printf("TestGamemode::OnGameModeInit()\n");
 
 				//call TestCallbackFunction immediately and just once
-				SetCallback(&TestGamemode::TestCallbackFunction);
+				//SetCallback(&TestGamemode::TestCallbackFunction);
 
 				//call TestCallbackFunction2 after 15 seconds and just once
-				SetCallback(&TestGamemode::TestCallbackFunction2, 15000);
+				//SetCallback(&TestGamemode::TestCallbackFunction2, 15000);
 
 				count = 0;
 				//call TestCallbackFunction3 every 2 seconds
-				SetCallback(&TestGamemode::TestCallbackFunction3, 2000, true);
+				//SetCallback(&TestGamemode::TestCallbackFunction3, 2000, true);
 
 				return 1;
 			}
@@ -80,10 +80,7 @@ namespace OpenEngine {
 			}
 
 			int TestGamemode::OnPlayerCommandText(int playerid, string cmdtext) {
-				char tmp[256];
-				sprintf(tmp, "Player %d: ", playerid);
-				string toWrite = string(tmp) + cmdtext + "\n";
-				printf(toWrite.c_str());
+				printf("Player %d: %s\n", playerid, cmdtext.c_str());
 				return 1;
 			}
 

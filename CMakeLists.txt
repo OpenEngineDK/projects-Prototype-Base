@@ -40,6 +40,9 @@ SET( PROTOTYPE_SOURCES
   
   # Particle system
   ParticleGroupBuilder.cpp
+  
+  # Map loading
+  MapLoader.cpp
 )
 
 # todo get rid of this!@#!
@@ -71,4 +74,5 @@ TARGET_LINK_LIBRARIES(Prototype-Base
   Extensions_RBPhysics
   Extensions_PropertyList
   Extensions_ParticleSystem
+  Extensions_Sky
 )

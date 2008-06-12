@@ -57,6 +57,7 @@
 #include "Gamemodes/IGamemode.h"
 #include "Gamemodes/TestGamemode.h"
 #include <Scene/PointLightNode.h>
+#include "MapLoader.h"
 
 
 #include <Geometry/Sphere.h>
@@ -83,9 +84,13 @@
 #include <Particles/PointEmitter.h>
 #include <Utils/PropertyList.h>
 
+// Sky extension
+#include <Sky/SkyBox.h>
+#include <Sky/SkyDome.h>
+
+
 #define MyParticleGroup EnergyParticleGroup<BillBoardParticle<EnergyParticle<DirectionParticle<IParticle> > > >
 #define MyParticle EnergyParticle<BillBoardParticle<EnergyParticle<DirectionParticle<IParticle> > > >
-
 
 // Additional namespaces (others are in the header).
 using namespace OpenEngine::Devices;
@@ -94,7 +99,7 @@ using namespace OpenEngine::Renderers;
 using namespace OpenEngine::Resources;
 using namespace OpenEngine::Utils;
 using namespace OpenEngine::Physics;
-
+using namespace OpenEngine::Sky;
 using namespace OpenEngine::Network;
 
 // Prototype namespace
@@ -136,7 +141,6 @@ IRigidBody * CreateSphere() {
 void CreateCrate(PhysicsFacade * physics, FaceSet* faces, ISceneNode* scene, float width = 11.0, float height = 11.0) {
   int maxcount = 50;
   for (int i = 0; i < maxcount; i++) {
-  	//ISceneNode* newNode = node->Clone();
   	GeometryNode* newNode = new GeometryNode(faces);
     AABB * shape = new AABB(*newNode);
     DynamicBody * blockBody = new DynamicBody( new RigidBody(shape) );
@@ -145,12 +149,12 @@ void CreateCrate(PhysicsFacade * physics, FaceSet* faces, ISceneNode* scene, flo
 	transNode->AddNode(newNode);
 
 	int cols = 5;
-	int row = i / cols; //((float)i / maxcount) * cols;
+	int row = i / cols;
 	int col = i % cols;
 
     Vector<3,float> position(200.0, 1.0 + row * height, col * width);
     blockBody->SetMass(0.2f);
-    blockBody->SetName("Box");
+    blockBody->SetName("Box " + Convert::int2string(i+1));
     blockBody->SetPosition(position);
     physics->AddRigidBody(blockBody);
     scene->AddNode(transNode);
@@ -174,7 +178,7 @@ GameFactory::GameFactory() {
 
 	// Create a renderer.
 	this->renderer = new Renderer();
-        renderer->SetFarPlane(50000.0);
+    renderer->SetFarPlane(50000.0);
 
 	// Add a rendering view to the renderer
 	this->renderer->AddRenderingView(new MyRenderingView(*viewport));
@@ -222,7 +226,6 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	// Bind the camera to the viewport
 	camera = new FollowCamera( *(new InterpolatedViewingVolume( *(new ViewingVolume()) )));
 	Frustum* frustum = new Frustum(*camera, 1, 1000.0);
-        //IViewingVolume* frustum = new Orthotope(*camera, 1, 1000.0, 4.0/3.0, 500.0 );
 	viewport->SetViewingVolume(frustum);
 
 	// set the resources directory
@@ -236,44 +239,42 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	ResourceManager<IShaderResource>::AddPlugin(new GLSLPlugin());
 
 	// Add models from models.txt to the scene
-	//ISceneNode* current = rNode;
 	dynamicObjects = new SceneNode();
 	staticObjects  = new SceneNode();
 	physicObjects  = new SceneNode();
-	
 	
 	
 	// Particles
 	particleSystem = new ParticleSystem();    
 	engine.AddModule(*particleSystem, IGameEngine::TICK_DEPENDENT);
 	
-	//group->Spawn();
-	//group->SetMode(MyParticleGroup::ALL);
 	
-	//PointEmitter<MyParticle >* emitter = (PointEmitter<MyParticle >*)group->GetEmitter();
-	//emitter->prototype->pos = Vector<3,float>(100.0, 20.0, 0.0);
-	
-	// end particles
-	
+    string skydomeDir = "Sky/Skydome";
+    DirectoryManager::AppendPath(resources + skydomeDir + "/"); // Hack to enable us to find files in this directory
+    PropertyList* skydomePList = new PropertyList(skydomeDir + "/skydome.skd");
+	SkyDome* skydome = new SkyDome(skydomePList);
+	staticObjects->AddNode(skydome->GetSceneNode());
 
-	//Static
-	GeometryNode* geoSkyBox = LoadGeometryFromFile("MarioBox/MarioBox.obj");
 	
 	string islandGeometry;
 	//islandGeometry = "2DGround/2DGround.obj"; 
 	islandGeometry = "Island/island.obj";
 	
+	MapLoader* mapLoader = new MapLoader();
+	bool result = mapLoader->LoadMap(new PropertyList("Maps/testmap.btm"));
+	if (result) {
+		staticObjects->AddNode(mapLoader->GetStaticScene());
+	}
+	
+	/*
 	GeometryNode* geoGround = LoadGeometryFromFile(islandGeometry);
-	staticObjects->AddNode(geoSkyBox);
+	staticObjects->AddNode(skydome->GetSceneNode());
 	staticObjects->AddNode(geoGround);
+	*/
 
 	//Physic
 	GeometryNode* geoGround2 = LoadGeometryFromFile(islandGeometry);
 	physicObjects->AddNode(geoGround2);
-
-	// Add FixedTimeStepPhysics module
-	//physic = new FixedTimeStepPhysics( physicObjects );
-	//engine.AddModule(*physic, IGameEngine::TICK_DEPENDENT);
 
 	// Register movement handler to be able to move the camera
 	classicMovement = new ClassicMovementHandler(input);
@@ -311,7 +312,7 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
     };
 
 	try {
-    	ErlNetwork* netm = new ErlNetwork("localhost", 2345);
+    	ErlNetwork* netm = new ErlNetwork("camel24.daimi.au.dk", 2345);
     	NetworkHandler* neth = new NetworkHandler(this, netm);
     	engine.AddModule(*netm);
     	netm->Attach(*neth);
@@ -412,9 +413,8 @@ ITank* GameFactory::AddTank(int i) {
 	tank->SetShotManager(shotMgr);
 	tankMgr->AddTank(tank, i);
 
-    tankBody->SetName("tank");
+    tankBody->SetName("Tank " + Convert::int2string(i+1));
     TransformationNode* mod_tran = tankBody->GetTransformationNode();
-    //mod_tran->SetPosition(Vector<3,float>(0,20 * i,5));    
     tankBody->SetMass(1.0f);
     tankBody->SetAngularDamping(20.0f);
     tankBody->SetLinearDamping(5.0f);
@@ -426,9 +426,9 @@ ITank* GameFactory::AddTank(int i) {
     // Add point light to the tank    
     PointLightNode* pln = new PointLightNode();
             
-    pln->constAtt = 1.0;
-    pln->linearAtt = 0.001;
-    pln->quadAtt = 0.0001;
+    pln->constAtt = 0.5;
+    pln->linearAtt = 0.01;
+    pln->quadAtt = 0.001;
     
     mod_tran->AddNode(pln);
     

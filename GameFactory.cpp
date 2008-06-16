@@ -57,6 +57,7 @@
 #include "Gamemodes/IGamemode.h"
 #include "Gamemodes/TestGamemode.h"
 #include <Scene/PointLightNode.h>
+#include <Scene/SpotLightNode.h>
 #include "MapLoader.h"
 
 
@@ -84,9 +85,10 @@
 #include <Particles/PointEmitter.h>
 #include <Utils/PropertyList.h>
 
-// Sky extension
-#include <Sky/SkyBox.h>
-#include <Sky/SkyDome.h>
+
+// From extensions
+#include <Resources/ColladaResource.h>
+
 
 
 #define MyParticleGroup EnergyParticleGroup<BillBoardParticle<EnergyParticle<DirectionParticle<IParticle> > > >
@@ -99,7 +101,7 @@ using namespace OpenEngine::Renderers;
 using namespace OpenEngine::Resources;
 using namespace OpenEngine::Utils;
 using namespace OpenEngine::Physics;
-using namespace OpenEngine::Sky;
+
 using namespace OpenEngine::Network;
 
 // Prototype namespace
@@ -118,6 +120,24 @@ public:
         AcceleratedRenderingView(viewport) {
 
     }
+};
+
+class SpawnHandler : public OpenEngine::Core::IListener<OpenEngine::Devices::KeyboardEventArg> {
+ public:
+  SpawnHandler(OpenEngine::Physics::DynamicBody* body, std::vector< Vector<3,float> > spawnPoints) : body(body), spawnPoints(spawnPoints) {}
+  void Handle(OpenEngine::Devices::KeyboardEventArg arg) {
+  	if (arg.type == KeyboardEventArg::PRESS && arg.sym == KEY_SPACE) {
+  		int randomIndex = (int)(((float)std::rand()/RAND_MAX) * spawnPoints.size());
+  		body->SetPosition(spawnPoints[randomIndex]);
+        body->SetRotation(Quaternion<float>(1,0,0,0));
+        body->SetLinearVelocity(Vector<3,float>(0,0,0));
+        body->SetAngularVelocity(Vector<3,float>(0,0,0));
+  	}
+  }
+
+ private:
+  OpenEngine::Physics::DynamicBody* body;
+  std::vector< Vector<3,float> > spawnPoints;
 };
 
 GeometryNode* LoadGeometryFromFile(string filepath) {
@@ -241,40 +261,21 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	// Add models from models.txt to the scene
 	dynamicObjects = new SceneNode();
 	staticObjects  = new SceneNode();
-	physicObjects  = new SceneNode();
+	physicsObjects  = new SceneNode();
 	
 	
 	// Particles
 	particleSystem = new ParticleSystem();    
 	engine.AddModule(*particleSystem, IGameEngine::TICK_DEPENDENT);
 	
-	
-    string skydomeDir = "Sky/Skydome";
-    DirectoryManager::AppendPath(resources + skydomeDir + "/"); // Hack to enable us to find files in this directory
-    PropertyList* skydomePList = new PropertyList(skydomeDir + "/skydome.skd");
-	SkyDome* skydome = new SkyDome(skydomePList);
-	staticObjects->AddNode(skydome->GetSceneNode());
 
-	
-	string islandGeometry;
-	//islandGeometry = "2DGround/2DGround.obj"; 
-	islandGeometry = "Island/island.obj";
-	
 	MapLoader* mapLoader = new MapLoader();
 	bool result = mapLoader->LoadMap(new PropertyList("Maps/testmap.btm"));
 	if (result) {
 		staticObjects->AddNode(mapLoader->GetStaticScene());
+		physicsObjects->AddNode(mapLoader->GetPhysicsScene());
+		dynamicObjects->AddNode(mapLoader->GetDynamicScene());
 	}
-	
-	/*
-	GeometryNode* geoGround = LoadGeometryFromFile(islandGeometry);
-	staticObjects->AddNode(skydome->GetSceneNode());
-	staticObjects->AddNode(geoGround);
-	*/
-
-	//Physic
-	GeometryNode* geoGround2 = LoadGeometryFromFile(islandGeometry);
-	physicObjects->AddNode(geoGround2);
 
 	// Register movement handler to be able to move the camera
 	classicMovement = new ClassicMovementHandler(input);
@@ -286,19 +287,20 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	TankController* tankCtrl = new TankController(tankMgr, classicMovement, camera);
 	classicMovement->SetTankController(tankCtrl);
 	engine.AddModule(*tankMgr);
-
+	
+	/*PointLightNode
 	// Setup SnowTank
 	GeometryNode* snowTankBody = LoadGeometryFromFile("ProtoTank/tank_body.obj");
 	GeometryNode* snowTankTurret = LoadGeometryFromFile("ProtoTank/tank_turret.obj");
 	GeometryNode* snowTankGun = LoadGeometryFromFile("ProtoTank/tank_cannon.obj");
 	SnowTank::SetModel(snowTankBody,snowTankTurret,snowTankGun);
-
+	*/
+	
 	// Setup SeanTank
 	GeometryNode* seanTankBody = LoadGeometryFromFile("Tank2/tank2.obj");
 	GeometryNode* seanTankTurret = LoadGeometryFromFile("Tank2/turret.obj");
 	GeometryNode* seanTankGun = LoadGeometryFromFile("Tank2/gun.obj");
 	SeanTank::SetModel(seanTankBody,seanTankTurret,seanTankGun);
-	
 	
 	class Temp : public IModule {
     public:
@@ -332,29 +334,72 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	crosshairNode = new Crosshair();
 	
 	
-	
-	
+	// Add particle systems to the scene
+	std::vector< PropertyList* >::iterator plistIter;
+	std::vector< PropertyList* > particleResources = mapLoader->GetParticleResources();
+	for (plistIter = particleResources.begin(); plistIter != particleResources.end(); plistIter++) {
+	  PropertyList* plist = (*plistIter);
+	  
+	  ParticleGroupBuilder* groupBuilder = new ParticleGroupBuilder(*plist, string("p1"));
+	  MyParticleGroup* group = (MyParticleGroup*)(groupBuilder->GetParticleGroup());
+	  particleSystem->AddGroup(group);
+	  staticObjects->AddNode(groupBuilder->GetRenderNode());
+	}
 	
 	
   	// create physics engine
 	AABB worldAabb(Vector<3,float>(-5000,-5000,-5000),Vector<3,float>(5000,5000,5000));
-	Vector<3,float> gravity(0.0, -200.0, 0.0);
+	Vector<3,float> gravity = mapLoader->GetGravity();
 	physics = new PhysicsFacade(worldAabb, gravity);
 	engine.AddModule(*physics, IGameEngine::TICK_DEPENDENT);
 	
 	
 	
-	
-	
-	
+	// load the collada resource plug-in
+	ResourceManager<IModelResource>::AddPlugin(new ColladaPlugin());
+
+    IModelResourcePtr resource = ResourceManager<IModelResource>::Create("Rock/rock.dae");
+    resource->Load();
+    ISceneNode* model = resource->GetSceneNode();
+    resource->Unload();
+    
+    TransformationNode* transNode = new TransformationNode();
+    transNode->AddNode(model);
+    transNode->Move(0.0, -20.0, 0.0);
+    
+    
+    DynamicBody* rockBody = new DynamicBody( new RigidBody( new AABB( *transNode ) ) );
+    rockBody->SetName("Rock");
+    TransformationNode* modTrans = rockBody->GetTransformationNode();
+    rockBody->SetMass(100.0f);
+    rockBody->SetAngularDamping(20.0f);
+    rockBody->SetLinearDamping(5.0f);
+    physics->AddRigidBody(rockBody);
+
+    modTrans->AddNode(transNode);
+    modTrans->Move(80.0, 20.0, 0.0);
+    dynamicObjects->AddNode(modTrans);
+    
+    // Add point light to the tank    
+    PointLightNode* pln = new PointLightNode();
+            
+    pln->constAtt = 0.5;
+    pln->linearAtt = 0.01;
+    pln->quadAtt = 0.001;
+    
+    pln->ambient = Vector<4,float>(0.0, 1.0, 0.2, 0.8);
+    pln->diffuse = Vector<4,float>(0.0, 0.0, 1.0, 1.0);
+    //pln->specular
+    
+    modTrans->AddNode(pln);
 
 	IGamemode* gamemode = new TestGamemode();
 	engine.AddModule(*gamemode);
 	// Load tanks
 	int tankCount = 1;
 	for ( int i = 0; i < tankCount; i++ ) {
-		//AddTank(i % 2/*, physics*/);
-		AddTank(i);
+		ITank* tank = AddTank(i);
+		tank->GetDynamicBody()->SetPosition( mapLoader->GetSpawnPoints()[i] );
 		gamemode->OnPlayerConnect(i);
 	}
 
@@ -365,6 +410,13 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
     SDLInput::keyEvent.Attach(*handler);
     engine.AddModule(*handler,IGameEngine::TICK_DEPENDENT);
     rNode->AddNode(handler->GetRenderNode());
+    
+    
+    
+    SpawnHandler* spawnHandler = new SpawnHandler(tankMgr->GetTank(0)->GetDynamicBody(), mapLoader->GetSpawnPoints());
+    SDLInput::keyEvent.Attach(*spawnHandler);
+    
+    
 
 	/*
     logger.info << "Preprocessing of static tree: started" << logger.end;
@@ -378,11 +430,7 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 
 	rNode->AddNode(staticObjects);
 	rNode->AddNode(dynamicObjects);
-	rNode->AddNode(physicObjects);
-	
-	
-	CreateSphere();
-	
+	//rNode->AddNode(physicsObjects);
 
   // physics debug node
   //scene->AddNode(physics->getRenderNode(this->renderer));
@@ -392,7 +440,7 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
   
   // load static geometry
    {
-    TriangleMesh * triMesh = new TriangleMesh(*physicObjects);
+    TriangleMesh * triMesh = new TriangleMesh(*physicsObjects);
     RigidBody * meshBody = new RigidBody(triMesh);
     meshBody->SetName("Island");
     meshBody->SetPosition(Vector<3,float>(0,0,5.0));
@@ -407,8 +455,8 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 ITank* GameFactory::AddTank(int i) {
 	DynamicBody* tankBody = NULL;
 	ITank* tank;
-	tankBody = new DynamicBody( new RigidBody( new AABB(*SnowTank::bodyModel) ) );
-	tank = new SnowTank(tankBody);
+	tankBody = new DynamicBody( new RigidBody( new AABB(*SeanTank::bodyModel) ) );
+	tank = new SeanTank(tankBody);
 
 	tank->SetShotManager(shotMgr);
 	tankMgr->AddTank(tank, i);
@@ -426,36 +474,28 @@ ITank* GameFactory::AddTank(int i) {
     // Add point light to the tank    
     PointLightNode* pln = new PointLightNode();
             
-    pln->constAtt = 0.5;
-    pln->linearAtt = 0.01;
-    pln->quadAtt = 0.001;
+    pln->constAtt = 0.8;
+    pln->linearAtt = 0.005;
+    pln->quadAtt = 0.0005;
     
-    mod_tran->AddNode(pln);
+    pln->ambient = Vector<4,float>(0.9, 0.4, 0.6, 1.0);
+    pln->diffuse = Vector<4,float>(0.8, 0.8, 0.6, 0.8);
+    //pln->specular
+    
+    TransformationNode* lightTrans = new TransformationNode();
+    lightTrans->AddNode(pln);
+    lightTrans->Move(20.0, 0.0, 0.0);
+    
+    mod_tran->AddNode(lightTrans);
+    
     
     // Add particle system to the tank
-    PropertyList* plist = new PropertyList("particles.txt");    
+    PropertyList* plist = new PropertyList("ParticleSystems/smoke2.txt");  
     ParticleGroupBuilder* groupBuilder = new ParticleGroupBuilder(*plist, string("p1"));
 	MyParticleGroup* group = (MyParticleGroup*)(groupBuilder->GetParticleGroup());
     particleSystem->AddGroup(group);
-    staticObjects->AddNode(groupBuilder->GetRenderNode());
-    
-    /*
-    IEmitter<MyParticle>* emitter = groupBuilder->BuildEmitter<MyParticle>(*plist, "p1");
-    //emitter->prototype.pos = tank->GetTankTransformationNode()->GetPosition();
-    group->SetEmitter(emitter);
-    
-    MyParticle* prototype = groupBuilder->BuildParticle<MyParticle>(*plist, "p1.emitter.prototype");
-    Vector<3,float>* position = &tank->GetTankTransformationNode()->GetPosition();
-    prototype->SetPosition(*position);
-    emitter->SetPrototype(prototype);
-    */
-    
-    /*
-    Vector<3,float>* emitterPos = plist->GetVectorP<3,float>("p1.emitter.prototype.pos");
-    printf("emitterpos = %f, %f, %f\n", (*emitterPos)[0], (*emitterPos)[1], (*emitterPos)[2]);
-    *emitterPos = tank->GetTankTransformationNode()->GetPosition();
-    printf("emitterpos = %f, %f, %f\n", (*emitterPos)[0], (*emitterPos)[1], (*emitterPos)[2]);
-    */
+    //staticObjects->AddNode(groupBuilder->GetRenderNode());
+    mod_tran->AddNode(groupBuilder->GetRenderNode());
     
     return tank;
 }

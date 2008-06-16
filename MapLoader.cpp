@@ -14,6 +14,11 @@
 #include <Resources/ResourceManager.h>
 #include <Resources/IModelResource.h>
 
+// Sky extension
+#include <Sky/SkyBox.h>
+#include <Sky/SkyDome.h>
+using namespace OpenEngine::Sky;
+
 using namespace OpenEngine::Resources;
 
 #include <string.h>
@@ -36,46 +41,53 @@ using std::string;
 	dynamicObjects->DeleteAllNodes();
 	staticObjects->DeleteAllNodes();
 	physicsObjects->DeleteAllNodes();
-	
-	int staticCount = plist->ListSize("staticObjects.resource");
- 	for (int i = 0; i < staticCount; i++) {
-        string modelName = plist->GetString("staticObjects.resource", i);
-        ISceneNode* model = LoadModelFromFile(modelName);
-		staticObjects->AddNode(model);
-    }
-
-/*
-    string skydomeDir = "Sky/Skydome";
-    DirectoryManager::AppendPath(resources + skydomeDir + "/"); // Hack to enable us to find files in this directory
-    PropertyList* skydomePList = new PropertyList(skydomeDir + "/skydome.skd");
-	SkyDome* skydome = new SkyDome(skydomePList);
-	
-	string islandGeometry;
-	//islandGeometry = "2DGround/2DGround.obj"; 
-	islandGeometry = "Island/island.obj";
-	
-	GeometryNode* geoGround = LoadGeometryFromFile(islandGeometry);
-	staticObjects->AddNode(skydome->GetSceneNode());
-	staticObjects->AddNode(geoGround);
-
-	//Physic
-	GeometryNode* geoGround2 = LoadGeometryFromFile(islandGeometry);
-	physicObjects->AddNode(geoGround2);
-
-	rNode->AddNode(staticObjects);
-	rNode->AddNode(dynamicObjects);
-	rNode->AddNode(physicObjects);
-
-  
-  	// load static geometry
-	{
-		TriangleMesh * triMesh = new TriangleMesh(*physicObjects);
-		RigidBody * meshBody = new RigidBody(triMesh);
-		meshBody->SetName("Island");
-		meshBody->SetPosition(Vector<3,float>(0,0,5.0));
-		physics->AddRigidBody(meshBody);
+    
+	if (plist->HaveKey("sky.type")) {
+		string skyType     = plist->GetString("sky.type");
+		string skyResource = plist->GetString("sky.resource");
+		string skyPath     = skyResource.substr(0, skyResource.rfind('/'));
+		string skyFile     = skyResource.substr(skyPath.size() + 1, skyResource.size());
+		
+		DirectoryManager::AppendPath("projects/Prototype-Base/data/" + skyPath + "/");
+		
+		logger.info << "Skyfile '" << skyFile << "'. Loading... ";
+		
+		PropertyList* skyPList = new PropertyList(skyFile);
+		
+		if (skyType == "box") {
+			SkyBox* skybox = new SkyBox(skyPList);
+			staticObjects->AddNode(skybox->GetSceneNode());
+			logger.info << "Done." << logger.end;
+		} else if (skyType == "dome") {
+			SkyDome* skydome = new SkyDome(skyPList);
+			staticObjects->AddNode(skydome->GetSceneNode());
+			logger.info << "Done." << logger.end;
+		} else {
+			logger.warning << "Unknown sky type '" << skyType << "'" << logger.end;
+		}
 	}
-	*/
+	
+	LoadModelsToScene(plist, staticObjects,  "staticObjects");
+	LoadModelsToScene(plist, physicsObjects, "physicsObjects");
+	LoadModelsToScene(plist, dynamicObjects, "dynamicObjects");
+	
+	int spawnPointCount = plist->ListSize("spawnpoints");
+ 	for (int i = 0; i < spawnPointCount; i++) {
+        Vector<3,float> spawnPoint = plist->GetVector<3,float>("spawnpoints", i);
+		spawnPoints.push_back(spawnPoint);
+    }
+    
+    gravity = plist->GetVector<3,float>("gravity");
+    
+    //DirectoryManager::AppendPath("projects/Prototype-Base/data/ParticleSystems/");
+    
+    int particleResourceCount = plist->ListSize("particlesystems");
+ 	for (int i = 0; i < particleResourceCount; i++) {
+        PropertyList* particlePList = new PropertyList(plist->GetString("particlesystems", i));
+		particleResources.push_back(particlePList);
+		
+		logger.info << "Particle system: '" << particlePList->GetFileName() << "'" << logger.end;
+    }
 	
 	return true;
   }
@@ -88,6 +100,14 @@ using std::string;
 	mod_res->Unload();
 	return mod_node;
   }
+  
+  void MapLoader::LoadModelsToScene(PropertyList* plist, ISceneNode* scene, string type) {
+  	int resourceCount = plist->ListSize(type + ".resource");
+ 	for (int i = 0; i < resourceCount; i++) {
+        string modelName = plist->GetString(type + ".resource", i);
+		scene->AddNode( LoadModelFromFile(modelName) );
+    }
+  }
 
   ISceneNode* MapLoader::GetStaticScene() {
   	return staticObjects;
@@ -99,6 +119,18 @@ using std::string;
   
   ISceneNode* MapLoader::GetPhysicsScene() {
   	return physicsObjects;
+  }
+  
+  std::vector< Vector<3,float> > MapLoader::GetSpawnPoints() {
+  	return spawnPoints;
+  }
+  
+  std::vector< PropertyList* > MapLoader::GetParticleResources() {
+  	return particleResources;
+  }
+  
+  Vector<3,float> MapLoader::GetGravity() {
+  	return gravity;
   }
 
 //}

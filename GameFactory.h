@@ -54,7 +54,7 @@ private:
     //HACK ALSO
     ISceneNode* dynamicObjects;
     ISceneNode* staticObjects;
-    ISceneNode* physicObjects;
+    ISceneNode* physicsObjects;
     //FixedTimeStepPhysics* physic;
     PhysicsFacade* physics;
     ParticleSystem* particleSystem;

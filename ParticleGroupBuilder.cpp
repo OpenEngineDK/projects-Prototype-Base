@@ -45,7 +45,7 @@ pair<IParticleGroup*,IRenderNode*> ParticleGroupBuilder::BuildGroup(PropertyList
         // modifiers
         for (int i=0; i < plist.ListSize(group + ".modifiers"); i++ ) {
             string name = plist.GetString(group + ".modifiers", i);
-            logger.info << "Adding modifier: " << name << logger.end;
+            //logger.info << "Adding modifier: " << name << logger.end;
             IModifier<ParticleTypeGlow >* mof = BuildModifier<ParticleTypeGlow >(plist, group + "." + name);
             if (mof != NULL)
                 particleGroup->AddModifier(mof);
@@ -147,7 +147,7 @@ template <class T> IModifier<T>* ParticleGroupBuilder::BuildModifier(PropertyLis
                 void (T::*ptr)(float);
                 //ptr = T::AddMethodForField<float>(field).first;
                 ptr = MethodForField_float<T>(field).first;
-                logger.info << "adding Pointer modifier" << logger.end;
+                //logger.info << "adding Pointer modifier" << logger.end;
                 PointerFieldModifier<T, float> *pfm = 
                 new PointerFieldModifier<T, float> (ptr, plist.GetFloatP(group + ".value"));
                 plist.SetBoolP(&(pfm->active), group + ".active");
@@ -156,7 +156,7 @@ template <class T> IModifier<T>* ParticleGroupBuilder::BuildModifier(PropertyLis
             case FT_VECTOR3F: {
                 void (T::*ptr)(Vector<3,float> );
                 ptr = MethodForField_vec3f<T>(field).first;
-                logger.info << "adding Pointer modifier" << logger.end;
+                //logger.info << "adding Pointer modifier" << logger.end;
                 PointerFieldModifier<T, Vector<3,float> > *pfm = 
                 new PointerFieldModifier<T, Vector<3,float> > (ptr, plist.GetVectorP<3,float>(group + ".value"));
                 plist.SetBoolP(&(pfm->active), group + ".active");
@@ -175,7 +175,7 @@ template <class T> IModifier<T>* ParticleGroupBuilder::BuildModifier(PropertyLis
                 void (T::*ptr)(float);
                 //ptr = T::AddMethodForField<float>(field).first;
                 ptr = MethodForField_float<T>(field).first;
-                logger.info << "adding Pointer modifier" << logger.end;
+                //logger.info << "adding Pointer modifier" << logger.end;
                 WobblyFieldModifier<T, float> *pfm = 
                 new WobblyFieldModifier<T, float> (ptr, plist.GetFloat(group + ".value"));
                 plist.SetFloatP(&(pfm->value), group + ".value");
@@ -185,7 +185,7 @@ template <class T> IModifier<T>* ParticleGroupBuilder::BuildModifier(PropertyLis
             case FT_VECTOR3F: {
                 void (T::*ptr)(Vector<3,float> );
                 ptr = MethodForField_vec3f<T>(field).first;
-                logger.info << "adding Pointer modifier" << logger.end;
+                //logger.info << "adding Pointer modifier" << logger.end;
                 WobblyFieldModifier<T, Vector<3,float> > *pfm = 
                 new WobblyFieldModifier<T, Vector<3,float> > (ptr, plist.GetVector<3,float>(group + ".value"));
                 plist.SetVectorP<3,float>(&(pfm->value), group + ".value");

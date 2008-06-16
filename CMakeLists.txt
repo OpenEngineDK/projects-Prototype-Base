@@ -70,6 +70,7 @@ TARGET_LINK_LIBRARIES(Prototype-Base
   Extensions_OpenGLRenderer
   Extensions_OBJResource
   Extensions_TGAResource
+  Extensions_ColladaResource
   Extensions_ErlNetwork
   Extensions_RBPhysics
   Extensions_PropertyList

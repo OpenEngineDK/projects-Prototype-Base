@@ -23,6 +23,7 @@
 #include <Renderers/RenderStateNode.h>
 #include <Renderers/OpenGL/Renderer.h>
 #include <Renderers/OpenGL/RenderingView.h>
+#include <Renderers/OpenGL/TextureLoader.h>
 #include <Resources/IModelResource.h>
 #include <Resources/File.h>
 #include <Resources/GLSLResource.h>
@@ -34,7 +35,7 @@
 #include <Scene/GeometryNode.h>
 #include <Scene/TransformationNode.h>
 #include <Utils/Statistics.h>
-#include <Renderers/OpenGL/TextureLoader.h>
+#include <Scene/VertexArrayTransformer.h>
 
 // from AccelerationStructures extension
 #include <Scene/CollectedGeometryTransformer.h>
@@ -108,6 +109,8 @@ using namespace OpenEngine::Network;
 using namespace OpenEngine::Prototype;
 using namespace OpenEngine::Prototype::Gamemode;
 
+using OpenEngine::Scene::VertexArrayTransformer;
+
 // composite rendering view. Uses RenderingView for drawing and
 // AcceleratedRenderingView for clipping. 
 class MyRenderingView : 
@@ -161,7 +164,7 @@ IRigidBody * CreateSphere() {
 void CreateCrate(PhysicsFacade * physics, FaceSet* faces, ISceneNode* scene, float width = 11.0, float height = 11.0) {
   int maxcount = 50;
   for (int i = 0; i < maxcount; i++) {
-  	GeometryNode* newNode = new GeometryNode(faces);
+    GeometryNode* newNode = new GeometryNode(new FaceSet(*faces));
     AABB * shape = new AABB(*newNode);
     DynamicBody * blockBody = new DynamicBody( new RigidBody(shape) );
     
@@ -199,9 +202,11 @@ GameFactory::GameFactory() {
 	// Create a renderer.
 	this->renderer = new Renderer();
     renderer->SetFarPlane(50000.0);
+    renderer->initialize.Attach(*(new TextureLoader())); // space leak
 
 	// Add a rendering view to the renderer
-	this->renderer->AddRenderingView(new MyRenderingView(*viewport));
+    renderer->process.Attach(*(new MyRenderingView(*viewport)));  // space leak
+
 }
 
 /**
@@ -446,6 +451,10 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
     meshBody->SetPosition(Vector<3,float>(0,0,5.0));
     physics->AddRigidBody(meshBody);
    }
+
+   
+    VertexArrayTransformer vaT;
+    vaT.Transform(*scene);
 
 	// Return true to signal success.
 	return true;

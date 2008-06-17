@@ -23,6 +23,7 @@ class ParticleGroupBuilder {
     PropertyList& plist;
     IParticleGroup* pGroup;
     IRenderNode* rNode;
+    IEmitter* eMitter;
     string group;
 public:
     
@@ -39,10 +40,10 @@ public:
     
     IParticleGroup* GetParticleGroup();
     IRenderNode* GetRenderNode();
+    IEmitter* GetEmitter();
     
-    
-    static pair<IParticleGroup*,IRenderNode*> BuildGroup(PropertyList& plist, string group);
-    template <class T> static IEmitter<T>* BuildEmitter(PropertyList& plist, string group);
+    void BuildGroup(PropertyList& plist, string group);
+    template <class T> static Emitter<T>* BuildEmitter(PropertyList& plist, string group);
     template <class T> static T* BuildParticle(PropertyList& plist, string group);
     template <class T, class G> static IRenderNode* BuildRenderNode(PropertyList& plist, string group, G* g);
     template <class T> static IModifier<T>* BuildModifier(PropertyList& plist, string group);

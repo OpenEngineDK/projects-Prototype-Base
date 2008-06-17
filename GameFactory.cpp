@@ -494,8 +494,14 @@ ITank* GameFactory::AddTank(int i) {
     ParticleGroupBuilder* groupBuilder = new ParticleGroupBuilder(*plist, string("p1"));
 	MyParticleGroup* group = (MyParticleGroup*)(groupBuilder->GetParticleGroup());
     particleSystem->AddGroup(group);
-    //staticObjects->AddNode(groupBuilder->GetRenderNode());
-    mod_tran->AddNode(groupBuilder->GetRenderNode());
+    staticObjects->AddNode(groupBuilder->GetRenderNode());
+    IEmitter *emitter = groupBuilder->GetEmitter();
+    TransformationNode* emitNode = dynamic_cast<TransformationNode*>(emitter);
+    if (emitNode)
+        mod_tran->AddNode(emitNode);
+
+    //mod_tran->AddNode(groupBuilder->GetRenderNode());
+
     
     return tank;
 }

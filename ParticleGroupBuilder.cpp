@@ -11,6 +11,7 @@
 #include <Particles/Particles.h>
 #include <Particles/Modifiers.h>
 #include <Particles/ParticleGroups.h>
+#include <Particles/TransformationEmitter.h>
 #include <Logging/Logger.h>
 
 #define ParticleTypeGlow BillBoardParticle<EnergyParticle<DirectionParticle<IParticle> > >
@@ -18,9 +19,8 @@
 using namespace OpenEngine::Particles;
 
 ParticleGroupBuilder::ParticleGroupBuilder(PropertyList& plist, string group) :plist(plist), group(group) {
-    pair<IParticleGroup*,IRenderNode*> p = BuildGroup(plist, group);
-    pGroup = p.first;
-    rNode = p.second;
+    BuildGroup(plist, group);
+
 }
 
 IParticleGroup* ParticleGroupBuilder::GetParticleGroup() {
@@ -30,16 +30,18 @@ IParticleGroup* ParticleGroupBuilder::GetParticleGroup() {
 IRenderNode* ParticleGroupBuilder::GetRenderNode() {
     return rNode;
 }
+IEmitter* ParticleGroupBuilder::GetEmitter() {
+    return eMitter;
+}
 
 
 
-// static
-
-pair<IParticleGroup*,IRenderNode*> ParticleGroupBuilder::BuildGroup(PropertyList& plist, string group) {
+void ParticleGroupBuilder::BuildGroup(PropertyList& plist, string group) {
     string type = plist.GetString(group + ".type");
     if (type == "glow") {
         
-        IEmitter<ParticleTypeGlow >* emitter = BuildEmitter<ParticleTypeGlow >(plist, group);
+        Emitter<ParticleTypeGlow >* emitter = BuildEmitter<ParticleTypeGlow >(plist, group);
+        eMitter = emitter;
         EnergyParticleGroup<ParticleTypeGlow > *particleGroup = new EnergyParticleGroup<ParticleTypeGlow >(plist.GetInt(group + ".count"), emitter);
         
         // modifiers
@@ -65,18 +67,41 @@ pair<IParticleGroup*,IRenderNode*> ParticleGroupBuilder::BuildGroup(PropertyList
         
     
         
-        return make_pair(particleGroup,BuildRenderNode<ParticleTypeGlow,EnergyParticleGroup<ParticleTypeGlow> >(plist, group, particleGroup));
+        pGroup = particleGroup;
+        rNode = BuildRenderNode<ParticleTypeGlow,EnergyParticleGroup<ParticleTypeGlow> >(plist, group, particleGroup);
     } else {
         logger.info << "Unknown type: " << type << logger.end;
+        
     }
     
-    return make_pair<IParticleGroup*,IRenderNode*>(NULL,NULL);
+
 }
 
-template <class T> IEmitter<T>* ParticleGroupBuilder::BuildEmitter(PropertyList& plist, string group) {
+template <class T> Emitter<T>* ParticleGroupBuilder::BuildEmitter(PropertyList& plist, string group) {
 
     string type = plist.GetString(group + ".emitter.type");
-    if (type == "Point") {
+    if (type == "transform") {
+      TransformationEmitter<T >* emitter = new TransformationEmitter<T >(plist.GetInt(group + ".emitter.speed"));
+      plist.SetIntP(&(emitter->speed), group + ".emitter.speed");
+      emitter->SetPrototype(BuildParticle<T >(plist, group + ".emitter.prototype"));
+      
+      // add modifiers to emitter
+      for (int i=0;
+	   i<plist.ListSize(group + ".emitter.modifiers");
+             i++) {
+            string name = plist.GetString(group + ".emitter.modifiers",
+        i);
+            IModifier<T >* mof = BuildModifier<T >(plist, group +
+                                                   ".emitter." +
+        name);
+            if (mof != NULL)
+                emitter->AddModifier(mof);
+        }
+        
+        return emitter;
+
+    }
+    else if (type == "Point") {
         PointEmitter<T >* emitter = new PointEmitter<T >(plist.GetInt(group + ".emitter.speed"));
         plist.SetIntP(&(emitter->speed), group + ".emitter.speed");
         emitter->SetPrototype(BuildParticle<T >(plist, group + ".emitter.prototype"));

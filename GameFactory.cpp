@@ -36,6 +36,7 @@
 #include <Scene/TransformationNode.h>
 #include <Utils/Statistics.h>
 #include <Scene/VertexArrayTransformer.h>
+#include <Scene/DisplayListTransformer.h>
 
 // from AccelerationStructures extension
 #include <Scene/CollectedGeometryTransformer.h>
@@ -110,6 +111,7 @@ using namespace OpenEngine::Prototype;
 using namespace OpenEngine::Prototype::Gamemode;
 
 using OpenEngine::Scene::VertexArrayTransformer;
+using OpenEngine::Scene::DisplayListTransformer;
 
 // composite rendering view. Uses RenderingView for drawing and
 // AcceleratedRenderingView for clipping. 
@@ -205,8 +207,11 @@ GameFactory::GameFactory() {
     renderer->initialize.Attach(*(new TextureLoader())); // space leak
 
 	// Add a rendering view to the renderer
-    renderer->process.Attach(*(new MyRenderingView(*viewport)));  // space leak
-
+    MyRenderingView* rv = new MyRenderingView(*viewport);
+    DisplayListTransformer* dlt = new DisplayListTransformer(rv);
+    
+    renderer->process.Attach(*rv);  // space leak
+    renderer->initialize.Attach(*dlt);
 }
 
 /**
@@ -456,6 +461,7 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
     VertexArrayTransformer vaT;
     vaT.Transform(*scene);
 
+    
 	// Return true to signal success.
 	return true;
 }

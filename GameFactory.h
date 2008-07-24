@@ -27,6 +27,13 @@
 // Particle system
 #include <Particles/ParticleSystem.h>
 
+//forward references
+namespace OpenEngine {
+    namespace Sound {
+        class OpenALSoundManager;
+    }
+}
+
 // Namespaces
 using namespace OpenEngine::Core;
 using namespace OpenEngine::Display;
@@ -34,6 +41,9 @@ using namespace OpenEngine::Renderers;
 using namespace OpenEngine::Physics;
 using namespace OpenEngine::Prototype;
 using namespace OpenEngine::Particles;
+
+// sound
+using OpenEngine::Sound::OpenALSoundManager;
 
 /**
  * Game factory definition.
@@ -58,7 +68,7 @@ private:
     //FixedTimeStepPhysics* physic;
     PhysicsFacade* physics;
     ParticleSystem* particleSystem;
-
+    OpenALSoundManager* soundmgr;
 public:
     GameFactory();
     bool         SetupEngine(IGameEngine& engine);

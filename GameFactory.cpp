@@ -91,6 +91,11 @@
 // From extensions
 #include <Resources/ColladaResource.h>
 
+// SOUND!!!
+#include <Resources/OpenALSoundResource.h>
+#include <Resources/ISoundResource.h>
+#include <Sound/OpenALSoundManager.h>
+#include <Sound/ISound.h>
 
 
 #define MyParticleGroup EnergyParticleGroup<BillBoardParticle<EnergyParticle<DirectionParticle<IParticle> > > >
@@ -112,6 +117,9 @@ using namespace OpenEngine::Prototype::Gamemode;
 
 using OpenEngine::Scene::VertexArrayTransformer;
 using OpenEngine::Scene::DisplayListTransformer;
+
+//sound
+using OpenEngine::Sound::OpenALSoundResource;
 
 // composite rendering view. Uses RenderingView for drawing and
 // AcceleratedRenderingView for clipping. 
@@ -192,7 +200,7 @@ void CreateCrate(PhysicsFacade * physics, FaceSet* faces, ISceneNode* scene, flo
 * Initializes the different components so they are accessible when
 * the setup method is executed.
 */
-GameFactory::GameFactory() {
+GameFactory::GameFactory() : camera(NULL) {
 
 	// Create a frame and viewport.
 	this->frame = new SDLFrame(1024, 768, 32);
@@ -212,6 +220,7 @@ GameFactory::GameFactory() {
     
     renderer->process.Attach(*rv);  // space leak
     renderer->initialize.Attach(*dlt);
+
 }
 
 /**
@@ -232,11 +241,20 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	// Add Statistics module
 	engine.AddModule(*(new OpenEngine::Utils::Statistics(1000)));
 
+
+	// Bind the camera to the viewport
+	camera = new FollowCamera( *(new InterpolatedViewingVolume( *(new ViewingVolume()) )));
+	Frustum* frustum = new Frustum(*camera, 1, 1000.0);
+	viewport->SetViewingVolume(frustum);
+
 	// Create a root scene node
 	SceneNode* scene = new SceneNode();
-
 	// Supply the scene to the renderer
 	this->renderer->SetSceneRoot(scene);
+
+    // Add soundmodule
+    soundmgr = new OpenALSoundManager(scene, camera);
+    engine.AddModule(*soundmgr);
 
 	// Add RenderStateNode to change rendering features at runtime
 	RenderStateNode* rNode = new RenderStateNode();
@@ -253,10 +271,6 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	QuitHandler* quit_h = new QuitHandler();
 	quit_h->BindToEventSystem();
 
-	// Bind the camera to the viewport
-	camera = new FollowCamera( *(new InterpolatedViewingVolume( *(new ViewingVolume()) )));
-	Frustum* frustum = new Frustum(*camera, 1, 1000.0);
-	viewport->SetViewingVolume(frustum);
 
 	// set the resources directory
 	string resources = "projects/Prototype-Base/data/";
@@ -267,6 +281,7 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	ResourceManager<IModelResource>::AddPlugin(new OBJPlugin());
 	ResourceManager<ITextureResource>::AddPlugin(new TGAPlugin());
 	ResourceManager<IShaderResource>::AddPlugin(new GLSLPlugin());
+    ResourceManager<ISoundResource>::AddPlugin(new OpenALSoundPlugin());
 
 	// Add models from models.txt to the scene
 	dynamicObjects = new SceneNode();
@@ -462,6 +477,7 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
     vaT.Transform(*scene);
 
     
+    
 	// Return true to signal success.
 	return true;
 }
@@ -471,7 +487,7 @@ ITank* GameFactory::AddTank(int i) {
 	DynamicBody* tankBody = NULL;
 	ITank* tank;
 	tankBody = new DynamicBody( new RigidBody( new AABB(*SeanTank::bodyModel) ) );
-	tank = new SeanTank(tankBody);
+    tank = new SeanTank(tankBody, soundmgr);
 
 	tank->SetShotManager(shotMgr);
 	tankMgr->AddTank(tank, i);
@@ -485,6 +501,7 @@ ITank* GameFactory::AddTank(int i) {
 
     mod_tran->AddNode(tank->GetTankTransformationNode());
     dynamicObjects->AddNode(mod_tran);
+
     
     // Add point light to the tank    
     PointLightNode* pln = new PointLightNode();

@@ -20,19 +20,31 @@
 #include "../GunManager.h"
 
 namespace OpenEngine {
+    namespace Sound {
+        class ISound;
+        class OpenALSoundManager;
+    }
+
 	namespace Prototype {
             namespace Vehicles {
 		using namespace OpenEngine::Scene;
 		using namespace OpenEngine::Physics;
 		using namespace OpenEngine::Core;
 
+        using OpenEngine::Sound::ISound;
+        using OpenEngine::Sound::OpenALSoundManager;
+
 		class SeanTank : public ITank {
+        private:
+            ISound* sound;
+            OpenALSoundManager* soundmgr;
+
 		public:
 			static GeometryNode* bodyModel;
 			static GeometryNode* turretModel;
 			static GeometryNode* gunModel;
 
-			SeanTank(DynamicBody* body);
+			SeanTank(DynamicBody* body, OpenALSoundManager* soundmgr);
 			virtual ~SeanTank();
 
 			virtual void Process(const float timeSinceLast);

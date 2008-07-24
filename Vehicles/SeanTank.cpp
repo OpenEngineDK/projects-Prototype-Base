@@ -9,17 +9,24 @@
 
 #include "SeanTank.h"
 
+#include <Sound/OpenALSoundManager.h>
+#include <Sound/ISound.h>
+#include <Resources/ResourceManager.h>
+#include <Resources/OpenALSoundResource.h>
+
+
 namespace OpenEngine {
 	namespace Prototype {
             namespace Vehicles {
 		using namespace OpenEngine::Math;
 
+                using namespace OpenEngine::Resources;
 		// initialize static members
 		GeometryNode* SeanTank::bodyModel = NULL;
 		GeometryNode* SeanTank::turretModel = NULL;
 		GeometryNode* SeanTank::gunModel = NULL;
 
-		SeanTank::SeanTank(DynamicBody* dynamicBody) : ITank(dynamicBody) {
+        SeanTank::SeanTank(DynamicBody* dynamicBody, OpenALSoundManager* soundmgr) : ITank(dynamicBody), soundmgr(soundmgr) {
 			GeometryNode* tankBody = dynamic_cast<GeometryNode*>(bodyModel->Clone());
 			GeometryNode* tankTurret = dynamic_cast<GeometryNode*>(turretModel->Clone());
 			GeometryNode* tankGun = dynamic_cast<GeometryNode*>(gunModel->Clone());
@@ -51,6 +58,15 @@ namespace OpenEngine {
 			gunMgr->AddGun(new LightningGun(), GunManager::PRIMARY_WEAPON);
 			gunMgr->AddGun(new LandmineLayer(), GunManager::SECONDARY_WEAPON);
 			gunMgr->AddGun(new ShieldGenerator(), GunManager::SECONDARY_WEAPON);
+
+            // Add sound to the tank
+            ISoundResourcePtr soundres = 
+                ResourceManager<ISoundResource>::Create("splat.ogg");
+            
+            sound = soundmgr->CreateSound(soundres);
+            SoundNode* soundNode = new SoundNode(sound);
+            tankTurretTrans->AddNode(soundNode);
+
 		}
 
 		SeanTank::~SeanTank() {
@@ -91,6 +107,7 @@ namespace OpenEngine {
 
 		void SeanTank::ShootGun(int i) {
 			gunMgr->ShootGun(i);
+            sound->Play();
 		}
         }
 	}

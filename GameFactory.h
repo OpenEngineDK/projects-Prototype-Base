@@ -30,7 +30,7 @@
 //forward references
 namespace OpenEngine {
     namespace Sound {
-        class OpenALSoundManager;
+        class OpenALSoundSystem;
     }
 }
 
@@ -43,7 +43,7 @@ using namespace OpenEngine::Prototype;
 using namespace OpenEngine::Particles;
 
 // sound
-using OpenEngine::Sound::OpenALSoundManager;
+using OpenEngine::Sound::OpenALSoundSystem;
 
 /**
  * Game factory definition.
@@ -68,7 +68,7 @@ private:
     //FixedTimeStepPhysics* physic;
     PhysicsFacade* physics;
     ParticleSystem* particleSystem;
-    OpenALSoundManager* soundmgr;
+    OpenALSoundSystem* soundmgr;
 public:
     GameFactory();
     bool         SetupEngine(IGameEngine& engine);

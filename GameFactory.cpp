@@ -92,9 +92,9 @@
 #include <Resources/ColladaResource.h>
 
 // SOUND!!!
-#include <Resources/OpenALSoundResource.h>
+#include <Resources/VorbisResource.h>
 #include <Resources/ISoundResource.h>
-#include <Sound/OpenALSoundManager.h>
+#include <Sound/OpenALSoundSystem.h>
 #include <Sound/ISound.h>
 
 
@@ -119,7 +119,7 @@ using OpenEngine::Scene::VertexArrayTransformer;
 using OpenEngine::Scene::DisplayListTransformer;
 
 //sound
-using OpenEngine::Sound::OpenALSoundResource;
+using OpenEngine::Sound::VorbisResource;
 
 // composite rendering view. Uses RenderingView for drawing and
 // AcceleratedRenderingView for clipping. 
@@ -253,7 +253,7 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	this->renderer->SetSceneRoot(scene);
 
     // Add soundmodule
-    soundmgr = new OpenALSoundManager(scene, camera);
+    soundmgr = new OpenALSoundSystem(scene, camera);
     engine.AddModule(*soundmgr);
 
 	// Add RenderStateNode to change rendering features at runtime
@@ -281,7 +281,7 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	ResourceManager<IModelResource>::AddPlugin(new OBJPlugin());
 	ResourceManager<ITextureResource>::AddPlugin(new TGAPlugin());
 	ResourceManager<IShaderResource>::AddPlugin(new GLSLPlugin());
-    ResourceManager<ISoundResource>::AddPlugin(new OpenALSoundPlugin());
+    ResourceManager<ISoundResource>::AddPlugin(new VorbisResourcePlugin());
 
 	// Add models from models.txt to the scene
 	dynamicObjects = new SceneNode();

@@ -22,7 +22,7 @@
 namespace OpenEngine {
     namespace Sound {
         class ISound;
-        class OpenALSoundManager;
+        class OpenALSoundSystem;
     }
 
 	namespace Prototype {
@@ -32,19 +32,19 @@ namespace OpenEngine {
 		using namespace OpenEngine::Core;
 
         using OpenEngine::Sound::ISound;
-        using OpenEngine::Sound::OpenALSoundManager;
+        using OpenEngine::Sound::OpenALSoundSystem;
 
 		class SeanTank : public ITank {
         private:
             ISound* sound;
-            OpenALSoundManager* soundmgr;
+            OpenALSoundSystem* soundmgr;
 
 		public:
 			static GeometryNode* bodyModel;
 			static GeometryNode* turretModel;
 			static GeometryNode* gunModel;
 
-			SeanTank(DynamicBody* body, OpenALSoundManager* soundmgr);
+			SeanTank(DynamicBody* body, OpenALSoundSystem* soundmgr);
 			virtual ~SeanTank();
 
 			virtual void Process(const float timeSinceLast);

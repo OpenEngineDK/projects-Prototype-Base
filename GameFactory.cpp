@@ -484,13 +484,13 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 
 
 ITank* GameFactory::AddTank(int i) {
-	DynamicBody* tankBody = NULL;
-	ITank* tank;
-	tankBody = new DynamicBody( new RigidBody( new AABB(*SeanTank::bodyModel) ) );
+    DynamicBody* tankBody = NULL;
+    ITank* tank;
+    tankBody = new DynamicBody( new RigidBody( new AABB(*SeanTank::bodyModel) ) );
     tank = new SeanTank(tankBody, soundmgr);
 
-	tank->SetShotManager(shotMgr);
-	tankMgr->AddTank(tank, i);
+    tank->SetShotManager(shotMgr);
+    tankMgr->AddTank(tank, i);
 
     tankBody->SetName("Tank " + Convert::int2string(i+1));
     TransformationNode* mod_tran = tankBody->GetTransformationNode();

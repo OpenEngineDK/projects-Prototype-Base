@@ -9,11 +9,10 @@
 
 #include "SeanTank.h"
 
-#include <Sound/OpenALSoundManager.h>
+#include <Sound/OpenALSoundSystem.h>
 #include <Sound/ISound.h>
 #include <Resources/ResourceManager.h>
-#include <Resources/OpenALSoundResource.h>
-
+#include <Resources/VorbisResource.h>
 
 namespace OpenEngine {
 	namespace Prototype {
@@ -26,7 +25,7 @@ namespace OpenEngine {
 		GeometryNode* SeanTank::turretModel = NULL;
 		GeometryNode* SeanTank::gunModel = NULL;
 
-        SeanTank::SeanTank(DynamicBody* dynamicBody, OpenALSoundManager* soundmgr) : ITank(dynamicBody), soundmgr(soundmgr) {
+        SeanTank::SeanTank(DynamicBody* dynamicBody, OpenALSoundSystem* soundmgr) : ITank(dynamicBody), soundmgr(soundmgr) {
 			GeometryNode* tankBody = dynamic_cast<GeometryNode*>(bodyModel->Clone());
 			GeometryNode* tankTurret = dynamic_cast<GeometryNode*>(turretModel->Clone());
 			GeometryNode* tankGun = dynamic_cast<GeometryNode*>(gunModel->Clone());

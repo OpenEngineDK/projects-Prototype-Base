@@ -13,7 +13,7 @@
 // OpenEngine library
 #include <Display/FollowCamera.h>
 #include <Display/Frustum.h>
-#include <Display/Orthotope.h>
+//#include <Display/Orthotope.h>
 #include <Display/InterpolatedViewingVolume.h>
 #include <Display/ViewingVolume.h>
 #include <Display/SDLFrame.h>
@@ -187,7 +187,7 @@ void CreateCrate(PhysicsFacade * physics, FaceSet* faces, ISceneNode* scene, flo
 
     Vector<3,float> position(200.0, 1.0 + row * height, col * width);
     blockBody->SetMass(0.2f);
-    blockBody->SetName("Box " + Convert::int2string(i+1));
+    blockBody->SetName("Box " + Convert::ToString(i+1));
     blockBody->SetPosition(position);
     physics->AddRigidBody(blockBody);
     scene->AddNode(transNode);
@@ -492,7 +492,7 @@ ITank* GameFactory::AddTank(int i) {
     tank->SetShotManager(shotMgr);
     tankMgr->AddTank(tank, i);
 
-    tankBody->SetName("Tank " + Convert::int2string(i+1));
+    tankBody->SetName("Tank " + Convert::ToString(i+1));
     TransformationNode* mod_tran = tankBody->GetTransformationNode();
     tankBody->SetMass(1.0f);
     tankBody->SetAngularDamping(20.0f);

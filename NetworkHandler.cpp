@@ -20,7 +20,7 @@ NetworkHandler::~NetworkHandler() {
 }
 
 void NetworkHandler::Notify(){
-    //logger.info << "notify: " << Convert::int2string(this->id) << logger.end;
+    //logger.info << "notify: " << Convert::ToString(this->id) << logger.end;
     // send position
     NetworkEventArg arg;
     arg.id = CPOS;
@@ -44,7 +44,7 @@ void NetworkHandler::Handle(NetworkEventArg arg) {
     char* buf = arg.payload;
     float pos[3];
 
-    //logger.info << "received net pkg: " + Convert::int2string(arg.id) << logger.end;
+    //logger.info << "received net pkg: " + Convert::ToString(arg.id) << logger.end;
 
     switch (arg.id) {
 
@@ -57,7 +57,7 @@ void NetworkHandler::Handle(NetworkEventArg arg) {
         // our own id is last (since we just connected)
         memcpy(&this->id, buf, 2);
         this->id = ntohs(this->id);
-        logger.info << "received id: " + Convert::int2string(this->id) << logger.end;
+        logger.info << "received id: " + Convert::ToString(this->id) << logger.end;
         break;
 
     case CCON: // a new client signed on
@@ -84,7 +84,7 @@ void NetworkHandler::Handle(NetworkEventArg arg) {
 }
 
 void NetworkHandler::CreatePlayerNode(int id) {
-    logger.info << "creating tank for player id: " + Convert::int2string(id)
+    logger.info << "creating tank for player id: " + Convert::ToString(id)
                 << logger.end;
     ITank* t = this->gf->AddTank(id);
     this->players[id] = t;

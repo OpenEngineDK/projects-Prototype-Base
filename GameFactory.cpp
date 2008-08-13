@@ -13,6 +13,7 @@
 // OpenEngine library
 #include <Display/FollowCamera.h>
 #include <Display/Frustum.h>
+#include <Display/Orthotope.h>
 //#include <Display/Orthotope.h>
 #include <Display/InterpolatedViewingVolume.h>
 #include <Display/ViewingVolume.h>
@@ -60,6 +61,7 @@
 #include "Gamemodes/IGamemode.h"
 #include "Gamemodes/TestGamemode.h"
 #include <Scene/PointLightNode.h>
+#include <Scene/DirectionalLightNode.h>
 #include <Scene/SpotLightNode.h>
 #include "MapLoader.h"
 
@@ -215,7 +217,6 @@ GameFactory::GameFactory() : camera(NULL) {
 
 	// Create a renderer.
 	this->renderer = new Renderer();
-    renderer->SetFarPlane(50000.0);
     renderer->initialize.Attach(*(new TextureLoader())); // space leak
 
 	// Add a rendering view to the renderer
@@ -248,8 +249,17 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 
 	// Bind the camera to the viewport
 	camera = new FollowCamera( *(new InterpolatedViewingVolume( *(new ViewingVolume()) )));
-	Frustum* frustum = new Frustum(*camera, 1, 1000.0);
+	
+	// Setup with frustum...
+	Frustum* frustum = new Frustum(*camera, 1, 20000.0);
 	viewport->SetViewingVolume(frustum);
+	
+	// ... or with Orthotope (orthogonal)...
+	//Orthotope* orthotope = new Orthotope(*camera, -1, 20000.0, -500, 500, -400, 400);
+	//viewport->SetViewingVolume(orthotope);
+	
+	//... or with standard ViewingVolume
+	//viewport->SetViewingVolume(camera);
 
 	// Create a root scene node
 	SceneNode* scene = new SceneNode();

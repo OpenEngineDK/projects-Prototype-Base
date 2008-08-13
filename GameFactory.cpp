@@ -28,6 +28,7 @@
 #include <Resources/File.h>
 #include <Resources/GLSLResource.h>
 #include <Resources/TGAResource.h>
+
 #include <Resources/OBJResource.h>
 #include <Resources/DirectoryManager.h>
 #include <Resources/ResourceManager.h>
@@ -97,6 +98,9 @@
 #include <Sound/OpenALSoundSystem.h>
 #include <Sound/ISound.h>
 
+// LayerNode
+#include <Scene/LayerNode.h>
+#include <Display/TextSurface.h>
 
 #define MyParticleGroup EnergyParticleGroup<BillBoardParticle<EnergyParticle<DirectionParticle<IParticle> > > >
 #define MyParticle EnergyParticle<BillBoardParticle<EnergyParticle<DirectionParticle<IParticle> > > >
@@ -239,7 +243,7 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	engine.AddModule(*input);
 
 	// Add Statistics module
-	engine.AddModule(*(new OpenEngine::Utils::Statistics(1000)));
+	//engine.AddModule(*(new OpenEngine::Utils::Statistics(1000)));
 
 
 	// Bind the camera to the viewport
@@ -280,8 +284,9 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	// load the resource plug-ins
 	ResourceManager<IModelResource>::AddPlugin(new OBJPlugin());
 	ResourceManager<ITextureResource>::AddPlugin(new TGAPlugin());
+	//ResourceManager<ITextureResource>::AddPlugin(new SDLImagePlugin());
 	ResourceManager<IShaderResource>::AddPlugin(new GLSLPlugin());
-    ResourceManager<ISoundResource>::AddPlugin(new VorbisResourcePlugin());
+	ResourceManager<ISoundResource>::AddPlugin(new VorbisResourcePlugin());
 
 	// Add models from models.txt to the scene
 	dynamicObjects = new SceneNode();
@@ -376,7 +381,7 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 	AABB worldAabb(Vector<3,float>(-5000,-5000,-5000),Vector<3,float>(5000,5000,5000));
 	Vector<3,float> gravity = mapLoader->GetGravity();
 	physics = new PhysicsFacade(worldAabb, gravity);
-	engine.AddModule(*physics, IGameEngine::TICK_DEPENDENT);
+	engine.AddModule(*physics , IGameEngine::TICK_DEPENDENT);
 	
 	
 	
@@ -462,6 +467,28 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
   
   GeometryNode* geoBox = LoadGeometryFromFile("Box/Box.obj");
   CreateCrate(physics, geoBox->GetFaceSet(), scene);
+
+  // Show some text!
+
+
+  CairoSurfaceResourcePtr sr = 
+      CairoSurfaceResourcePtr(new CairoSurfaceResource(CairoSurfaceResource::CreateCairoSurface(1000,100)));
+
+  
+  TextSurface *ts = new TextSurface(*sr, string("Hmm"));
+
+  LayerNode *ln = new LayerNode(1024, 768); 
+  Layer layer(0,0);
+  //Layer babeLayer(100,100);
+  
+  layerStat = new LayerStatistics(1000, ts);
+  engine.AddModule(*layerStat);
+  //babeLayer.texr = ResourceManager<ITextureResource>::Create("hud.tga");
+  layer.texr = sr;
+  ln->AddLayer(layer); // = sr; //ResourceManager<ITextureResource>::Create("hud.tga");
+  //ln->AddLayer(*layerStat);
+  //ln->AddLayer(babeLayer);
+  scene->AddNode(ln);
   
   // load static geometry
    {

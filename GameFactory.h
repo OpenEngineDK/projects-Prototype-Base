@@ -27,6 +27,9 @@
 // Particle system
 #include <Particles/ParticleSystem.h>
 
+// Layer
+#include <Utils/LayerStatistics.h>
+
 //forward references
 namespace OpenEngine {
     namespace Sound {
@@ -69,6 +72,7 @@ private:
     PhysicsFacade* physics;
     ParticleSystem* particleSystem;
     OpenALSoundSystem* soundmgr;
+    LayerStatistics* layerStat;
 public:
     GameFactory();
     bool         SetupEngine(IGameEngine& engine);

@@ -43,6 +43,7 @@ SET( PROTOTYPE_SOURCES
   
   # Map loading
   MapLoader.cpp
+
 )
 
 # todo get rid of this!@#!
@@ -78,4 +79,5 @@ TARGET_LINK_LIBRARIES(Prototype-Base
   Extensions_Sky
   Extensions_OpenALSoundSystem
   Extensions_VorbisResource
+  Extensions_OEGUI
 )

@@ -22,6 +22,12 @@ any   /extensions                        http://www.daimi.au.dk/~dodger/bullet.z
 # Network
 darcs /extensions/ErlNetwork             http://www.openengine.dk/code/extensions/ErlNetwork
 
+# Sound
+darcs /extensions/VorbisResource	 http://www.openengine.dk/code/extensions/VorbisResource
+darcs /extensions/OpenALSoundSystem      http://www.openengine.dk/code/extensions/OpenALSoundSystem
+darcs /extensions/Shapes                 http://www.openengine.dk/code/branches/Shapes
+any /projects/Prototype-Base/data        http://www.openengine.dk/data/sound/splat.ogg
+
 # Particle system
 darcs /extensions/ParticleSystem         http://openengine.dk/code/extensions/ParticleSystem
 darcs /extensions/Bindings               http://openengine.dk/code/extensions/Bindings

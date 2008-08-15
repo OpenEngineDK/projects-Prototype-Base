@@ -482,7 +482,7 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 
 
   CairoSurfaceResourcePtr sr = 
-      CairoSurfaceResourcePtr(new CairoSurfaceResource(CairoSurfaceResource::CreateCairoSurface(1000,100)));
+      CairoSurfaceResourcePtr(new CairoSurfaceResource(CairoSurfaceResource::CreateCairoSurface(1024,128)));
 
   
   TextSurface *ts = new TextSurface(*sr, string("Hmm"));

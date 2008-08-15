@@ -3,9 +3,11 @@
 #include "../GunManager.h"
 #include "LightningShot.h"
 #include "../Vehicles/ITank.h"
+#include <Logging/Logger.h>
 
 using namespace OpenEngine::Prototype;
 using namespace OpenEngine::Prototype::Vehicles;
+using namespace OpenEngine::Logging;
 
 namespace OpenEngine {
 	namespace Prototype {
@@ -18,7 +20,8 @@ namespace OpenEngine {
 		LightningGun::~LightningGun() {}
 
 		void LightningGun::ShootGun(ShotPosAndDir posAndDir) {
-			lastFired = Timer::GetTime();
+//lastFired = Timer::GetTime();
+ logger.error << "Timing broken in LightningGun" << logger.end;
 
 			Vector<3,float> shotPos = posAndDir.first;
 			Quaternion<float> shotDir = posAndDir.second; 
@@ -50,7 +53,9 @@ namespace OpenEngine {
 		}
 
 		bool LightningGun::GunReady() {
-			return (Timer::GetTime() >= lastFired + delayTime);
+ logger.error << "Timing broken in LightningGun" << logger.end;
+ return false;
+ //			return (Timer::GetTime() >= lastFired + delayTime);
 		}
             }
 

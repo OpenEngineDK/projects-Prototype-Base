@@ -3,9 +3,12 @@
 #include "../GunManager.h"
 #include "LaserShot.h"
 #include "../Vehicles/ITank.h"
+#include <Logging/Logger.h>
 
 using namespace OpenEngine::Prototype;
 using namespace OpenEngine::Prototype::Vehicles;
+using namespace OpenEngine::Logging;
+
 
 namespace OpenEngine {
 	namespace Prototype {
@@ -19,7 +22,9 @@ namespace OpenEngine {
 		LaserGun::~LaserGun() {}
 
 		void LaserGun::ShootGun(ShotPosAndDir posAndDir) {
-			lastFired = Timer::GetTime();
+//lastFired = Timer::GetTime();
+ logger.error << "Timing broken in LaserGun" << logger.end;
+ 
 
 			Vector<3,float> shotPos = posAndDir.first;
 			Quaternion<float> shotDir = posAndDir.second; 
@@ -50,7 +55,10 @@ namespace OpenEngine {
 		}
 
 		bool LaserGun::GunReady() {
-			return (Timer::GetTime() >= lastFired + delayTime);
+//			return (Timer::GetTime() >= lastFired + delayTime);
+ logger.error <<"Timing broken in LaserGun" << logger.end;
+ 
+ return false;
 		}
             }
 	} // NS Utils

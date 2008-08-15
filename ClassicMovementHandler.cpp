@@ -9,16 +9,17 @@
 
 #include "ClassicMovementHandler.h"
 
-#include <Core/IGameEngine.h>
+
 #include <Devices/IMouse.h>
 #include <Math/Quaternion.h>
 //#include <Physics/RigidBox.h>
 #include "TankController.h"
+#include <Logging/Logger.h>
+using namespace OpenEngine::Logging;
 
 namespace OpenEngine {
 	namespace Prototype {
 
-		using OpenEngine::Core::IGameEngine;
 		using OpenEngine::Scene::TransformationNode;
 		using namespace OpenEngine::Math;
 		//using namespace OpenEngine::Physics;
@@ -93,7 +94,11 @@ namespace OpenEngine {
 			}*/
 		}
 
-		void ClassicMovementHandler::Process(const float dt, const float percent) {
+		void ClassicMovementHandler::Handle(ProcessEventArg arg) 
+                {
+                  
+                  logger.error << "timing broken in ClassicMovementHandler" << logger.end;
+                  float dt = 1;
                         // Turret and camera handling
                         float rSpeed = 0.001;
                         float mSpeed = 0.5;
@@ -258,11 +263,11 @@ namespace OpenEngine {
                     mRightClick = false;
             }
         }
-		void ClassicMovementHandler::BindToEventSystem() {
+		void ClassicMovementHandler::BindToEventSystem(IKeyboard & key, IMouse & mouse) {
 
-            IKeyboard::keyEvent.Attach(*this);
-            IMouse::mouseMovedEvent.Attach(*this);
-            IMouse::mouseButtonEvent.Attach(*this);
+            key.KeyEvent().Attach(*this);
+            mouse.MouseMovedEvent().Attach(*this);
+            mouse.MouseButtonEvent().Attach(*this);
 		}
 
 		void ClassicMovementHandler::SetTank(ITank* tank) {

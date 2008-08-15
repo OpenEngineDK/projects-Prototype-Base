@@ -12,9 +12,9 @@
 #define _TEST_GAME_FACTORY_H_
 
 // Game engine interface
-#include <Core/IGameFactory.h>
 #include <Display/Viewport.h>
 #include <Scene/ISceneNode.h>
+#include <Core/Engine.h>
 
 // HACK-EDY HACK HACK
 //#include <Physics/FixedTimeStepPhysics.h>
@@ -56,7 +56,7 @@ using OpenEngine::Sound::OpenALSoundSystem;
  * 
  * @see IGameFactory
  */
-class GameFactory : public IGameFactory {
+class GameFactory {
 
 private:
     IFrame*      frame;         // member variable for the engine frame
@@ -75,7 +75,9 @@ private:
     LayerStatistics* layerStat;
 public:
     GameFactory();
-    bool         SetupEngine(IGameEngine& engine);
+
+    bool SetupEngine(OpenEngine::Core::Engine & engine);
+
     IFrame*      GetFrame();
     IRenderer*   GetRenderer();
 

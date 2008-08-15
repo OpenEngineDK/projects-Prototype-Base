@@ -14,6 +14,7 @@
 #include "Utils/GenericGamemodeCallbackHandler.h"
 #include "Utils/GamemodeCallbackHandler.h"
 #include <string>
+#include <Logging/Logger.h>
 
 namespace OpenEngine {
 	namespace Prototype {
@@ -33,14 +34,22 @@ namespace OpenEngine {
 
 				bool IsTypeOf(const std::type_info& inf) { return false; };
 
-				void Initialize() { OnGameModeInit(); };
-				void Deinitialize() { OnGameModeExit(); };                    
-				void Process(const float dt, const float percent) { 
-					if ( genericCBHandler != NULL ) {
-						genericCBHandler->ProcessCallbacks(dt);
-					}
-					OnGameLoopProcess(dt);
-				};
+        void Handle(OpenEngine::Core::InitializeEventArg arg)
+          {OnGameModeInit();}
+        void Handle(OpenEngine::Core::ProcessEventArg arg) 
+          {
+            float dt = 1;
+            using namespace OpenEngine::Logging;
+            
+            logger.error << "Timing broken in IGamemode" << logger.end;
+            if ( genericCBHandler != NULL ) {
+              genericCBHandler->ProcessCallbacks(dt);
+            }
+            OnGameLoopProcess(dt);
+          }
+        
+        void Handle(OpenEngine::Core::DeinitializeEventArg arg) 
+          {OnGameModeExit();}
 
 				// Implemented for each gamemode
 				virtual int OnGameModeInit() = 0;

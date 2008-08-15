@@ -1,6 +1,7 @@
 #ifndef _QUIT_HANDLER_H_
 #define _QUIT_HANDLER_H_
 
+#include <Core/Engine.h>
 #include <Devices/Symbols.h>
 #include <Devices/IKeyboard.h>
 
@@ -14,17 +15,21 @@ using namespace OpenEngine::Devices;
  * handle method. If the key symbol is escape it quits the game.
  */
 class QuitHandler : public IListener<KeyboardEventArg> {
-public:
+ public:
+
+  QuitHandler(OpenEngine::Core::Engine & engine) :
+    engine(engine)
+    {} 
+      
     void Handle(KeyboardEventArg arg) {
-        if (arg.sym == KEY_ESCAPE) {
-            IGameEngine::Instance().Stop();
-        }
+      if (arg.sym == KEY_ESCAPE) {
+        engine.Stop();
+      }
     }
-    
-    void BindToEventSystem() {
         
-        IKeyboard::keyEvent.Attach(*this);
-    }
+    private:
+    
+    OpenEngine::Core::Engine & engine;
 };
  
 #endif

@@ -23,12 +23,9 @@ class ForceHandler : public OpenEngine::Core::IListener<OpenEngine::Devices::Key
 
   void Handle(OpenEngine::Devices::KeyboardEventArg arg);
 
-
-  void Initialize();
-
-  void Process(const float deltaTime, const float percent);
-  void Deinitialize();
-  bool IsTypeOf(const std::type_info& inf);
+  void Handle(OpenEngine::Core::InitializeEventArg arg);
+  void Handle(OpenEngine::Core::ProcessEventArg arg);
+  void Handle(OpenEngine::Core::DeinitializeEventArg arg);
 
   OpenEngine::Renderers::IRenderNode * GetRenderNode();
 

@@ -217,14 +217,15 @@ GameFactory::GameFactory() : camera(NULL) {
 
 	// Create a renderer.
 	this->renderer = new Renderer();
-    renderer->initialize.Attach(*(new TextureLoader())); // space leak
-
+  
+  renderer->InitializeEvent().Attach(*(new TextureLoader())); // space leak
+  
 	// Add a rendering view to the renderer
-    MyRenderingView* rv = new MyRenderingView(*viewport);
-    DisplayListTransformer* dlt = new DisplayListTransformer(rv);
-    
-    renderer->process.Attach(*rv);  // space leak
-    renderer->initialize.Attach(*dlt);
+  MyRenderingView* rv = new MyRenderingView(*viewport);
+  DisplayListTransformer* dlt = new DisplayListTransformer(rv);
+
+  renderer->ProcessEvent().Attach(*rv);  // space leak
+  renderer->InitializeEvent().Attach(*dlt);
 
 }
 
@@ -237,228 +238,239 @@ GameFactory::GameFactory() : camera(NULL) {
 *
 * @param engine The game engine instance.
 */
-bool GameFactory::SetupEngine(IGameEngine& engine) {
+bool GameFactory::SetupEngine(Engine& engine) {
 
-	// Add mouse and keyboard module here
-	SDLInput* input = new SDLInput();
-	engine.AddModule(*input);
+  engine.InitializeEvent().Attach(*this->renderer);
+  engine.ProcessEvent().Attach(*this->renderer);
+  engine.DeinitializeEvent().Attach(*this->renderer);
 
-	// Add Statistics module
-	//engine.AddModule(*(new OpenEngine::Utils::Statistics(1000)));
+  engine.InitializeEvent().Attach(*this->frame);
+  engine.ProcessEvent().Attach(*this->frame);
+  engine.DeinitializeEvent().Attach(*this->frame);
 
 
-	// Bind the camera to the viewport
-	camera = new FollowCamera( *(new InterpolatedViewingVolume( *(new ViewingVolume()) )));
+  // Add mouse and keyboard module here
+  SDLInput* input = new SDLInput();
+  engine.InitializeEvent().Attach(*input);
+  engine.ProcessEvent().Attach(*input);
+  engine.DeinitializeEvent().Attach(*input);
+  // Add Statistics module
+  //engine.AddModule(*(new OpenEngine::Utils::Statistics(1000)));
+
+
+  // Bind the camera to the viewport
+  camera = new FollowCamera( *(new InterpolatedViewingVolume( *(new ViewingVolume()) )));
 	
-	// Setup with frustum...
-	Frustum* frustum = new Frustum(*camera, 1, 20000.0);
-	viewport->SetViewingVolume(frustum);
+  // Setup with frustum...
+  Frustum* frustum = new Frustum(*camera, 1, 20000.0);
+  viewport->SetViewingVolume(frustum);
 	
-	// ... or with Orthotope (orthogonal)...
-	//Orthotope* orthotope = new Orthotope(*camera, -1, 20000.0, -500, 500, -400, 400);
-	//viewport->SetViewingVolume(orthotope);
+  // ... or with Orthotope (orthogonal)...
+  //Orthotope* orthotope = new Orthotope(*camera, -1, 20000.0, -500, 500, -400, 400);
+  //viewport->SetViewingVolume(orthotope);
 	
-	//... or with standard ViewingVolume
-	//viewport->SetViewingVolume(camera);
+  //... or with standard ViewingVolume
+  //viewport->SetViewingVolume(camera);
 
-	// Create a root scene node
-	SceneNode* scene = new SceneNode();
-	// Supply the scene to the renderer
-	this->renderer->SetSceneRoot(scene);
+  // Create a root scene node
+  SceneNode* scene = new SceneNode();
+  // Supply the scene to the renderer
+  this->renderer->SetSceneRoot(scene);
 
-    // Add soundmodule
-    soundmgr = new OpenALSoundSystem(scene, camera);
-    engine.AddModule(*soundmgr);
+  // Add soundmodule
+  soundmgr = new OpenALSoundSystem(scene, camera);
+  engine.ProcessEvent().Attach(*soundmgr);
 
-	// Add RenderStateNode to change rendering features at runtime
-	RenderStateNode* rNode = new RenderStateNode();
-	rNode->AddOptions(RenderStateNode::RENDER_TEXTURES);
-	rNode->AddOptions(RenderStateNode::RENDER_SHADERS);
-	rNode->AddOptions(RenderStateNode::RENDER_BACKFACES);
-	scene->AddNode(rNode);
+  // Add RenderStateNode to change rendering features at runtime
+  RenderStateNode* rNode = new RenderStateNode();
+  rNode->AddOptions(RenderStateNode::RENDER_TEXTURES);
+  rNode->AddOptions(RenderStateNode::RENDER_SHADERS);
+  rNode->AddOptions(RenderStateNode::RENDER_BACKFACES);
+  scene->AddNode(rNode);
 
-	// Bind keys for changing rendering state
-	RenderStateHandler* renderStateHandler = new RenderStateHandler(rNode);
-	renderStateHandler->BindToEventSystem();
+  // Bind keys for changing rendering state
+  RenderStateHandler* renderStateHandler = new RenderStateHandler(rNode);
+  input->KeyEvent().Attach(*renderStateHandler);
 
-	// Bind the quit handler
-	QuitHandler* quit_h = new QuitHandler();
-	quit_h->BindToEventSystem();
+  // Bind the quit handler
+  QuitHandler* quit_h = new QuitHandler(engine);
+  input->KeyEvent().Attach(*quit_h);
 
 
-	// set the resources directory
-	string resources = "projects/Prototype-Base/data/";
-	DirectoryManager::AppendPath(resources);
-	logger.info << "Resource directory: " << resources << logger.end;
+  // set the resources directory
+  string resources = "projects/Prototype-Base/data/";
+  DirectoryManager::AppendPath(resources);
+  logger.info << "Resource directory: " << resources << logger.end;
 
-	// load the resource plug-ins
-	ResourceManager<IModelResource>::AddPlugin(new OBJPlugin());
-	ResourceManager<ITextureResource>::AddPlugin(new TGAPlugin());
-	//ResourceManager<ITextureResource>::AddPlugin(new SDLImagePlugin());
-	ResourceManager<IShaderResource>::AddPlugin(new GLSLPlugin());
-	ResourceManager<ISoundResource>::AddPlugin(new VorbisResourcePlugin());
+  // load the resource plug-ins
+  ResourceManager<IModelResource>::AddPlugin(new OBJPlugin());
+  ResourceManager<ITextureResource>::AddPlugin(new TGAPlugin());
+  //ResourceManager<ITextureResource>::AddPlugin(new SDLImagePlugin());
+  ResourceManager<IShaderResource>::AddPlugin(new GLSLPlugin());
+  ResourceManager<ISoundResource>::AddPlugin(new VorbisResourcePlugin());
 
-	// Add models from models.txt to the scene
-	dynamicObjects = new SceneNode();
-	staticObjects  = new SceneNode();
-	physicsObjects  = new SceneNode();
+  // Add models from models.txt to the scene
+  dynamicObjects = new SceneNode();
+  staticObjects  = new SceneNode();
+  physicsObjects  = new SceneNode();
 	
 	
-	// Particles
-	particleSystem = new ParticleSystem();    
-	engine.AddModule(*particleSystem, IGameEngine::TICK_DEPENDENT);
+  // Particles
+  particleSystem = new ParticleSystem();    
+  engine.ProcessEvent().Attach(*particleSystem);
 	
 
-	MapLoader* mapLoader = new MapLoader();
-	bool result = mapLoader->LoadMap(new PropertyList("Maps/testmap.btm"));
-	if (result) {
-		staticObjects->AddNode(mapLoader->GetStaticScene());
-		physicsObjects->AddNode(mapLoader->GetPhysicsScene());
-		dynamicObjects->AddNode(mapLoader->GetDynamicScene());
-	}
+  MapLoader* mapLoader = new MapLoader();
+  bool result = mapLoader->LoadMap(new PropertyList("Maps/testmap.btm"));
+  if (result) {
+    staticObjects->AddNode(mapLoader->GetStaticScene());
+    physicsObjects->AddNode(mapLoader->GetPhysicsScene());
+    dynamicObjects->AddNode(mapLoader->GetDynamicScene());
+  }
 
-	// Register movement handler to be able to move the camera
-	classicMovement = new ClassicMovementHandler(input);
-	classicMovement->BindToEventSystem();
-	engine.AddModule(*classicMovement,IGameEngine::TICK_DEPENDENT);
+  // Register movement handler to be able to move the camera
+  classicMovement = new ClassicMovementHandler(input);
+  classicMovement->BindToEventSystem(*input,*input);
+  engine.ProcessEvent().Attach(*classicMovement);
 
-	//Setup the tanks
-	tankMgr = new TankManager();
-	TankController* tankCtrl = new TankController(tankMgr, classicMovement, camera);
-	classicMovement->SetTankController(tankCtrl);
-	engine.AddModule(*tankMgr);
+  //Setup the tanks
+  tankMgr = new TankManager();
+  TankController* tankCtrl = new TankController(tankMgr, classicMovement, camera);
+  classicMovement->SetTankController(tankCtrl);
+  engine.ProcessEvent().Attach(*tankMgr);
 	
-	/*PointLightNode
-	// Setup SnowTank
-	GeometryNode* snowTankBody = LoadGeometryFromFile("ProtoTank/tank_body.obj");
-	GeometryNode* snowTankTurret = LoadGeometryFromFile("ProtoTank/tank_turret.obj");
-	GeometryNode* snowTankGun = LoadGeometryFromFile("ProtoTank/tank_cannon.obj");
-	SnowTank::SetModel(snowTankBody,snowTankTurret,snowTankGun);
-	*/
+  /*PointLightNode
+  // Setup SnowTank
+  GeometryNode* snowTankBody = LoadGeometryFromFile("ProtoTank/tank_body.obj");
+  GeometryNode* snowTankTurret = LoadGeometryFromFile("ProtoTank/tank_turret.obj");
+  GeometryNode* snowTankGun = LoadGeometryFromFile("ProtoTank/tank_cannon.obj");
+  SnowTank::SetModel(snowTankBody,snowTankTurret,snowTankGun);
+  */
 	
-	// Setup SeanTank
-	GeometryNode* seanTankBody = LoadGeometryFromFile("Tank2/tank2.obj");
-	GeometryNode* seanTankTurret = LoadGeometryFromFile("Tank2/turret.obj");
-	GeometryNode* seanTankGun = LoadGeometryFromFile("Tank2/gun.obj");
-	SeanTank::SetModel(seanTankBody,seanTankTurret,seanTankGun);
+  // Setup SeanTank
+  GeometryNode* seanTankBody = LoadGeometryFromFile("Tank2/tank2.obj");
+  GeometryNode* seanTankTurret = LoadGeometryFromFile("Tank2/turret.obj");
+  GeometryNode* seanTankGun = LoadGeometryFromFile("Tank2/gun.obj");
+  SeanTank::SetModel(seanTankBody,seanTankTurret,seanTankGun);
 	
-	class Temp : public IModule {
-    public:
-        NetworkHandler* net;
-        void Initialize() {}
-        void Deinitialize() {}
-        bool IsTypeOf(const std::type_info& i) { return false; }
-        void Process(float dt, float p) {
-            net->Notify();
-        }
-    };
-
-	try {
-    	ErlNetwork* netm = new ErlNetwork("camel24.daimi.au.dk", 2345);
-    	NetworkHandler* neth = new NetworkHandler(this, netm);
-    	engine.AddModule(*netm);
-    	netm->Attach(*neth);
-    	
-    	Temp* t = new Temp();
-    	t->net = neth;
-    	engine.AddModule(*t, IGameEngine::TICK_DEPENDENT);
-    } catch (Exception e) {
-    	logger.error << e.what() << logger.end;
+  class Temp : public IModule {
+  public:
+    NetworkHandler* net;
+    void Handle(InitializeEventArg arg) {}
+    
+    void Handle(ProcessEventArg arg){}
+    void Handle(DeinitializeEventArg arg) 
+    {
+      net->Notify();
     }
+  };
 
-	shotMgr = new ShotManager();
-	rNode->AddNode(shotMgr);
-	engine.AddModule(*shotMgr,IGameEngine::TICK_DEPENDENT);
+  try {
+    ErlNetwork* netm = new ErlNetwork("camel24.daimi.au.dk", 2345);
+    NetworkHandler* neth = new NetworkHandler(this, netm);
+    engine.ProcessEvent().Attach(*netm);
+    netm->Attach(*neth);
+    	
+    Temp* t = new Temp();
+    t->net = neth;
+    engine.ProcessEvent().Attach(*t);
+  } catch (Exception e) {
+    logger.error << e.what() << logger.end;
+  }
+
+  shotMgr = new ShotManager();
+  rNode->AddNode(shotMgr);
+  engine.ProcessEvent().Attach(*shotMgr);
 
 
-	crosshairNode = new Crosshair();
+  crosshairNode = new Crosshair();
 	
 	
-	// Add particle systems to the scene
-	std::vector< PropertyList* >::iterator plistIter;
-	std::vector< PropertyList* > particleResources = mapLoader->GetParticleResources();
-	for (plistIter = particleResources.begin(); plistIter != particleResources.end(); plistIter++) {
-	  PropertyList* plist = (*plistIter);
+  // Add particle systems to the scene
+  std::vector< PropertyList* >::iterator plistIter;
+  std::vector< PropertyList* > particleResources = mapLoader->GetParticleResources();
+  for (plistIter = particleResources.begin(); plistIter != particleResources.end(); plistIter++) {
+    PropertyList* plist = (*plistIter);
 	  
-	  ParticleGroupBuilder* groupBuilder = new ParticleGroupBuilder(*plist, string("p1"));
-	  MyParticleGroup* group = (MyParticleGroup*)(groupBuilder->GetParticleGroup());
-	  particleSystem->AddGroup(group);
-	  staticObjects->AddNode(groupBuilder->GetRenderNode());
-	}
+    ParticleGroupBuilder* groupBuilder = new ParticleGroupBuilder(*plist, string("p1"));
+    MyParticleGroup* group = (MyParticleGroup*)(groupBuilder->GetParticleGroup());
+    particleSystem->AddGroup(group);
+    staticObjects->AddNode(groupBuilder->GetRenderNode());
+  }
 	
 	
-  	// create physics engine
-	AABB worldAabb(Vector<3,float>(-5000,-5000,-5000),Vector<3,float>(5000,5000,5000));
-	Vector<3,float> gravity = mapLoader->GetGravity();
-	physics = new PhysicsFacade(worldAabb, gravity);
-	engine.AddModule(*physics , IGameEngine::TICK_DEPENDENT);
+  // create physics engine
+  AABB worldAabb(Vector<3,float>(-5000,-5000,-5000),Vector<3,float>(5000,5000,5000));
+  Vector<3,float> gravity = mapLoader->GetGravity();
+  physics = new PhysicsFacade(worldAabb, gravity);
+  engine.ProcessEvent().Attach(*physics);
 	
 	
 	
-	// load the collada resource plug-in
-	ResourceManager<IModelResource>::AddPlugin(new ColladaPlugin());
+  // load the collada resource plug-in
+  ResourceManager<IModelResource>::AddPlugin(new ColladaPlugin());
 
-    IModelResourcePtr resource = ResourceManager<IModelResource>::Create("Rock/rock.dae");
-    resource->Load();
-    ISceneNode* model = resource->GetSceneNode();
-    resource->Unload();
+  IModelResourcePtr resource = ResourceManager<IModelResource>::Create("Rock/rock.dae");
+  resource->Load();
+  ISceneNode* model = resource->GetSceneNode();
+  resource->Unload();
     
-    TransformationNode* transNode = new TransformationNode();
-    transNode->AddNode(model);
-    transNode->Move(0.0, -20.0, 0.0);
+  TransformationNode* transNode = new TransformationNode();
+  transNode->AddNode(model);
+  transNode->Move(0.0, -20.0, 0.0);
     
     
-    DynamicBody* rockBody = new DynamicBody( new RigidBody( new AABB( *transNode ) ) );
-    rockBody->SetName("Rock");
-    TransformationNode* modTrans = rockBody->GetTransformationNode();
-    rockBody->SetMass(100.0f);
-    rockBody->SetAngularDamping(20.0f);
-    rockBody->SetLinearDamping(5.0f);
-    physics->AddRigidBody(rockBody);
+  DynamicBody* rockBody = new DynamicBody( new RigidBody( new AABB( *transNode ) ) );
+  rockBody->SetName("Rock");
+  TransformationNode* modTrans = rockBody->GetTransformationNode();
+  rockBody->SetMass(100.0f);
+  rockBody->SetAngularDamping(20.0f);
+  rockBody->SetLinearDamping(5.0f);
+  physics->AddRigidBody(rockBody);
 
-    modTrans->AddNode(transNode);
-    modTrans->Move(80.0, 20.0, 0.0);
-    dynamicObjects->AddNode(modTrans);
+  modTrans->AddNode(transNode);
+  modTrans->Move(80.0, 20.0, 0.0);
+  dynamicObjects->AddNode(modTrans);
     
-    // Add point light to the tank    
-    PointLightNode* pln = new PointLightNode();
+  // Add point light to the tank    
+  PointLightNode* pln = new PointLightNode();
             
-    pln->constAtt = 0.5;
-    pln->linearAtt = 0.01;
-    pln->quadAtt = 0.001;
+  pln->constAtt = 0.5;
+  pln->linearAtt = 0.01;
+  pln->quadAtt = 0.001;
     
-    pln->ambient = Vector<4,float>(0.0, 1.0, 0.2, 0.8);
-    pln->diffuse = Vector<4,float>(0.0, 0.0, 1.0, 1.0);
-    //pln->specular
+  pln->ambient = Vector<4,float>(0.0, 1.0, 0.2, 0.8);
+  pln->diffuse = Vector<4,float>(0.0, 0.0, 1.0, 1.0);
+  //pln->specular
     
-    modTrans->AddNode(pln);
+  modTrans->AddNode(pln);
 
-	IGamemode* gamemode = new TestGamemode();
-	engine.AddModule(*gamemode);
-	// Load tanks
-	int tankCount = 1;
-	for ( int i = 0; i < tankCount; i++ ) {
-		ITank* tank = AddTank(i);
-		tank->GetDynamicBody()->SetPosition( mapLoader->GetSpawnPoints()[i] );
-		gamemode->OnPlayerConnect(i);
-	}
+  IGamemode* gamemode = new TestGamemode();
+  engine.ProcessEvent().Attach(*gamemode);
+  // Load tanks
+  int tankCount = 1;
+  for ( int i = 0; i < tankCount; i++ ) {
+    ITank* tank = AddTank(i);
+    tank->GetDynamicBody()->SetPosition( mapLoader->GetSpawnPoints()[i] );
+    gamemode->OnPlayerConnect(i);
+  }
 
-	tankCtrl->SetPlayerTank(0);
+  tankCtrl->SetPlayerTank(0);
 	
-    // steering
-    ForceHandler * handler = new ForceHandler(tankMgr->GetTank(0)->GetDynamicBody(), physics);
-    SDLInput::keyEvent.Attach(*handler);
-    engine.AddModule(*handler,IGameEngine::TICK_DEPENDENT);
-    rNode->AddNode(handler->GetRenderNode());
+  // steering
+  ForceHandler * handler = new ForceHandler(tankMgr->GetTank(0)->GetDynamicBody(), physics);
+  input->KeyEvent().Attach(*handler);
+  engine.ProcessEvent().Attach(*handler);
+  rNode->AddNode(handler->GetRenderNode());
     
     
     
-    SpawnHandler* spawnHandler = new SpawnHandler(tankMgr->GetTank(0)->GetDynamicBody(), mapLoader->GetSpawnPoints());
-    SDLInput::keyEvent.Attach(*spawnHandler);
+  SpawnHandler* spawnHandler = new SpawnHandler(tankMgr->GetTank(0)->GetDynamicBody(), mapLoader->GetSpawnPoints());
+  input->KeyEvent().Attach(*spawnHandler);
     
     
 
-	/*
+  /*
     logger.info << "Preprocessing of static tree: started" << logger.end;
     QuadTransformer quadT;
     quadT.SetMaxFaceCount(500);
@@ -466,11 +478,11 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
     quadT.Transform(*staticObjects);
     rNode->AddNode(staticObjects);
     logger.info << "Preprocessing of static tree: done" << logger.end;
-	*/
+  */
 
-	rNode->AddNode(staticObjects);
-	rNode->AddNode(dynamicObjects);
-	//rNode->AddNode(physicsObjects);
+  rNode->AddNode(staticObjects);
+  rNode->AddNode(dynamicObjects);
+  //rNode->AddNode(physicsObjects);
 
   // physics debug node
   //scene->AddNode(physics->getRenderNode(this->renderer));
@@ -482,7 +494,7 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
 
 
   CairoSurfaceResourcePtr sr = 
-      CairoSurfaceResourcePtr(new CairoSurfaceResource(CairoSurfaceResource::CreateCairoSurface(1024,128)));
+    CairoSurfaceResourcePtr(new CairoSurfaceResource(CairoSurfaceResource::CreateCairoSurface(1024,128)));
 
   
   TextSurface *ts = new TextSurface(*sr, string("Hmm"));
@@ -492,7 +504,7 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
   //Layer babeLayer(100,100);
   
   layerStat = new LayerStatistics(1000, ts);
-  engine.AddModule(*layerStat);
+  engine.ProcessEvent().Attach(*layerStat);
   //babeLayer.texr = ResourceManager<ITextureResource>::Create("hud.tga");
   layer.texr = sr;
   ln->AddLayer(layer); // = sr; //ResourceManager<ITextureResource>::Create("hud.tga");
@@ -501,22 +513,22 @@ bool GameFactory::SetupEngine(IGameEngine& engine) {
   scene->AddNode(ln);
   
   // load static geometry
-   {
+  {
     TriangleMesh * triMesh = new TriangleMesh(*physicsObjects);
     RigidBody * meshBody = new RigidBody(triMesh);
     meshBody->SetName("Island");
     meshBody->SetPosition(Vector<3,float>(0,0,5.0));
     physics->AddRigidBody(meshBody);
-   }
+  }
 
    
-    VertexArrayTransformer vaT;
-    vaT.Transform(*scene);
+  VertexArrayTransformer vaT;
+  vaT.Transform(*scene);
 
     
     
-	// Return true to signal success.
-	return true;
+  // Return true to signal success.
+  return true;
 }
 
 

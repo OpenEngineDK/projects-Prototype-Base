@@ -10,7 +10,7 @@
 // OpenEngine stuff
 #include <Meta/Config.h>
 
-#include <Core/GameEngine.h>
+#include <Core/Engine.h>
 #include <Logging/Logger.h>
 #include <Logging/StreamLogger.h>
 
@@ -36,10 +36,14 @@ int main(int argc, char** argv) {
     // Print usage info.
     logger.info << "========= Beaten Traxx Prototype =========" << logger.end;
 
-    // Start the engine.
-    IGameEngine& engine = GameEngine::Instance();
-    engine.Start(new GameFactory());
+//     // Start the engine.
+//     IGameEngine& engine = GameEngine::Instance();
+//     engine.Start(new GameFactory());
 
+    Engine * engine = new Engine();
+    GameFactory * gameFactory = new GameFactory();
+    gameFactory->SetupEngine(*engine);
+    engine->Start();
     // Return when the engine stops.
     return EXIT_SUCCESS;
 }

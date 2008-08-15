@@ -104,12 +104,12 @@ void ForceHandler::Handle(OpenEngine::Devices::KeyboardEventArg arg) {
   }
 }
 
-
-void ForceHandler::Initialize() {
-
+void ForceHandler::Handle(OpenEngine::Core::InitializeEventArg arg) 
+{
 }
 
-void ForceHandler::Process(const float deltaTime, const float percent) {
+void ForceHandler::Handle(OpenEngine::Core::ProcessEventArg arg) 
+{
   const Quaternion<float> & rot = body->GetRotation();
   Vector<3,float> acc = rot.RotateVector(Vector<3,float>(500,0,0));
   Vector<3,float> steer = rot.RotateVector(Vector<3,float>(0,1000,0));
@@ -121,19 +121,15 @@ void ForceHandler::Process(const float deltaTime, const float percent) {
     body->ApplyForce(-acc);
   }
   if(left) {
-     body->ApplyTorque(steer);
+    body->ApplyTorque(steer);
   }
   if(right) {
-     body->ApplyTorque(-steer);
+    body->ApplyTorque(-steer);
   }
 
 }
-void ForceHandler::Deinitialize() {
 
-}
-bool ForceHandler::IsTypeOf(const std::type_info& inf) {
-  return typeid(ForceHandler) == inf;
-}
+void ForceHandler::Handle(OpenEngine::Core::DeinitializeEventArg) {}
 
 OpenEngine::Renderers::IRenderNode * ForceHandler::GetRenderNode() {
   return &(this->rNode);

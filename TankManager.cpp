@@ -1,5 +1,8 @@
 
 #include "TankManager.h"
+#include <Logging/Logger.h>
+
+using namespace OpenEngine::Logging;
 
 namespace OpenEngine {
     namespace Prototype {
@@ -38,12 +41,21 @@ namespace OpenEngine {
             return elm->second;
         }
 
-	void TankManager::Initialize() {
-	}
-	
-	void TankManager::Deinitialize() {
-	}
-	
+        void TankManager::Handle(InitializeEventArg arg) 
+        {
+        }
+      
+      void TankManager::Handle(ProcessEventArg arg)
+      {
+        logger.error << "Timig broken in Tankmanager" << logger.end;
+        Process(1,1);
+      }
+      
+      void TankManager::Handle(DeinitializeEventArg arg) 
+      {
+      }
+
+
 	bool TankManager::IsTypeOf(const std::type_info& inf) {
 		return false;
 	}

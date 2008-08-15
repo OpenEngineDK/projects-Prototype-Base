@@ -39,12 +39,14 @@ namespace OpenEngine {
 
                 ITank* GetTank(int i);
 
-		void Initialize();
-		void Deinitialize();
 		virtual bool IsTypeOf(const std::type_info& inf);
 		virtual void Process(const float dt, const float percent);
 
 		TankMap GetTankMap();
+
+                  void Handle(InitializeEventArg arg);
+                  void Handle(ProcessEventArg arg);
+                  void Handle(DeinitializeEventArg arg);
 
         };
     } // NS Prototype

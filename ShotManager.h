@@ -36,10 +36,9 @@ namespace OpenEngine {
 
 			virtual ~ShotManager();
 
-                        void Initialize();
-                        void Deinitialize();
-                        virtual bool IsTypeOf(const std::type_info& inf);
-                        virtual void Process(const float dt, const float percent);
+      void Handle(OpenEngine::Core::InitializeEventArg arg);
+      void Handle(OpenEngine::Core::ProcessEventArg arg);
+      void Handle(OpenEngine::Core::DeinitializeEventArg arg);
 
 			void Apply(IRenderingView* view);
 

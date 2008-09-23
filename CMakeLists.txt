@@ -62,7 +62,6 @@ TARGET_LINK_LIBRARIES(Prototype-Base
   OpenEngine_Display
   OpenEngine_Devices
   OpenEngine_Renderers
-  OpenEngine_Renderers_OpenGL
   OpenEngine_Resources
   OpenEngine_Scene
   # Extensions

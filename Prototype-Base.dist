@@ -6,7 +6,7 @@ darcs /                                  http://www.openengine.dk/code/openengin
 
 # Project repository
 darcs /projects/Prototype-Base           http://www.openengine.dk/code/projects/Prototype-Base
-any   /projects/Prototype-Base/data      http://www.openengine.dk/code/projects/Prototype-Base/data.zip
+any   /projects/Prototype-Base/data      http://www.openengine.dk/data/projects/Prototype-Base/data.zip
 
 # Required extension repositories
 darcs /extensions/SDL                    http://www.openengine.dk/code/extensions/SDL
@@ -16,8 +16,9 @@ darcs /extensions/TGAResource            http://www.openengine.dk/code/extension
 darcs /extensions/OBJResource            http://www.openengine.dk/code/extensions/OBJResource
 
 # Physics
-darcs /extensions/RBPhysics              http://www.daimi.au.dk/~dodger/RBPhysics
-any   /extensions                        http://www.daimi.au.dk/~dodger/bullet.zip
+darcs /extensions/RBPhysics              http://www.daimi.au.dk/~cgd/code/extensions/RBPhysics
+linux  /libraries                        http://www.openengine.dk/data/libraries/bullet2.70-linux.tar.gz
+darwin  /libraries                       http://www.openengine.dk/data/libraries/bullet2.70-mac-i32.zip
 
 # Network
 darcs /extensions/ErlNetwork             http://www.openengine.dk/code/extensions/ErlNetwork

@@ -3,9 +3,11 @@
 
 # Main repository
 darcs /                                  http://www.openengine.dk/code/openengine
+darcs-dev / fh.daimi.au.dk:/users/cgd/code/openengine
 
 # Project repository
 darcs /projects/Prototype-Base           http://www.openengine.dk/code/projects/Prototype-Base
+darcs-dev /projects/Prototype-Base       fh.daimi.au.dk:/users/cgd/code/projects/Prototype-Base
 any   /projects/Prototype-Base/data      http://www.openengine.dk/data/projects/Prototype-Base/data.zip
 
 # Required extension repositories
@@ -14,6 +16,11 @@ darcs /extensions/OpenGLRenderer         http://www.openengine.dk/code/extension
 darcs /extensions/AccelerationStructures http://www.openengine.dk/code/extensions/AccelerationStructures
 darcs /extensions/TGAResource            http://www.openengine.dk/code/extensions/TGAResource
 darcs /extensions/OBJResource            http://www.openengine.dk/code/extensions/OBJResource
+darcs-dev /extensions/SDL                    fh.daimi.au.dk:/users/cgd/code/extensions/SDL
+darcs-dev /extensions/OpenGLRenderer         fh.daimi.au.dk:/users/cgd/code/extensions/OpenGLRenderer
+darcs-dev /extensions/AccelerationStructures fh.daimi.au.dk:/users/cgd/code/extensions/AccelerationStructures
+darcs-dev /extensions/TGAResource            fh.daimi.au.dk:/users/cgd/code/extensions/TGAResource
+darcs-dev /extensions/OBJResource            fh.daimi.au.dk:/users/cgd/code/extensions/OBJResource
 
 # Physics
 darcs /extensions/RBPhysics              http://www.daimi.au.dk/~cgd/code/extensions/RBPhysics
@@ -22,32 +29,43 @@ darwin  /libraries                       http://www.openengine.dk/data/libraries
 
 # Network
 darcs /extensions/ErlNetwork             http://www.openengine.dk/code/extensions/ErlNetwork
+darcs-dev /extensions/ErlNetwork         fh.daimi.au.dk:/users/cgd/code/extensions/ErlNetwork
 
 # Sound
 darcs /extensions/VorbisResource	 http://www.openengine.dk/code/extensions/VorbisResource
 darcs /extensions/OpenALSoundSystem      http://www.openengine.dk/code/extensions/OpenALSoundSystem
 darcs /extensions/Shapes                 http://www.openengine.dk/code/branches/Shapes
+darcs-dev /extensions/VorbisResource     fh.daimi.au.dk:/users/cgd/code/extensions/VorbisResource
+darcs-dev /extensions/OpenALSoundSystem  fh.daimi.au.dk:/users/cgd/code/extensions/OpenALSoundSystem
+darcs-dev /extensions/Shapes             fh.daimi.au.dk:/users/cgd/code/branches/Shapes
 any /projects/Prototype-Base/data        http://www.openengine.dk/data/sound/splat.ogg
 
 # Particle system
 darcs /extensions/ParticleSystem         http://openengine.dk/code/extensions/ParticleSystem
+darcs-dev /extensions/ParticleSystem     fh.daimi.au.dk:/users/cgd/code/extensions/ParticleSystem
 darcs /extensions/Bindings               http://openengine.dk/code/extensions/Bindings
+darcs-dev /extensions/Bindings           fh.daimi.au.dk:/users/cgd/code/extensions/Bindings
 darcs /extensions/PropertyList           http://openengine.dk/code/extensions/PropertyList
+darcs-dev /extensions/PropertyList       fh.daimi.au.dk:/users/cgd/code/extensions/PropertyList
 # Particle data
 any /projects/Prototype-Base/data        http://www.openengine.dk/data/images/Smoke.zip
 any /projects/Prototype-Base/data        http://www.openengine.dk/data/images/particle.tga
 
 # Sky extension
 darcs /extensions/Sky                    http://openengine.dk/code/extensions/Sky
+darcs-dev /extensions/Sky                fh.daimi.au.dk:/users/cgd/code/extensions/Sky
 
 # 2D Layer
 darcs /extensions/OEGUI			 http://openengine.dk/code/extensions/OEGUI
+darcs-dev /extensions/OEGUI              fh.daimi.au.dk:/users/cgd/code/extensions/OEGUI
 
 # Collada extension
 darcs  /extensions/ColladaResource       http://www.openengine.dk/code/extensions/ColladaResource
 linux  /libraries                        http://www.openengine.dk/data/libraries/collada-linux.tar.gz
 win    /libraries                        http://www.openengine.dk/data/libraries/colladadom2.1-win32.zip
 darwin /libraries                        http://www.openengine.dk/data/libraries/Collada-mac.tar.gz
+darwin /libraries                        http://openengine.dk/data/libraries/pcre-osx-i32.zip
+darwin /libraries                        http://openengine.dk/data/libraries/pcrecpp-osx-i32.zip
 
 # windows libraries
 win32 /libraries                         http://openengine.dk/data/libraries/boost-win32.zip

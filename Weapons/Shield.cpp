@@ -51,7 +51,7 @@ namespace OpenEngine {
 			glColor3f(0.0, 0.0, 0.7);
 
 			// Render the shots
-			float diameter = 1.0;
+			//@todo: unused variable: float diameter = 1.0;
 
 			glPushMatrix();
 			glTranslatef(pos[0],pos[1],pos[2]);

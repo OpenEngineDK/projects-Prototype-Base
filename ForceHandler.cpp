@@ -143,7 +143,7 @@ ForceHandler::RenderForceNode::RenderForceNode() :
 {}
 
 void ForceHandler::RenderForceNode::Apply(OpenEngine::Renderers::IRenderingView *view) {
-  IRenderer & renderer = *view->GetRenderer();
+  //@todo: unused variable: IRenderer & renderer = *view->GetRenderer();
 //   if(Timer::GetTime() < rayTime) {
 //     renderer.DrawLine(Line(rayStart,rayEnd),Vector<3,float>(1,0,0));
 

@@ -98,12 +98,12 @@ namespace OpenEngine {
 				count++;
 				printf("This has been called %d times - TestGamemode::TestCallbackFunction3()\n",count);
 				if ( count == 4 ) {
-					printf("Overriding previous timer by setting the callback again, now 6 seconds - TestGamemode::TestCallbackFunction3()\n",count);
+					printf("Overriding previous timer by setting the callback again, now 6 seconds - TestGamemode::TestCallbackFunction3(), count:%d\n",count);
 					SetCallback(&TestGamemode::TestCallbackFunction3, 6000, true);
 				}
 				if ( count == 5 ) {
 					StopCallback(&TestGamemode::TestCallbackFunction3);
-					printf("Executed 5 times, attempting to stop callback - TestGamemode::TestCallbackFunction3()\n",count);
+					printf("Executed 5 times, attempting to stop callback - TestGamemode::TestCallbackFunction3(), count:%d\n",count);
 				}
 				return 1;
 			}

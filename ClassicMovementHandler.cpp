@@ -98,10 +98,10 @@ namespace OpenEngine {
                 {
                   
                   logger.error << "timing broken in ClassicMovementHandler" << logger.end;
-                  float dt = 1;
+                  //@todo: unused variable: float dt = 1;
                         // Turret and camera handling
                         float rSpeed = 0.001;
-                        float mSpeed = 0.5;
+                        //@todo: unused variable: float mSpeed = 0.5;
                         
                         float rot = 0.0;
                         if ( fabs(turretRotation) > rotationFactor ) {
@@ -144,11 +144,11 @@ namespace OpenEngine {
                         // Keyboard handling
 			//RigidBody* box = tank->GetRigidBox();
 			//if( box == NULL ) return;
-			static float speed = 1750.0f;
-			static float turn = 550.0f;
+			//@todo: unused variable: static float speed = 1750.0f;
+			//@todo: unused variable: static float turn = 550.0f;
 			Matrix<3,3,float> m; //orientation
 			//if( forward || back || left || right ) m = box->GetRotationMatrix();
-			float delta = dt / 1000 * 8;
+			//@todo: unused variable: float delta = dt / 1000 * 8;
 			/*
 			// Forward 
 			if( forward ){

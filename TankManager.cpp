@@ -1,4 +1,3 @@
-
 #include "TankManager.h"
 #include <Logging/Logger.h>
 
@@ -45,32 +44,23 @@ namespace OpenEngine {
         {
         }
       
-      void TankManager::Handle(ProcessEventArg arg)
-      {
-        logger.error << "Timig broken in Tankmanager" << logger.end;
-        Process(1,1);
-      }
+        void TankManager::Handle(ProcessEventArg arg)
+        {
+            float dt = arg.approx / 1000.0;
+            TankMap::iterator iter;
+            for (iter =  tankMap.begin(); iter != tankMap.end(); iter++) {
+                ITank* tank = (*iter).second;
+                tank->Process(dt);
+            }
+        }
       
-      void TankManager::Handle(DeinitializeEventArg arg) 
-      {
-      }
+        void TankManager::Handle(DeinitializeEventArg arg) 
+        {
+        }
 
-
-	bool TankManager::IsTypeOf(const std::type_info& inf) {
-		return false;
-	}
-	
-	void TankManager::Process(const float dt, const float percent) {
-		TankMap::iterator iter;
-		for (iter =  tankMap.begin(); iter != tankMap.end(); iter++) {
-			ITank* tank = (*iter).second;
-			tank->Process(dt);
-		}
-	}
-
-	TankMap TankManager::GetTankMap() {
-		return tankMap;
-	}
+        TankMap TankManager::GetTankMap() {
+            return tankMap;
+        }
 
     } // NS Prototype
 } // NS OpenEngine

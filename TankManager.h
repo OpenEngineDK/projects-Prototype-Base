@@ -12,41 +12,40 @@
 
 #include "Vehicles/ITank.h"
 #include <Core/IModule.h>
+#include <map>
 
 namespace OpenEngine {
     namespace Prototype {
 
         using namespace std;
-	using namespace OpenEngine::Core;
+        using namespace OpenEngine::Core;
         using namespace OpenEngine::Prototype::Vehicles;
 
-        typedef map<int,ITank*> TankMap;
+        typedef std::map<int,Vehicles::ITank* > TankMap;
 
         class TankManager : public IModule  {
-            private:
-		int newID;
-                TankMap tankMap;
-            public:
-                TankManager();
+        private:
+            int newID;
+            TankMap tankMap;
+        public:
+            TankManager();
 
-                virtual ~TankManager();
+            virtual ~TankManager();
 
-                void AddTank(ITank* tank);
+            void AddTank(ITank* tank);
                 
-                void AddTank(ITank* tank, int ID);
+            void AddTank(ITank* tank, int ID);
 
-                void RemoveTank(int i);
+            void RemoveTank(int i);
 
-                ITank* GetTank(int i);
+            ITank* GetTank(int i);
 
-		virtual bool IsTypeOf(const std::type_info& inf);
-		virtual void Process(const float dt, const float percent);
 
-		TankMap GetTankMap();
+            TankMap GetTankMap();
 
-                  void Handle(InitializeEventArg arg);
-                  void Handle(ProcessEventArg arg);
-                  void Handle(DeinitializeEventArg arg);
+            void Handle(InitializeEventArg arg);
+            void Handle(ProcessEventArg arg);
+            void Handle(DeinitializeEventArg arg);
 
         };
     } // NS Prototype

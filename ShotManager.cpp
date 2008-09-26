@@ -23,8 +23,7 @@ namespace OpenEngine {
     }
     void ShotManager::Handle(ProcessEventArg arg)
     {
-      logger.error << "Timing broken in ShotManager" << logger.end;
-      float dt = 1;
+      float dt = arg.approx / 1000.0;
       
       bool deleted = false;
       for ( unsigned int i = 0; i < toDelete.size(); i++ ) {

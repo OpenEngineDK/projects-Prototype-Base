@@ -29,8 +29,8 @@ namespace OpenEngine {
 
 		class IGun {
 		protected:
-			double lastFired;
-			double delayTime;
+			Time lastFired;
+			Time delayTime;
 			GunManager* gunMgr;
 
 		public:

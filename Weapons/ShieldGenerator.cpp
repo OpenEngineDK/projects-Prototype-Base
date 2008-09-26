@@ -14,25 +14,21 @@ namespace OpenEngine {
             namespace Weapons {
 
 		ShieldGenerator::ShieldGenerator() {
-			lastFired = 0.0;
-			delayTime = 10000.0;
+			lastFired = Time(0);
+			delayTime = Time(10000000); // 10000ms
 		}
 
 		ShieldGenerator::~ShieldGenerator() {}
 
 		void ShieldGenerator::ShootGun(ShotPosAndDir posAndDir) {
-      //			lastFired = Timer::GetTime();
-      logger.error << "Timing broken in ShieldGenerator" << logger.end;
+            lastFired = Timer::GetTime();
 
 			Shield* shot = new Shield(this);
 			gunMgr->GetTank()->GetShotManager()->AddShot(shot);
 		}
 
 		bool ShieldGenerator::GunReady() {
-      logger.error << "Timing broken in ShieldGenerator" << logger.end;
-      return false;
-      
-			//return (Timer::GetTime() >= lastFired + delayTime);
+			return (Timer::GetTime() >= lastFired + delayTime);
 		}
 
 		Vector<3,float> ShieldGenerator::UpdatePosition() {

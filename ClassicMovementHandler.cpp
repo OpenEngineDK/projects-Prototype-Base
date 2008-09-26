@@ -97,8 +97,7 @@ namespace OpenEngine {
 		void ClassicMovementHandler::Handle(ProcessEventArg arg) 
                 {
                   
-                  logger.error << "timing broken in ClassicMovementHandler" << logger.end;
-                  //@todo: unused variable: float dt = 1;
+                  //@todo: unused variable: float dt = arg.approx / 1000.0;
                         // Turret and camera handling
                         float rSpeed = 0.001;
                         //@todo: unused variable: float mSpeed = 0.5;

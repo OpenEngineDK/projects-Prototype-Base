@@ -38,10 +38,7 @@ namespace OpenEngine {
           {OnGameModeInit();}
         void Handle(OpenEngine::Core::ProcessEventArg arg) 
           {
-            float dt = 1;
-            using namespace OpenEngine::Logging;
-            
-            logger.error << "Timing broken in IGamemode" << logger.end;
+            float dt = arg.approx / 1000.0;
             if ( genericCBHandler != NULL ) {
               genericCBHandler->ProcessCallbacks(dt);
             }

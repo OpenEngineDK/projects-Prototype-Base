@@ -60,11 +60,10 @@ void ForceHandler::Handle(OpenEngine::Devices::KeyboardEventArg arg) {
         physics->RayTest(rNode.rayStart,rNode.rayEnd,callback);
         
         if(callback->hasHit) {
-          //rNode.rayTime = Timer::GetTime() + 1000.0;
-          logger.error << "Timing broken in ForceHandler" << logger.end;
-          rNode.rayEnd = rNode.rayStart + (rNode.rayEnd - rNode.rayStart)*callback->fraction;
-          rNode.normal = callback->normal;
-
+            rNode.rayTime = Timer::GetTime() + Time(1000000);
+            rNode.rayEnd = rNode.rayStart + (rNode.rayEnd - rNode.rayStart)*callback->fraction;
+            rNode.normal = callback->normal;
+            
           if(typeid(DynamicBody) == typeid(*callback->body)) {
             DynamicBody & dynBody = *dynamic_cast<DynamicBody*>(callback->body);
             
@@ -143,11 +142,9 @@ ForceHandler::RenderForceNode::RenderForceNode() :
 {}
 
 void ForceHandler::RenderForceNode::Apply(OpenEngine::Renderers::IRenderingView *view) {
-  //@todo: unused variable: IRenderer & renderer = *view->GetRenderer();
-//   if(Timer::GetTime() < rayTime) {
-//     renderer.DrawLine(Line(rayStart,rayEnd),Vector<3,float>(1,0,0));
-
-//     renderer.DrawLine(Line(rayEnd,rayEnd+(normal.GetNormalize()*100)),Vector<3,float>(0,0,1));
-//   } 
-  logger.error << "Timing broken in ForceHandler" << logger.end;  
+    IRenderer & renderer = *view->GetRenderer();
+    if(Timer::GetTime() < rayTime) {
+        renderer.DrawLine(Line(rayStart,rayEnd),Vector<3,float>(1,0,0));
+        renderer.DrawLine(Line(rayEnd,rayEnd+(normal.GetNormalize()*100)),Vector<3,float>(0,0,1));
+    } 
 }

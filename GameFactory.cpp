@@ -286,6 +286,8 @@ bool GameFactory::SetupEngine(Engine& engine) {
   rNode->AddOptions(RenderStateNode::RENDER_TEXTURES);
   rNode->AddOptions(RenderStateNode::RENDER_SHADERS);
   rNode->AddOptions(RenderStateNode::RENDER_BACKFACES);
+  rNode->AddOptions(RenderStateNode::RENDER_LIGHTING);
+  rNode->AddOptions(RenderStateNode::RENDER_WITH_DEPTH_TEST);
   scene->AddNode(rNode);
 
   // Bind keys for changing rendering state

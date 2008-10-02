@@ -12,6 +12,9 @@
 #include <Renderers/IRenderNode.h>
 #include <Renderers/IRenderingView.h>
 #include <Math/Vector.h>
+#include <Utils/Timer.h>
+
+using namespace OpenEngine;
 
 class ForceHandler : public OpenEngine::Core::IListener<OpenEngine::Devices::KeyboardEventArg>,
   public OpenEngine::Core::IModule {
@@ -37,7 +40,7 @@ class ForceHandler : public OpenEngine::Core::IListener<OpenEngine::Devices::Key
     void Apply(OpenEngine::Renderers::IRenderingView *view);
     OpenEngine::Math::Vector<3,float> rayStart;
     OpenEngine::Math::Vector<3,float> rayEnd;
-    double rayTime;
+    Utils::Time rayTime;
     OpenEngine::Math::Vector<3,float> normal;
   };
 

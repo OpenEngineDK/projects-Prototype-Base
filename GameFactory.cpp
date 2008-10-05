@@ -283,11 +283,7 @@ bool GameFactory::SetupEngine(Engine& engine) {
 
   // Add RenderStateNode to change rendering features at runtime
   RenderStateNode* rNode = new RenderStateNode();
-  rNode->AddOptions(RenderStateNode::RENDER_TEXTURES);
-  rNode->AddOptions(RenderStateNode::RENDER_SHADERS);
-  rNode->AddOptions(RenderStateNode::RENDER_BACKFACES);
-  rNode->AddOptions(RenderStateNode::RENDER_LIGHTING);
-  rNode->AddOptions(RenderStateNode::RENDER_WITH_DEPTH_TEST);
+  //rNode->EnableOption(RenderStateNode::LIGHTING);
   scene->AddNode(rNode);
 
   // Bind keys for changing rendering state

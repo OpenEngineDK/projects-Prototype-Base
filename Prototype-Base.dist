@@ -34,10 +34,10 @@ darcs-dev /extensions/ErlNetwork         fh.daimi.au.dk:/users/cgd/code/extensio
 # Sound
 darcs /extensions/VorbisResource	 http://openengine.dk/code/extensions/VorbisResource
 darcs /extensions/OpenALSoundSystem      http://openengine.dk/code/extensions/OpenALSoundSystem
-darcs /extensions/Shapes                 http://openengine.dk/code/branches/Shapes
+darcs /extensions/Shapes                 http://openengine.dk/code/extensions/Shapes
 darcs-dev /extensions/VorbisResource     fh.daimi.au.dk:/users/cgd/code/extensions/VorbisResource
 darcs-dev /extensions/OpenALSoundSystem  fh.daimi.au.dk:/users/cgd/code/extensions/OpenALSoundSystem
-darcs-dev /extensions/Shapes             fh.daimi.au.dk:/users/cgd/code/branches/Shapes
+darcs-dev /extensions/Shapes             fh.daimi.au.dk:/users/cgd/code/extensions/Shapes
 any /projects/Prototype-Base/data        http://openengine.dk/data/sound/splat.ogg
 
 # Particle system

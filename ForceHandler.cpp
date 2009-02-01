@@ -24,7 +24,7 @@ ForceHandler::ForceHandler(DynamicBody * body, PhysicsFacade * physics) :
 void ForceHandler::Handle(OpenEngine::Devices::KeyboardEventArg arg) {
   
   bool val = false;
-  if (arg.type == KeyboardEventArg::PRESS) {
+  if (arg.type == EVENT_PRESS) {
     val = true;
     switch(arg.sym) {
     case KEY_0:
@@ -131,7 +131,7 @@ void ForceHandler::Handle(OpenEngine::Core::ProcessEventArg arg)
 
 void ForceHandler::Handle(OpenEngine::Core::DeinitializeEventArg) {}
 
-OpenEngine::Renderers::IRenderNode * ForceHandler::GetRenderNode() {
+OpenEngine::Scene::RenderNode * ForceHandler::GetRenderNode() {
   return &(this->rNode);
 }
 

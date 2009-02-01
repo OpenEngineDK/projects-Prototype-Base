@@ -10,7 +10,7 @@
 #ifndef _I_SHOT_H_
 #define _I_SHOT_H_
 
-#include <Renderers/IRenderNode.h>
+#include <Scene/RenderNode.h>
 #include <Renderers/IRenderingView.h>
 #include <Scene/ISceneNode.h>
 #include <Meta/OpenGL.h>
@@ -18,8 +18,8 @@
 // forward declarations
 namespace OpenEngine { 
 	//namespace Geometry  { class Box; } 
-	namespace Scene     { class TransformationNode; } 
-	namespace Renderers { class IRenderNode; }
+	namespace Scene     { class TransformationNode;
+                          class RenderNode; }
 	namespace Prototype { class ShotManager; } 
 }
 
@@ -33,7 +33,7 @@ namespace OpenEngine {
 	namespace Prototype {
             namespace Weapons {
 
-        class IShot : public IRenderNode {
+        class IShot : public RenderNode {
 		protected:
 			ShotManager* shotMgr;
 

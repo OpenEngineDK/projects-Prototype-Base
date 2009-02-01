@@ -25,7 +25,7 @@ using namespace OpenEngine::Prototype::Weapons;
 namespace OpenEngine {
 	namespace Prototype {
 
-                class ShotManager : public IRenderNode, public IModule {
+                class ShotManager : public RenderNode, public IModule {
 		private:
 			list<IShot*>::iterator shotIter;
 			list<IShot*> shots;

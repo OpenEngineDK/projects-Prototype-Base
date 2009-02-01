@@ -221,9 +221,9 @@ namespace OpenEngine {
 
 		// set state of keys on up/down events
 		void ClassicMovementHandler::Handle(KeyboardEventArg arg) { 
-            if (arg.type == KeyboardEventArg::PRESS)
+            if (arg.type == EVENT_PRESS)
                 HandleKeyEvent(arg, true); 
-            else if (arg.type == KeyboardEventArg::RELEASE)
+            else if (arg.type == EVENT_RELEASE)
                 HandleKeyEvent(arg, false);
 		}
 
@@ -250,12 +250,12 @@ namespace OpenEngine {
 		}
 
 		void ClassicMovementHandler::Handle(MouseButtonEventArg event) {
-            if (event.type == MouseButtonEventArg::PRESS) {
+            if (event.type == EVENT_PRESS) {
                 mLeftClick = (event.button == BUTTON_LEFT);
                 mRightClick = (event.button == BUTTON_RIGHT);
                 mWheelUp = (event.button == BUTTON_WHEEL_UP);
                 mWheelDown = (event.button == BUTTON_WHEEL_DOWN);
-            } else if (event.type == MouseButtonEventArg::RELEASE) {
+            } else if (event.type == EVENT_RELEASE) {
                 if (event.button == BUTTON_LEFT) 
                     mLeftClick = false;
                 if (event.button == BUTTON_RIGHT)

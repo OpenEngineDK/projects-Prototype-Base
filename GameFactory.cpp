@@ -20,8 +20,8 @@
 #include <Display/SDLFrame.h>
 #include <Devices/SDLInput.h>
 #include <Logging/Logger.h>
-#include <Renderers/IRenderNode.h>
-#include <Renderers/RenderStateNode.h>
+#include <Scene/RenderNode.h>
+#include <Scene/RenderStateNode.h>
 #include <Renderers/OpenGL/Renderer.h>
 #include <Renderers/OpenGL/RenderingView.h>
 #include <Renderers/OpenGL/TextureLoader.h>
@@ -145,7 +145,7 @@ class SpawnHandler : public OpenEngine::Core::IListener<OpenEngine::Devices::Key
  public:
   SpawnHandler(OpenEngine::Physics::DynamicBody* body, std::vector< Vector<3,float> > spawnPoints) : body(body), spawnPoints(spawnPoints) {}
   void Handle(OpenEngine::Devices::KeyboardEventArg arg) {
-  	if (arg.type == KeyboardEventArg::PRESS && arg.sym == KEY_SPACE) {
+  	if (arg.type == EVENT_PRESS && arg.sym == KEY_SPACE) {
   		int randomIndex = (int)(((float)std::rand()/RAND_MAX) * spawnPoints.size());
   		body->SetPosition(spawnPoints[randomIndex]);
         body->SetRotation(Quaternion<float>(1,0,0,0));
@@ -216,7 +216,7 @@ GameFactory::GameFactory() : camera(NULL) {
 	viewport = new Viewport(*frame);
 
 	// Create a renderer.
-	this->renderer = new Renderer();
+	this->renderer = new Renderer(viewport);
   
   renderer->InitializeEvent().Attach(*(new TextureLoader())); // space leak
   

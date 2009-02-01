@@ -12,17 +12,18 @@
 
 #include <Particles/ParticleGroup.h>
 #include <Utils/PropertyList.h>
-#include <Renderers/IRenderNode.h>
+#include <Scene/RenderNode.h>
 
 using namespace OpenEngine::Particles;
 using namespace OpenEngine::Utils;
 using namespace OpenEngine::Renderers;
+using namespace OpenEngine::Scene;
 
 
 class ParticleGroupBuilder {
     PropertyList& plist;
     IParticleGroup* pGroup;
-    IRenderNode* rNode;
+    RenderNode* rNode;
     IEmitter* eMitter;
     string group;
 public:
@@ -39,13 +40,13 @@ public:
     ParticleGroupBuilder(PropertyList& plist, string group);
     
     IParticleGroup* GetParticleGroup();
-    IRenderNode* GetRenderNode();
+    RenderNode* GetRenderNode();
     IEmitter* GetEmitter();
     
     void BuildGroup(PropertyList& plist, string group);
     template <class T> static Emitter<T>* BuildEmitter(PropertyList& plist, string group);
     template <class T> static T* BuildParticle(PropertyList& plist, string group);
-    template <class T, class G> static IRenderNode* BuildRenderNode(PropertyList& plist, string group, G* g);
+    template <class T, class G> static RenderNode* BuildRenderNode(PropertyList& plist, string group, G* g);
     template <class T> static IModifier<T>* BuildModifier(PropertyList& plist, string group);
     
     template <class T> static pair<void (T::*)(float), int> MethodForField_float(string field);

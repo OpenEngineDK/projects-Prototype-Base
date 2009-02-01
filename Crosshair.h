@@ -10,7 +10,7 @@
 #ifndef _CROSSHAIR_H_
 #define _CROSSHAIR_H_
 
-#include <Renderers/IRenderNode.h>
+#include <Scene/RenderNode.h>
 #include <Renderers/IRenderingView.h>
 #include <Scene/ISceneNode.h>
 #include <Meta/OpenGL.h>
@@ -18,8 +18,8 @@
 // forward declarations
 namespace OpenEngine { 
   //namespace Geometry  { class Box; } 
-  namespace Scene     { class TransformationNode; } 
-  namespace Renderers { class IRenderNode; } 
+  namespace Scene     { class TransformationNode;
+                        class RenderNode; } 
 }
 
 using namespace OpenEngine::Math;
@@ -30,7 +30,7 @@ using namespace OpenEngine::Renderers;
 namespace OpenEngine {
   namespace Utils {
 
-    class Crosshair : public IRenderNode {  
+    class Crosshair : public RenderNode {  
     public:
       Crosshair();
     

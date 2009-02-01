@@ -27,7 +27,7 @@ IParticleGroup* ParticleGroupBuilder::GetParticleGroup() {
     return pGroup;
 }
 
-IRenderNode* ParticleGroupBuilder::GetRenderNode() {
+RenderNode* ParticleGroupBuilder::GetRenderNode() {
     return rNode;
 }
 IEmitter* ParticleGroupBuilder::GetEmitter() {
@@ -149,7 +149,7 @@ template <class T> T* ParticleGroupBuilder::BuildParticle(PropertyList& plist, s
 }
 
 
-template <class T, class G> IRenderNode* ParticleGroupBuilder::BuildRenderNode(PropertyList& plist, string group, G* g) {
+template <class T, class G> RenderNode* ParticleGroupBuilder::BuildRenderNode(PropertyList& plist, string group, G* g) {
     string type = plist.GetString(group + ".render");
     if (type == "Billboard") {
         return new BillBoardRenderNode<T, G >(g);

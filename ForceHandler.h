@@ -9,7 +9,7 @@
 #include <Physics/DynamicBody.h>
 #include <Physics/PhysicsFacade.h>
 #include "CustomRayCallback.h"
-#include <Renderers/IRenderNode.h>
+#include <Scene/RenderNode.h>
 #include <Renderers/IRenderingView.h>
 #include <Math/Vector.h>
 #include <Utils/Timer.h>
@@ -30,11 +30,11 @@ class ForceHandler : public OpenEngine::Core::IListener<OpenEngine::Devices::Key
   void Handle(OpenEngine::Core::ProcessEventArg arg);
   void Handle(OpenEngine::Core::DeinitializeEventArg arg);
 
-  OpenEngine::Renderers::IRenderNode * GetRenderNode();
+  OpenEngine::Scene::RenderNode * GetRenderNode();
 
  private:
 
-  class RenderForceNode : public OpenEngine::Renderers::IRenderNode {
+  class RenderForceNode : public OpenEngine::Scene::RenderNode {
   public:
     RenderForceNode();
     void Apply(OpenEngine::Renderers::IRenderingView *view);

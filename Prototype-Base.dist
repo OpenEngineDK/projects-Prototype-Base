@@ -24,6 +24,7 @@ darcs-dev /extensions/OBJResource            fh.daimi.au.dk:/users/cgd/code/exte
 
 # Physics
 darcs /extensions/RBPhysics              http://daimi.au.dk/~cgd/code/extensions/RBPhysics
+darcs-dev /extensions/RBPhysics              fh.daimi.au.dk:/users/cgd/code/extensions/RBPhysics
 linux  /libraries                        http://openengine.dk/data/libraries/bullet2.70-linux.tar.gz
 darwin  /libraries                       http://openengine.dk/data/libraries/bullet2.70-mac-i32.zip
 
@@ -61,6 +62,7 @@ darcs-dev /extensions/OEGUI              fh.daimi.au.dk:/users/cgd/code/extensio
 
 # Collada extension
 darcs  /extensions/ColladaResource       http://openengine.dk/code/extensions/ColladaResource
+darcs-dev  /extensions/ColladaResource   fh.daimi.au.dk:/users/cgd/code/extensions/ColladaResource
 linux  /libraries                        http://openengine.dk/data/libraries/collada-linux.tar.gz
 win    /libraries                        http://openengine.dk/data/libraries/colladadom2.1-win32.zip
 darwin /libraries 			 http://openengine.dk/data/libraries/colladadom2.1-osx-i32.zip

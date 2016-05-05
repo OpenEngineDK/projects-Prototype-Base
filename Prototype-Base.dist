@@ -3,66 +3,66 @@
 
 # Main repository
 darcs /                                  http://openengine.dk/code/openengine
-darcs-dev / fh.daimi.au.dk:/users/cgd/code/openengine
+git-dev / git@github.com:OpenEngineDK/openengine.git
 
 # Project repository
-darcs /projects/Prototype-Base           http://openengine.dk/code/projects/Prototype-Base
-darcs-dev /projects/Prototype-Base       fh.daimi.au.dk:/users/cgd/code/projects/Prototype-Base
+git /projects/Prototype-Base           https://github.com/OpenEngineDK/projects-Prototype-Base.git
+git-dev /projects/Prototype-Base       git@github.com:OpenEngineDK/projects-Prototype-Base.git
 any   /projects/Prototype-Base/data      http://openengine.dk/data/projects/Prototype-Base/data.zip
 
 # Required extension repositories
-darcs /extensions/SDL                    http://openengine.dk/code/extensions/SDL
-darcs /extensions/OpenGLRenderer         http://openengine.dk/code/extensions/OpenGLRenderer
-darcs /extensions/AccelerationStructures http://openengine.dk/code/extensions/AccelerationStructures
-darcs /extensions/TGAResource            http://openengine.dk/code/extensions/TGAResource
-darcs /extensions/OBJResource            http://openengine.dk/code/extensions/OBJResource
-darcs-dev /extensions/SDL                    fh.daimi.au.dk:/users/cgd/code/extensions/SDL
-darcs-dev /extensions/OpenGLRenderer         fh.daimi.au.dk:/users/cgd/code/extensions/OpenGLRenderer
-darcs-dev /extensions/AccelerationStructures fh.daimi.au.dk:/users/cgd/code/extensions/AccelerationStructures
-darcs-dev /extensions/TGAResource            fh.daimi.au.dk:/users/cgd/code/extensions/TGAResource
-darcs-dev /extensions/OBJResource            fh.daimi.au.dk:/users/cgd/code/extensions/OBJResource
+git /extensions/SDL                    https://github.com/OpenEngineDK/extensions-SDL.git
+git /extensions/OpenGLRenderer         https://github.com/OpenEngineDK/extensions-OpenGLRenderer.git
+git /extensions/AccelerationStructures https://github.com/OpenEngineDK/extensions-AccelerationStructures.git
+git /extensions/TGAResource            https://github.com/OpenEngineDK/extensions-TGAResource.git
+git /extensions/OBJResource            https://github.com/OpenEngineDK/extensions-OBJResource.git
+git-dev /extensions/SDL                    git@github.com:OpenEngineDK/extensions-SDL.git
+git-dev /extensions/OpenGLRenderer         git@github.com:OpenEngineDK/extensions-OpenGLRenderer.git
+git-dev /extensions/AccelerationStructures git@github.com:OpenEngineDK/extensions-AccelerationStructures.git
+git-dev /extensions/TGAResource            git@github.com:OpenEngineDK/extensions-TGAResource.git
+git-dev /extensions/OBJResource            git@github.com:OpenEngineDK/extensions-OBJResource.git
 
 # Physics
 darcs /extensions/RBPhysics              http://daimi.au.dk/~cgd/code/extensions/RBPhysics
-darcs-dev /extensions/RBPhysics              fh.daimi.au.dk:/users/cgd/code/extensions/RBPhysics
+git-dev /extensions/RBPhysics              git@github.com:OpenEngineDK/extensions-RBPhysics.git
 linux  /libraries                        http://openengine.dk/data/libraries/bullet2.70-linux.tar.gz
 darwin  /libraries                       http://openengine.dk/data/libraries/bullet2.70-mac-i32.zip
 
 # Network
-darcs /extensions/ErlNetwork             http://openengine.dk/code/extensions/ErlNetwork
-darcs-dev /extensions/ErlNetwork         fh.daimi.au.dk:/users/cgd/code/extensions/ErlNetwork
+git /extensions/ErlNetwork             https://github.com/OpenEngineDK/extensions-ErlNetwork.git
+git-dev /extensions/ErlNetwork         git@github.com:OpenEngineDK/extensions-ErlNetwork.git
 
 # Sound
-darcs /extensions/VorbisResource	 http://openengine.dk/code/extensions/VorbisResource
-darcs /extensions/OpenALSoundSystem      http://openengine.dk/code/extensions/OpenALSoundSystem
-darcs /extensions/Shapes                 http://openengine.dk/code/extensions/Shapes
-darcs-dev /extensions/VorbisResource     fh.daimi.au.dk:/users/cgd/code/extensions/VorbisResource
-darcs-dev /extensions/OpenALSoundSystem  fh.daimi.au.dk:/users/cgd/code/extensions/OpenALSoundSystem
-darcs-dev /extensions/Shapes             fh.daimi.au.dk:/users/cgd/code/extensions/Shapes
+git /extensions/VorbisResource	 https://github.com/OpenEngineDK/extensions-VorbisResource.git
+git /extensions/OpenALSoundSystem      https://github.com/OpenEngineDK/extensions-OpenALSoundSystem.git
+git /extensions/Shapes                 https://github.com/OpenEngineDK/extensions-Shapes.git
+git-dev /extensions/VorbisResource     git@github.com:OpenEngineDK/extensions-VorbisResource.git
+git-dev /extensions/OpenALSoundSystem  git@github.com:OpenEngineDK/extensions-OpenALSoundSystem.git
+git-dev /extensions/Shapes             git@github.com:OpenEngineDK/extensions-Shapes.git
 any /projects/Prototype-Base/data        http://openengine.dk/data/sound/splat.ogg
 
 # Particle system
-darcs /extensions/ParticleSystem         http://openengine.dk/code/extensions/ParticleSystem
-darcs-dev /extensions/ParticleSystem     fh.daimi.au.dk:/users/cgd/code/extensions/ParticleSystem
-darcs /extensions/Bindings               http://openengine.dk/code/extensions/Bindings
-darcs-dev /extensions/Bindings           fh.daimi.au.dk:/users/cgd/code/extensions/Bindings
-darcs /extensions/PropertyList           http://openengine.dk/code/extensions/PropertyList
-darcs-dev /extensions/PropertyList       fh.daimi.au.dk:/users/cgd/code/extensions/PropertyList
+git /extensions/ParticleSystem         https://github.com/OpenEngineDK/extensions-ParticleSystem.git
+git-dev /extensions/ParticleSystem     git@github.com:OpenEngineDK/extensions-ParticleSystem.git
+git /extensions/Bindings               https://github.com/OpenEngineDK/extensions-Bindings.git
+git-dev /extensions/Bindings           git@github.com:OpenEngineDK/extensions-Bindings.git
+git /extensions/PropertyList           https://github.com/OpenEngineDK/extensions-PropertyList.git
+git-dev /extensions/PropertyList       git@github.com:OpenEngineDK/extensions-PropertyList.git
 # Particle data
 any /projects/Prototype-Base/data        http://openengine.dk/data/images/Smoke.zip
 any /projects/Prototype-Base/data        http://openengine.dk/data/images/particle.tga
 
 # Sky extension
-darcs /extensions/Sky                    http://openengine.dk/code/extensions/Sky
-darcs-dev /extensions/Sky                fh.daimi.au.dk:/users/cgd/code/extensions/Sky
+git /extensions/Sky                    https://github.com/OpenEngineDK/extensions-Sky.git
+git-dev /extensions/Sky                git@github.com:OpenEngineDK/extensions-Sky.git
 
 # 2D Layer
-darcs /extensions/OEGUI			 http://openengine.dk/code/extensions/OEGUI
-darcs-dev /extensions/OEGUI              fh.daimi.au.dk:/users/cgd/code/extensions/OEGUI
+git /extensions/OEGUI			 https://github.com/OpenEngineDK/extensions-OEGUI.git
+git-dev /extensions/OEGUI              git@github.com:OpenEngineDK/extensions-OEGUI.git
 
 # Collada extension
-darcs  /extensions/ColladaResource       http://openengine.dk/code/extensions/ColladaResource
-darcs-dev  /extensions/ColladaResource   fh.daimi.au.dk:/users/cgd/code/extensions/ColladaResource
+git  /extensions/ColladaResource       https://github.com/OpenEngineDK/extensions-ColladaResource.git
+git-dev  /extensions/ColladaResource   git@github.com:OpenEngineDK/extensions-ColladaResource.git
 linux  /libraries                        http://openengine.dk/data/libraries/collada-linux.tar.gz
 win    /libraries                        http://openengine.dk/data/libraries/colladadom2.1-win32.zip
 darwin /libraries 			 http://openengine.dk/data/libraries/colladadom2.1-osx-i32.zip
